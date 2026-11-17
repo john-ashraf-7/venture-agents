@@ -1,0 +1,48 @@
+{
+ "id": "run_20261117T210355_8a22:desk_evidence_v1",
+ "run_id": "run_20261117T210355_8a22",
+ "name": "desk_evidence_v1",
+ "rule": {
+  "demand_signals_min": 3,
+  "paying_competitors_min": 1,
+  "direct_competitors_max": 4,
+  "blocking_compliance_flags_max": 0,
+  "founder_fit": {
+   "compare": "high_end_of_estimate",
+   "require_skills": true
+  },
+  "community_domains": [
+   "reddit.com",
+   "news.ycombinator.com",
+   "stackexchange.com",
+   "stackoverflow.com",
+   "superuser.com",
+   "askubuntu.com",
+   "indiehackers.com",
+   "producthunt.com/discussions",
+   "quora.com",
+   "techcommunity.microsoft.com"
+  ],
+  "coverage_min": {
+   "pages_read": 5,
+   "verifiable_sources": 1
+  },
+  "counts_only": {
+   "labels": [
+    "SUPPORTED"
+   ],
+   "checked_by_different_family": true
+  },
+  "change_our_mind": "We would change the recommendation if at least 3 dated, sourced demand signals and 1 competitor with a verified public price were found, with no blocking compliance flag and a plan that fits the founder's budget and time.",
+  "definitions": {
+   "demand_signal": "A SUPPORTED claim, backed by a fetched source, of one of: a first-person problem statement with a date, on a site in community_domains (articles, template galleries and vendor blogs never count); an existing paid product with a public pricing page; a sourced trend whose quote contains a figure or date (at most one trend counts). Search-snippet claims are PARTIAL and never count.",
+   "paying_competitor": "A competitor whose price was read from its own fetched page and verified by the claim checker.",
+   "direct_competitor": "Same buyer, same job, same channel as the founder's idea.",
+   "blocking_compliance_flag": "The idea falls in an excluded category (physical goods, financial/crypto, health or legal advice) or needs a licence the founder does not have."
+  },
+  "brief_idea": "Another generic to-do list template pack for everyone",
+  "counting": "distinct (source_url, type) SUPPORTED claims of types demand_signal, paying_competitor, trend, checked by a different model family"
+ },
+ "sha256": "535dde27a17710c11931091160eceb9114961a47ffef144301910d6ac343a115",
+ "locked_at": "2026-11-17T21:03:55Z"
+}
