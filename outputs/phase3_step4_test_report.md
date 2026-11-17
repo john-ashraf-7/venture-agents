@@ -2,7 +2,7 @@
 
 ```json
 {
- "attempts": 1,
+ "attempts": 2,
  "exit_code_zero": true,
  "failures": []
 }

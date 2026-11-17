@@ -1,7 +1,10 @@
 # Research plan (fixed before any web page was read)
 
-- Effort estimate (ASSUMPTION): 40-60 hours (available: 48.0)
-- Cost estimate (ASSUMPTION): $300-$600 (budget: 300.0)
+- Effort estimate (ASSUMPTION): 20-60 hours (available: 48.0)
+- Cost estimate (ASSUMPTION): $50-$200 (budget: 300.0)
+- Baseline used (ASSUMPTION, config/product_type_baselines.yaml): Template pack / guide / checklist: 10-40 hours, $0-$150
+- Model's own estimate (ASSUMPTION): 20-60 hours, $50-$200; adjustment reason: Increased effort and cost to cover copywriting, design, and market research for a targeted guide/template pack.
+- Clamped in code: no (allowed 5-60 hours, $0-$225)
 - Required skills (ASSUMPTION): copywriting, freelancing for 6 years
 - Founder capacity: TIGHT - scope reduced and guardrails tightened
 - Caps (demo-fast): {'results_per_query': 5, 'max_queries': 3, 'max_pages': 5, 'page_chars': 6000, 'demand_queries': 4, 'competitor_queries': 2, 'pricing_queries': 2}
@@ -10,27 +13,27 @@
 
 ```json
 {
- "problem": "payment reminder emails",
- "audience": "new freelancers",
- "product_type": "template pack",
+ "problem": "payment-reminder email templates",
+ "audience": "new freelance designers and writers",
+ "product_type": "guide/template pack",
  "synonyms": [
-  "invoice reminder templates",
-  "payment notice templates",
-  "billing follow-up templates"
+  "payment reminder email templates",
+  "invoicing checklist",
+  "payment reminder templates"
  ]
 }
 ```
 
 ## Queries (built in code from templates, linted)
 
-- [demand] site:reddit.com payment reminder emails
-- [demand] site:news.ycombinator.com payment reminder emails
-- [demand] payment reminder emails "I wish there was"
-- [demand] site:reddit.com new freelancers payment reminder emails
-- [competitors] template pack for new freelancers
-- [competitors] best template pack new freelancers 2026
+- [demand] payment-reminder email templates "I wish there was"
+- [demand] payment-reminder email templates frustrated OR annoying OR "hate"
+- [demand] payment reminder email templates "I wish there was"
+- [demand] payment reminder email templates frustrated OR annoying OR "hate"
+- [competitors] payment-reminder email templates guide/template pack
+- [competitors] best guide/template pack for payment-reminder email templates 2026
 
-Second-pass queries (`alternatives to` / `pricing` for the first competitor found) are added after reading and logged in the decision log with the competitor name's web provenance.
+These are round 1 of the iterative research loop. Later rounds are planned from a summary of what was found (competitor names, communities, gaps vs the locked thresholds) and listed under "Research rounds" in step 4.
 
 ## Lessons from earlier runs (relevance-filtered)
 

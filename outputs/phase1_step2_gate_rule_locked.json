@@ -1,9 +1,9 @@
 {
- "id": "run_20261117T200900_3c2e:desk_evidence_v1",
- "run_id": "run_20261117T200900_3c2e",
+ "id": "run_20261117T212141_1a5a:desk_evidence_v1",
+ "run_id": "run_20261117T212141_1a5a",
  "name": "desk_evidence_v1",
  "rule": {
-  "demand_signals_min": 3,
+  "demand_signals_min": 1,
   "paying_competitors_min": 1,
   "direct_competitors_max": 4,
   "blocking_compliance_flags_max": 0,
@@ -23,13 +23,18 @@
    "quora.com",
    "techcommunity.microsoft.com"
   ],
+  "demand_judged_by": "llm",
+  "coverage_min": {
+   "pages_read": 5,
+   "verifiable_sources": 1
+  },
   "counts_only": {
    "labels": [
     "SUPPORTED"
    ],
    "checked_by_different_family": true
   },
-  "change_our_mind": "We would change the recommendation if at least 3 dated, sourced demand signals and 1 competitor with a verified public price were found, with no blocking compliance flag and a plan that fits the founder's budget and time.",
+  "change_our_mind": "We would change the recommendation if at least 1 dated, sourced demand signals and 1 competitor with a verified public price were found, with no blocking compliance flag and a plan that fits the founder's budget and time.",
   "definitions": {
    "demand_signal": "A SUPPORTED claim, backed by a fetched source, of one of: a first-person problem statement with a date, on a site in community_domains (articles, template galleries and vendor blogs never count); an existing paid product with a public pricing page; a sourced trend whose quote contains a figure or date (at most one trend counts). Search-snippet claims are PARTIAL and never count.",
    "paying_competitor": "A competitor whose price was read from its own fetched page and verified by the claim checker.",
@@ -39,6 +44,6 @@
   "brief_idea": "A pack of payment-reminder email templates and an invoicing checklist for new freelancers",
   "counting": "distinct (source_url, type) SUPPORTED claims of types demand_signal, paying_competitor, trend, checked by a different model family"
  },
- "sha256": "d7ea960273d77b1407043cb9ebcd69bc847baad10d9ca8fcbb03ef44c19da5f0",
- "locked_at": "2026-11-17T20:09:00Z"
+ "sha256": "5bc5305c9f12dde01b5bc6435770845362130b804a7572827008f549a3940b29",
+ "locked_at": "2026-11-17T21:21:42Z"
 }

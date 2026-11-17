@@ -1,13 +1,13 @@
 # Launch posts (queued in the Outbox; founder approves each; connectors MOCKED)
 
-## Direct sales via personal website and email list
+## Direct sales via a simple landing page with email capture
 
-Hey freelancers, I’ve put together a small pack of payment‑reminder email templates and an invoicing checklist that I’ve used myself for the past six years. The Basic tier gives you the core templates and the checklist, while the Complete tier adds five bonus emails and lifetime access. No fluff, just practical tools to help you collect payments faster and more politely.
+Hey freelancers, I just put together a small pack that includes 10 ready‑to‑use payment‑reminder emails and a checklist to make invoicing easier. No fluff, just the basics that help you keep track of what needs to be sent and what steps are still pending. If you’re looking to save time on follow‑ups, it might be worth checking out.
 
-## Social media posts on LinkedIn and Twitter targeting freelancers
+## Social media promotion on LinkedIn and Twitter targeting freelance groups
 
-As a freelancer, I know how tough it can be to chase late payments. That’s why I created a set of ready‑made reminder emails and a quick invoicing checklist. Pick the Basic tier for the essentials, or upgrade to Complete for extra templates and lifetime access. No claims, just the tools I use.
+Hi everyone, I’ve launched a quick resource for new freelancers: 10 payment‑reminder templates and a detailed invoicing checklist. I built it from my own experience to keep the process simple and error‑free. Feel free to take a look if you’re in the same boat and want to streamline your invoicing.
 
-## Affiliate marketing with freelance communities and forums
+## Partnerships with freelance platforms (e.g., Upwork, Fiverr) to offer the pack as a resource
 
-I’ve built a small pack of email templates and an invoicing checklist that I use to keep my own payments on track. It’s split into a Basic tier with the core tools, and a Complete tier that adds five bonus emails and lifetime access. If you’re looking for a straightforward way to manage invoicing, this might be worth a look.
+I’m excited to offer a new pack that includes 10 payment‑reminder email templates and an invoicing checklist. It’s designed to help freelancers keep their billing organized without extra hassle. If you’re on a platform and need a quick reference, let me know how it can fit into your workflow.

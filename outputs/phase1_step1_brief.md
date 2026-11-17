@@ -3,7 +3,7 @@
 ```json
 {
  "idea": "A pack of payment-reminder email templates and an invoicing checklist for new freelancers",
- "product_type": "template pack",
+ "product_type": "guide/template pack",
  "skills": [
   "copywriting",
   "freelancing for 6 years"

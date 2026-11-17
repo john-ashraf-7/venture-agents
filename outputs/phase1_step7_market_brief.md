@@ -1,18 +1,19 @@
 # Market brief
 
-The Notion-based freelance pack is priced at 49 USD [C10]. Users report that sending reminders before the due date can feel pushy, and best practice is to send a friendly reminder at the end of the 30‑day period [C20][C23]. Existing reminder tools often use robotic templates that clients ignore or find insulting, leading many freelancers to rewrite each email manually [C25][C26]. Automatic payment reminders can be scheduled 7 days before and 3 days before the due date, or at the end of the billing period, to avoid awkward follow‑ups [C27][C28]. The kit also aligns with broader freelance startup guidance on pricing tiers, retainer structuring, and scope protection, which typically cost between 500 and 3,000 USD in year one [C40][C41][C42].
+The market for payment‑reminder tools includes free templates from Scalesuite that can be copied and pasted [C3] and best‑practice guidance on tone from the same provider [C4]. Monograph offers a five‑touch reminder system with ready‑to‑send templates and an automation framework for A&E firms, which can schedule reminders automatically to speed fee collection [C5][C6]. Other invoicing platforms such as Invoice‑Generator.com provide instant, simple invoice generation without signup [C20], while Paymo links time tracking to invoicing for hourly freelancers [C21]. Zoho Invoice, Deel Bookkeeping, Canva, Bonsai, Square, Freshbooks, and Invox each offer varying degrees of templates, automation, and bookkeeping features tailored to freelancers, with free tiers or limited plans for small teams [C22][C23][C24][C25][C26][C27][C28].
 
 ## Segments (ASSUMPTION unless cited)
 
+- ASSUMPTION: no segment could be named from the evidence; the interviews (step 10) should find them.
 
 ## Quality
 
 ```json
 {
- "citation_coverage": 0.5,
- "citation_precision": 0.095,
+ "citation_coverage": 0.548,
+ "citation_precision": 0.032,
  "completeness": 0.5,
- "score": 0.365,
+ "score": 0.36,
  "revisions": 2,
  "escalated_to_founder": true
 }

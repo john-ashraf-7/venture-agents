@@ -3,13 +3,13 @@
 **Recommendation: PARK.**
 
 - Verdict computed by code: **PARK**
-- Computed at: 2026-11-17T20:10:09Z
+- Computed at: 2026-11-17T21:25:01Z
 
 ## Locked rule
 
 ```json
 {
- "demand_signals_min": 3,
+ "demand_signals_min": 1,
  "paying_competitors_min": 1,
  "direct_competitors_max": 4,
  "blocking_compliance_flags_max": 0,
@@ -29,13 +29,18 @@
   "quora.com",
   "techcommunity.microsoft.com"
  ],
+ "demand_judged_by": "llm",
+ "coverage_min": {
+  "pages_read": 5,
+  "verifiable_sources": 1
+ },
  "counts_only": {
   "labels": [
    "SUPPORTED"
   ],
   "checked_by_different_family": true
  },
- "change_our_mind": "We would change the recommendation if at least 3 dated, sourced demand signals and 1 competitor with a verified public price were found, with no blocking compliance flag and a plan that fits the founder's budget and time.",
+ "change_our_mind": "We would change the recommendation if at least 1 dated, sourced demand signals and 1 competitor with a verified public price were found, with no blocking compliance flag and a plan that fits the founder's budget and time.",
  "definitions": {
   "demand_signal": "A SUPPORTED claim, backed by a fetched source, of one of: a first-person problem statement with a date, on a site in community_domains (articles, template galleries and vendor blogs never count); an existing paid product with a public pricing page; a sourced trend whose quote contains a figure or date (at most one trend counts). Search-snippet claims are PARTIAL and never count.",
   "paying_competitor": "A competitor whose price was read from its own fetched page and verified by the claim checker.",
@@ -51,25 +56,25 @@
 
 | check | value | threshold | pass |
 |---|---|---|---|
-| demand_signals | 2 | >= 3 | False |
-| paying_competitors | 1 | >= 1 | True |
-| direct_competitors | 9 | <= 4 | False |
+| demand_signals | 1 | >= 1 | True |
+| paying_competitors | 0 | >= 1 | False |
+| direct_competitors | 1 | <= 4 | True |
 | blocking_compliance_flags | 0 | <= 0 | True |
-| founder_fit | high-end cost $600 > budget $300; high-end effort 60 h > 48 h available | high end within budget/time; skills covered | False |
+| founder_fit | high-end effort 60 h > 48 h available | high end within budget/time; skills covered | False |
 
 ## Explanation
 
 Recommendation: PARK.
-The decision is based on the locked rule that requires at least 3 verified demand signals, but only 2 were found. Additionally, there are 9 direct competitors, exceeding the maximum of 4 allowed. The founder fit also fails because the high-end cost and effort exceed the budget and available time. No other criteria were violated, but these failures are sufficient for a PARK verdict.
+The gate evaluation found that while there is at least one demand signal, there are no paying competitors with a verified price, which is a required condition. The rule also requires a high-end founder fit within budget and time, but the founder’s effort estimate exceeds the available hours. Because these two key criteria are not met, the system recommends parking the idea. No other factors override this decision.
 
 ## Devil's advocate
 
-- Bull case: The presence of at least one paying competitor indicates that there is a market willing to pay for this product, suggesting potential revenue opportunities.
-- Bear case: The lack of sufficient demand signals and the high number of direct competitors imply that there might be insufficient interest and difficulty in standing out, which could lead to low adoption rates.
+- Bull case: The product fills a niche gap with unique features, and the demand signals indicate a clear need among the target audience, suggesting a viable market opportunity.
+- Bear case: The absence of paying competitors and the unproven willingness to pay make it uncertain whether the product can generate sufficient revenue, potentially leading to financial difficulties.
 
 ## Options
 
-- **PARK** (recommended): Pause; collect the missing evidence first. Evidence: 2 verified demand signals, below the locked minimum of 3.. Risk: Momentum loss.
+- **PARK** (recommended): Pause; collect the missing evidence first. Evidence: No competitor with a verified price: willingness to pay is unproven.. Risk: Momentum loss.
 - **PIVOT_BACK**: Re-scope the idea. Evidence: Partial evidence. Risk: Another research cycle.
 - **GO** (weakest evidence): Override and continue anyway (typed reason required). Evidence: Below the locked threshold. Risk: Builds on unproven demand.
 
@@ -77,5 +82,5 @@ The decision is based on the locked rule that requires at least 3 verified deman
 
 - Choice: **GO** (recommendation was PARK)
 - Override: True
-- Reason: Demo run to show the full pipeline; evidence is weak (2/3 demand, 9 direct competitors) and the system recommended PARK
-- Decided at: 2026-11-17T20:12:18Z
+- Reason: Demo run to show the full pipeline; the system recommended PARK (no priced competitor, 60 h > 48 h)
+- Decided at: 2026-11-17T21:26:01Z

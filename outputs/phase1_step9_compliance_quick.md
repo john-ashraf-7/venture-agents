@@ -2,10 +2,10 @@
 
 Not legal advice - confirm with a lawyer in your jurisdiction.
 
-- [note] Privacy/GDPR: The product is a digital template pack; no personal data collection or processing is involved unless the buyer uploads data, which is not part of the product.
-- [note] Consumer Law – Digital Goods: Digital product sold to consumers; must provide clear description, price, and refund policy. No exclusion.
-- [note] Platform Rules – Content Restrictions: Templates and checklists are allowed content on major platforms; ensure no copyrighted text is included.
-- [note] Endorsement & Review Rules: No endorsements or reviews are required; if used, must comply with FTC guidelines.
-- [note] Licensing – No Licence Required: Product does not fall under excluded categories (financial, health, legal, physical goods) and does not require a special licence.
+- [note] Privacy/GDPR compliance for collecting email addresses and sending marketing emails: Requires clear consent, opt‑out mechanism, and data protection policy. Not a blocked category.
+- [note] Consumer law – clear description of digital product, refund policy, and delivery terms: Must comply with e‑commerce consumer protection rules. Not a blocked category.
+- [note] Platform rules – adherence to marketplace terms (e.g., Etsy, Gumroad) regarding digital downloads and email templates: Must follow platform policies on content and delivery. Not a blocked category.
+- [note] Copyright and licensing of template content: Ensure templates are original or properly licensed. Not a blocked category.
+- [note] No financial, health, legal, or physical goods content: Product falls within allowed categories.
 
-Regulatory burden (ASSUMPTION): 2/5
+Regulatory burden (ASSUMPTION): 3/5

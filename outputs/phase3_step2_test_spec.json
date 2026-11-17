@@ -1,16 +1,15 @@
 {
  "required_headings": [
   "Executive Summary",
-  "Target Audience",
-  "Problem Statement",
-  "Solution Overview",
-  "Product Features",
+  "Target Audience & Pain Points",
+  "Product Description",
+  "Key Features & Benefits",
   "Pricing & Packaging",
-  "Distribution Channels",
+  "Distribution & Marketing Plan",
   "Success Metrics"
  ],
- "min_sections": 8,
- "min_words_per_section": 50,
+ "min_sections": 7,
+ "min_words_per_section": 80,
  "forbidden_phrases": [
   "income promises",
   "fake reviews",

@@ -2,11 +2,11 @@
 
 | tier | price (USD) | includes |
 |---|---|---|
-| Basic | 49.00 | Payment‑reminder email templates; Invoicing checklist; Standard license |
-| Complete | 79.00 | Payment‑reminder email templates; Invoicing checklist; Standard license; Bonus: 5 additional email templates; Lifetime access |
+| Basic | 29.99 | 10 payment‑reminder email templates; 1 invoicing checklist; Standard license; 30‑day refund policy |
+| Premium | 49.99 | 10 payment‑reminder email templates; 1 invoicing checklist; Video tutorials; Standard license; 30‑day refund policy |
 
-Rationale: The Basic tier aligns with the verified competitor price claim C10 (Freelance pack on Notion priced at 49 USD). The Complete tier offers additional value (bonus templates and lifetime access) while remaining competitive. All core content is available in the Basic tier, ensuring no paywall behind extra tiers.
+Rationale: The Basic tier offers core content that is fully accessible and meets the needs of new freelancers without hidden upsells. The Premium tier adds value with video tutorials, aligning with common digital‑product pricing practices. Both tiers are one‑time purchases, consistent with the brief’s revenue model and the target market’s preference for straightforward pricing.
 
-Competitor price claims: C10
+Competitor price claims: none verified (ASSUMPTION)
 
 No payment code exists; checkout would run in the founder's own payment provider.

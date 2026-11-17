@@ -1,6 +1,6 @@
 {
- "id": "run_20261117T200900_3c2e:experiment",
- "run_id": "run_20261117T200900_3c2e",
+ "id": "run_20261117T212141_1a5a:experiment",
+ "run_id": "run_20261117T212141_1a5a",
  "name": "experiment",
  "rule": {
   "signups_threshold": 100,
@@ -12,9 +12,9 @@
    "demo_audience",
    "simulated"
   ],
-  "change_our_mind": "If fewer than 100 sign\u2011ups occur, we should conclude the templates are not compelling enough and reconsider the product offering or pricing before investing further.",
+  "change_our_mind": "If fewer than 100 sign\u2011ups are achieved, we would conclude that the target market is not willing to pay for a paid template pack and should pivot to a different offering or pricing model.",
   "verdict_mapping": ">= threshold: GO; < 25% of threshold: STOP; otherwise PIVOT_BACK; no verdict before the window closes; INSUFFICIENT_SAMPLE below min_visitors"
  },
- "sha256": "cc75c3252870df7e8b43c49aac30dfabedaf2ab22eb19d8f6d3041374e510187",
- "locked_at": "2026-11-17T20:12:58Z"
+ "sha256": "f5bb7f722b09b817ef85058d2b916cc4387a48155703653ffe9240d6fb4e75bd",
+ "locked_at": "2026-11-17T21:26:17Z"
 }

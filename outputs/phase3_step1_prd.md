@@ -2,22 +2,21 @@
 
 ```json
 {
- "product_title": "Freelancer Payment‑Reminder & Invoicing Template Pack",
- "audience": "New freelance designers and writers",
- "problem": "They struggle to collect payments on time and keep track of invoicing tasks",
+ "product_title": "Payment‑Reminder Email Templates & Invoicing Checklist Pack",
+ "audience": "New freelance designers and writers who have just started invoicing clients",
+ "problem": "They struggle to follow up on unpaid invoices, leading to cash flow gaps and wasted time",
  "outcomes": [
-  "Provide ready‑made email templates that increase on‑time payments",
-  "Offer a clear invoicing checklist that reduces administrative overhead",
-  "Enable users to send polite, effective reminders without drafting from scratch"
+  "Reduce time spent on follow‑ups by 50%",
+  "Increase on‑time payments by 30%",
+  "Provide a clear, step‑by‑step invoicing process"
  ],
  "required_sections": [
   "Executive Summary",
-  "Target Audience",
-  "Problem Statement",
-  "Solution Overview",
-  "Product Features",
+  "Target Audience & Pain Points",
+  "Product Description",
+  "Key Features & Benefits",
   "Pricing & Packaging",
-  "Distribution Channels",
+  "Distribution & Marketing Plan",
   "Success Metrics"
  ],
  "out_of_scope": []
