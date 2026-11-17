@@ -12,6 +12,9 @@ from app.models import DevilsAdvocate, GateExplanation
 OBSERVER = None  # evals: called with the model's first reply text (verdict-first rate)
 
 
+STATES = ("NOT_STARTED", "IN_PROGRESS", "INSUFFICIENT_SAMPLE")
+
+
 def explain(run_id: str, result: gates.GateResult, locked_rule: dict[str, Any]) -> str:
     facts = {"gate": result.gate, "verdict_computed_by_code": result.verdict.value, "state": result.state,
              "checks": [c.__dict__ for c in result.checks], "reasons": result.reasons, "locked_rule": locked_rule}
@@ -21,8 +24,12 @@ def explain(run_id: str, result: gates.GateResult, locked_rule: dict[str, Any]) 
         replies.append(out.text)
         if OBSERVER and len(replies) == 1:
             OBSERVER(out.text)
-        if verdict_first_ok(out.text, result.verdict):
+        wrong_state = [st for st in STATES if st != result.state and st in out.text.upper().replace(" ", "_")]
+        if verdict_first_ok(out.text, result.verdict) and not wrong_state:
             return None
+        if wrong_state:
+            return (f"The gate state computed by code is {result.state or 'none'}; do not call it {', '.join(wrong_state)}. "
+                    f"Use only the state and numbers given.")
         return (f"Your first sentence must start with the verdict word {result.verdict.value} and name no other "
                 f"verdict. Start with exactly '{gates.recommendation_sentence(result.verdict)}'")
     try:

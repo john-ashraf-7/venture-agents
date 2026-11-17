@@ -11,9 +11,9 @@ flowchart TD
     G0 --> I[Intake: parsed Brief<br/>asks for missing info]
     I --> L1[Lock desk-gate rule<br/>sha256 + timestamp]
     L1 --> P[Planner: queries + effort/cost ranges<br/>fixed before any web text]
-    P --> S[SearXNG capped search] --> R[Isolated page reader<br/>qwen3, no tools]
+    P --> S[Research loop: Tavily if key, else SearXNG<br/>+ PullPush Reddit, HN, App Store reviews, Stack Exchange] --> R[Isolated page reader<br/>gpt-oss, no tools]
     R --> CE[Claim extractor<br/>gpt-oss] --> QC[Code: quote must appear in source]
-    QC --> CC[Claim checker<br/>qwen3, fresh prompt] --> LED[(Evidence Ledger)]
+    QC --> CC[Claim checker + demand classifier<br/>qwen3:32b, other family] --> LED[(Evidence Ledger)]
     P --> IS[Idea scout] & CO[Compliance quick] & MT[Mom Test script]
     LED --> DG{{Desk gate: code}}
     CO --> DG

@@ -1,6 +1,6 @@
 # Venture Builder
 
-An open-source team of AI agents that takes a founder's brief toward a validated, sellable **digital** product through six gated phases, and that recommends **STOP** when the evidence is weak. Gate verdicts are computed by plain code against rules locked before the evidence is gathered; the founder makes every final call; nothing is published, sent or spent without founder approval in the Outbox. Runs entirely on local open-weight models (gpt-oss:20b + qwen2.5:7b via Ollama). License: Apache-2.0.
+An open-source team of AI agents that takes a founder's brief toward a validated, sellable **digital** product through six gated phases, and that recommends **STOP** when the evidence is weak. Gate verdicts are computed by plain code against rules locked before the evidence is gathered; the founder makes every final call; nothing is published, sent or spent without founder approval in the Outbox. Runs entirely on local open-weight models (gpt-oss:20b writes; qwen3:32b and qwen2.5:7b check; all via Ollama). License: Apache-2.0.
 
 ## Quickstart
 
@@ -66,6 +66,7 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 | shared memory / lessons relevance filter | `nomic-embed-text` (Apache-2.0) | local embeddings |
 | optional `safeguard` profile | `gpt-oss-safeguard:20b` | Policy Guard alternative, loaded one after another |
 | opt-in `PROFILE=quality` | `gpt-oss:120b` writers, `qwen3:32b` reader and checkers (Apache-2.0) | ~85 GB, an 80 GB GPU; set `PULL_MODELS="gpt-oss:120b qwen3:32b nomic-embed-text"`; not used for any committed run |
+| optional, off by default: claim checker `minicheck-flan-t5` (MiniCheck, MIT), policy guard on Granite Guardian, reranker `bge-reranker-v2-m3` (Apache-2.0) | Hugging Face weights, run in the app process | select with `ROLE_<ROLE>=...`; needs `pip install torch transformers` (not in the default image) |
 
 **The committed demo run** (`outputs/`, `decision_log.json`: run `run_20261117T212141_1a5a`, all six phases, live with every cache cleared) used the defaults above on one RTX 3090: gpt-oss:20b for the writers and page reader, qwen3:32b for the claim checker and demand classifier, qwen2.5:7b for the other checkers, no embedding model (lessons relevance used the keyword-overlap fallback). Ollama ran natively on the host; search used Tavily (own free key) with SearXNG in Docker as fallback, plus the Hacker News API (the Stack Exchange anonymous quota for this IP was used up that day). The founder overrode two gates with typed reasons (desk PARK, experiment still open); all six decisions are in the log with `approved_by: founder`, and no Outbox item was approved, so nothing was sent. Its 11 LLM cache hits are in-run reuse: the research loop and Phase 1 ask the demand classifier the same question.
 
