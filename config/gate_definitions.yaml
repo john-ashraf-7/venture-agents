@@ -18,8 +18,10 @@ desk_gate:
 
 definitions:
   demand_signal: >-
-    A SUPPORTED claim, backed by a fetched source, of one of: a dated forum/community post
-    describing the problem; an existing paid product with a public pricing page; a sourced trend.
+    A SUPPORTED claim, backed by a fetched source, of one of: a forum/community post describing
+    the problem, on a page the reader classified as a forum (quotes from vendor or article pages
+    do not count); an existing paid product with a public pricing page; a sourced trend whose quote
+    contains a figure or date (at most one trend counts).
   paying_competitor: >-
     A competitor whose price was read from its own fetched page and verified by the claim checker.
   direct_competitor: >-

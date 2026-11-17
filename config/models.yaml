@@ -53,7 +53,7 @@ roles:
   intake:           { model: gpt-oss-20b, temperature: 0.2 }
   planner:          { model: gpt-oss-20b, temperature: 0.2 }
   idea_scout:       { model: gpt-oss-20b, temperature: 0.7 }
-  page_reader:      { model: qwen-8b,     temperature: 0.0, checks: null }
+  page_reader:      { model: qwen-8b,     temperature: 0.0, checks: null, escalate_to: gpt-oss-20b }   # escalates only when a value is not on the page
   claim_extractor:  { model: gpt-oss-20b, temperature: 0.0 }
   claim_checker:    { model: qwen-8b,     temperature: 0.0, escalate_to: null, checks: claim_extractor }
   devils_advocate:  { model: qwen-8b,     temperature: 0.5 }

@@ -87,7 +87,7 @@ Each phase lists its agents, tools, method and output. Outputs are written to `o
 
 | Gate | Type | Checks (locked before evidence) | Outcomes |
 |---|---|---|---|
-| Desk evidence (end of Phase 1) | evidence threshold | ≥3 distinct SUPPORTED demand signals (a person describing the problem on a page the reader classified as a forum, a priced product, a sourced trend; quotes from vendor or article pages do not count as demand), checked by a different model family; ≥1 competitor with a verified price; ≤N direct competitors; 0 blocking compliance flags; founder fit (high end of cost/hours ranges vs budget/time; skills) | compliance flag → STOP; demand below half the minimum → STOP; demand below minimum → PARK; no paying competitor → PARK; too many direct competitors → PIVOT_BACK; fit fails or unknown → PARK; all pass → GO |
+| Desk evidence (end of Phase 1) | evidence threshold | ≥3 distinct SUPPORTED demand signals (a person describing the problem on a page the reader classified as a forum, a priced product, a sourced trend whose quote has a figure or date, at most one; quotes from vendor or article pages are relabelled and do not count as demand), checked by a different model family; ≥1 competitor with a verified price; ≤N direct competitors; 0 blocking compliance flags; founder fit (high end of cost/hours ranges vs budget/time; skills) | compliance flag → STOP; demand below half the minimum → STOP; demand below minimum → PARK; no paying competitor → PARK; too many direct competitors → PIVOT_BACK; fit fails or unknown → PARK; all pass → GO |
 | Experiment plan (Phase 2) | founder approval | founder approves threshold, min visitors, window; then locked | GO (lock) / REPEAT / PARK |
 | Experiment (Phase 2) | evidence threshold | sign-ups (excluding demo audience and simulated) vs locked threshold, visitors vs min_visitors, window closed | IN_PROGRESS (no verdict) · INSUFFICIENT_SAMPLE → REPEAT · ≥ threshold → GO · < 25% → STOP · otherwise PIVOT_BACK |
 | Tests (Phase 3) | tests passing | test runner exit code | 0 → GO · fail → REPEAT (max 3) → PARK/REPEAT by founder |
@@ -109,6 +109,8 @@ The real design (prototype status in brackets):
 8. Orders, deliveries and tickets feed Phase 6 metrics. The system never holds, moves or refunds money; the Outbox blocks every money action (tier 2).
 
 ## Data flow
+
+**Method library.** `knowledge/*.md` holds short method cards in our own words, each naming the agents it guides and the public work it summarises. `app/agents/base.py` adds the matching cards to an agent's instructions under a "not evidence" heading and logs their ids. Cards never enter the Evidence Ledger or count at a gate; the gate explainer gets none, so it still sees only the locked rule and the numbers.
 
 - **Founder text** enters once (Intake) and is stored as `founder` provenance; later agents receive only the parsed `Brief` and typed artifacts.
 - **Web text** enters only through the isolated reader and is reduced to structured fields tagged `web`; it can become claims, never instructions. Claims carry `id, text, type, label, source_url, source_quote, retrieved_at, checked_by_model, provenance, artifact_id`.

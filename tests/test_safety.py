@@ -99,3 +99,35 @@ def test_no_payment_code():
     req = (ROOT / "requirements.txt").read_text().lower()
     assert not hits, hits
     assert not any(s in req for s in ("stripe", "paypal", "braintree", "adyen"))
+
+
+def test_reader_drops_quotes_not_on_the_page():
+    from app.models import PageExtract
+    from app.services import reader
+    page = "Price: $29 one-time. I lose hours every month chasing late invoices."
+    ex = PageExtract(page_kind="forum", product_name="Invented Kit", price_text="$49",
+                     problem_statements=[{"quote": "I lose hours every month chasing late invoices"},
+                                         {"quote": "I wish templates synced across all my devices"}])
+    out = reader.keep_only_page_words(ex, page)
+    assert [q.quote for q in out.problem_statements] == ["I lose hours every month chasing late invoices"]
+    assert out.product_name is None and out.price_text is None
+
+
+def test_bot_check_page_is_never_read():
+    from app.services import reader
+    wall = 'Reddit document.addEventListener("DOMContentLoaded",async function(){e.requestSubmit()})'
+    assert reader.looks_blocked(wall)
+    assert not reader.looks_blocked("A long forum thread about invoices. " * 200)
+
+
+def test_legal_review_service_is_excluded_from_whole_brief():
+    from app.services import guard
+    assert guard.excluded_type("AI-generated legal contract reviews for freelancers. freelancers. affordable legal advice")
+    assert guard.excluded_type("Contract templates for freelancers (not legal advice)") is None
+
+
+def test_method_cards_guide_agents_but_are_never_evidence():
+    from app.services import knowledge
+    notes = knowledge.for_agent("planner")
+    assert notes and all(c["source"] for c in notes)
+    assert "NOT evidence" in knowledge.as_prompt(notes)

@@ -128,7 +128,8 @@ def start(raw: FounderInput, *, background: bool = True) -> dict[str, Any]:
     decision_log.append(run_id, "founder", "submit_brief", initiated_by="founder", approved_by=None)
     text = " ".join(raw.model_dump().values())
     g = guard.check(text, run_id=run_id, context="founder_input")
-    excluded = guard.excluded_type(f"{raw.idea}")
+    # skills are left out: a founder who is a nurse or a law student may still build an allowed product
+    excluded = guard.excluded_type(f"{raw.idea}. {raw.target_market}. {raw.values}")
     if not g.allowed or excluded:
         reason = g.reason if not g.allowed else f"Excluded product type: {excluded}. This system does not build physical goods, financial/crypto products, or health/legal advice products."
         update(run_id, status="blocked", error=reason)
@@ -346,9 +347,14 @@ def phase1(run_id: str) -> None:
     to_check: list[Claim] = []
     for d in drafts.claims:
         page = by_url.get(d.source_url)
+        vendor_copy = d.type == "demand_signal" and page and page["extract"].get("page_kind") != "forum"
+        if vendor_copy:
+            d.type = "other"
         c = ledger.new(run_id, text=d.text, type=d.type, label=Label.PARTIAL, source_url=d.source_url if page else None,
                        source_quote=d.source_quote, retrieved_at=page["retrieved_at"] if page else None,
                        writer_family=writer_family, provenance=Provenance.web, artifact_id=f"phase1_market_v{ver}")
+        if vendor_copy:
+            c.note = "Vendor or article copy, not a person describing the problem: not a demand signal."
         if not page:
             ledger.rewrite_unsupported(c)
         elif not market_researcher.quote_in_source(d.source_quote, page["text"]):
@@ -359,7 +365,7 @@ def phase1(run_id: str) -> None:
             to_check.append(c)
         else:
             c.label = Label.ASSUMPTION
-            c.note = "Not checked in demo-fast (does not feed the gate)."
+            c.note = c.note or "Not checked in demo-fast (does not feed the gate)."
             ledger.update(c)
     for c in to_check:
         events.check_kill()
@@ -447,7 +453,11 @@ def phase1(run_id: str) -> None:
     # a demand signal is a person describing the problem, so vendor and article pages do not count
     forum_urls = {p["url"] for p in pages if p["extract"].get("page_kind") == "forum"}
     counting = {(c.source_url, c.type) for c in all_c if c.type in DEMAND_TYPES and ledger.counts_for_gate(c)
-                and (c.type != "demand_signal" or c.source_url in forum_urls)}
+                and (c.type != "demand_signal" or c.source_url in forum_urls)
+                and (c.type != "trend" or re.search(r"\d", c.source_quote or ""))}
+    # a trend says where a market is moving, not that anyone wants this product: at most one counts
+    trends = sorted(k for k in counting if k[1] == "trend")
+    counting -= set(trends[1:])
     missing = [s for s in plan.required_skills if not any(s.lower() in k.lower() or k.lower() in s.lower() for k in brief.skills)]
     ev = gates.DeskEvidence(
         demand_signals=len(counting), paying_competitors=len(paying_urls),

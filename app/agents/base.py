@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from app import llm
 from app.config import prompt
-from app.services import cost, decision_log, events
+from app.services import cost, decision_log, events, knowledge
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -24,7 +24,8 @@ def run(run_id: Optional[str], agent: str, role: str, action: str, schema: type[
     """Run one agent step. `context` holds typed artifacts only (never the founder's raw text)."""
     if run_id:
         events.emit(run_id, "step", f"{agent}: {action} ...", agent=agent)
-    system = prompt(agent) or prompt(role)
+    notes = knowledge.for_agent(agent)
+    system = (prompt(agent) or prompt(role)) + knowledge.as_prompt(notes)
     user = (instructions + "\n\n" if instructions else "") + "\n\n".join(f"## {k}\n{ctx(v)}" for k, v in context.items())
     out = llm.call(role, [{"role": "system", "content": system}, {"role": "user", "content": user}], schema, run_id=run_id)
     if run_id:
@@ -32,5 +33,6 @@ def run(run_id: Optional[str], agent: str, role: str, action: str, schema: type[
         decision_log.append(run_id, agent, action, sources=sources or [], model=llm.model_name(role),
                             cost=0.0, approved_by=None, role=role, tokens_in=last.get("tokens_in"),
                             tokens_out=last.get("tokens_out"), latency_s=last.get("latency_s"),
-                            cache_hit=last.get("cache_hit"), ref_cost_usd=last.get("ref_cost_usd"))
+                            cache_hit=last.get("cache_hit"), ref_cost_usd=last.get("ref_cost_usd"),
+                            knowledge_cards=[c["id"] for c in notes])
     return out

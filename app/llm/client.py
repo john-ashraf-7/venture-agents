@@ -184,8 +184,12 @@ def _extract_json(text: str) -> str:
 
 # ----------------------------------------------------------------- call -------------------
 def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: Optional[str] = None,
-         use_cache: bool = True, max_retries: int = 2) -> T:
-    """Resolve the role's model, request JSON matching `schema`, validate, retry, escalate, log."""
+         use_cache: bool = True, max_retries: int = 2, check: Optional[Callable[[T], Optional[str]]] = None) -> T:
+    """Resolve the role's model, request JSON matching `schema`, validate, retry, escalate, log.
+
+    `check` returns an error message for a schema-valid reply that is still wrong (e.g. a quote that is not
+    on the page). The model gets one retry with that message, then the call escalates. If every model fails
+    the check, the last reply is returned and the caller's own code filter decides what to keep."""
     events.check_kill()
     spec = resolve(role)
     json_schema = inline_refs(schema.model_json_schema())
@@ -193,6 +197,7 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
                 + json.dumps(json_schema)}
     candidates = [spec.model] + ([spec.escalate_to] if spec.escalate_to else [])
     last_err = ""
+    checked_out: Optional[T] = None
     for model in candidates:
         msgs = [sys_note] + list(messages)
         key = _cache_key(spec, model, msgs, schema.__name__)
@@ -201,8 +206,9 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
             if hit is not None:
                 try:
                     obj = schema.model_validate_json(hit["content"])
-                    record_call(run_id, role, model, 0, 0, 0.0, cache_hit=True)
-                    return obj
+                    if check is None or check(obj) is None:
+                        record_call(run_id, role, model, 0, 0, 0.0, cache_hit=True)
+                        return obj
                 except ValidationError:
                     pass
         for attempt in range(max_retries + 1):
@@ -219,16 +225,27 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
             record_call(run_id, role, model, tin, tout, latency)
             try:
                 obj = schema.model_validate_json(_extract_json(content))
-                _cache_put(key, {"content": obj.model_dump_json(), "model": model.name})
-                return obj
             except ValidationError as e:
+                obj = None
                 last_err = str(e)[:1500]
                 msgs = msgs + [{"role": "assistant", "content": content[:4000]},
                                {"role": "user", "content": "That JSON failed validation:\n" + last_err +
                                 "\nReturn corrected JSON only."}]
+                continue
+            problem = check(obj) if check else None
+            if problem is None:
+                _cache_put(key, {"content": obj.model_dump_json(), "model": model.name})
+                return obj
+            checked_out, last_err = obj, problem
+            if attempt >= 1:  # one corrective retry per model, then escalate
+                break
+            msgs = msgs + [{"role": "assistant", "content": content[:4000]},
+                           {"role": "user", "content": problem + "\nReturn corrected JSON only."}]
         if run_id:
             events.emit(run_id, "warn", f"{role}: {model.name} failed after retries; "
                         + ("escalating" if model is not candidates[-1] else "giving up"))
+    if checked_out is not None:
+        return checked_out
     raise LLMError(role, candidates[-1].name, last_err or "unknown failure")
 
 

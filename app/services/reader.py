@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from typing import Any, Optional
 
 import httpx
@@ -58,6 +59,8 @@ def fetch(url: str, max_chars: int) -> dict[str, Any]:
     cache = _cache_path(url)
     if cache.exists():
         data = json.loads(cache.read_text(encoding="utf-8"))
+        if looks_blocked(data["text"]):
+            return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": "blocked-bot-check"}
         data["text"] = data["text"][:max_chars]
         data["origin"] = "cache"
         return data
@@ -69,10 +72,43 @@ def fetch(url: str, max_chars: int) -> dict[str, Any]:
         text = html_to_text(r.text)
     except httpx.HTTPError as e:
         return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": f"error: {type(e).__name__}"}
+    if looks_blocked(text):
+        return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": "blocked-bot-check"}
     data = {"url": url, "text": text[:20000], "retrieved_at": now_iso(), "origin": "live"}
     cache.write_text(json.dumps(data), encoding="utf-8")
     data["text"] = data["text"][:max_chars]
     return data
+
+
+BOT_WALL = re.compile(r"(document\.addEventListener|enable javascript|verify you are (a )?human|cf-chl|captcha)", re.I)
+
+
+def looks_blocked(text: str) -> bool:
+    """A bot-check or script-only page: reading it would give the model nothing real to quote."""
+    words = re.findall(r"[A-Za-z]{3,}", text)
+    return bool(BOT_WALL.search(text[:3000])) and len(words) < 400
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"\W+", " ", (s or "").lower()).strip()
+
+
+def off_page_values(extract: PageExtract, text: str) -> list[str]:
+    page = _norm(text)
+    values = [q.quote for q in extract.problem_statements] + [v for v in (extract.product_name, extract.price_text) if v]
+    return [v for v in values if _norm(v) not in page]
+
+
+def keep_only_page_words(extract: PageExtract, text: str) -> PageExtract:
+    """Drop any quote, product name or price the model returned that is not on the page."""
+    page = _norm(text)
+    on_page = lambda v: bool(v) and len(_norm(v)) >= 4 and _norm(v) in page
+    extract.problem_statements = [q for q in extract.problem_statements if on_page(q.quote)]
+    if extract.price_text and not on_page(extract.price_text):
+        extract.price_text, extract.has_public_price = None, False
+    if extract.product_name and not on_page(extract.product_name):
+        extract.product_name = None
+    return extract
 
 
 def wrap(text: str) -> str:
@@ -81,10 +117,19 @@ def wrap(text: str) -> str:
 
 
 def read(url: str, text: str, run_id: Optional[str] = None) -> PageExtract:
-    return llm.call("page_reader", [
-        {"role": "system", "content": (llm_prompt := _prompt())},
+    extract = llm.call("page_reader", [
+        {"role": "system", "content": _prompt()},
         {"role": "user", "content": f"URL: {url}\n" + wrap(text)},
-    ], PageExtract, run_id=run_id)
+    ], PageExtract, run_id=run_id, check=lambda ex: _off_page_message(ex, text))
+    return keep_only_page_words(extract, text)
+
+
+def _off_page_message(extract: PageExtract, text: str) -> Optional[str]:
+    bad = off_page_values(extract, text)
+    if not bad:
+        return None
+    return ("These values are not on the page; copy words exactly from the page or leave the field empty: "
+            + json.dumps(bad[:5]))
 
 
 def _prompt() -> str:

@@ -12,9 +12,13 @@ def run(run_id: str, brief: Brief, pages: list[dict[str, Any]]) -> CompetitorTab
                 if p["extract"].get("page_kind") == "product" or p["extract"].get("product_name")]
     if not products:
         return CompetitorTable(rows=[])
-    return base.run(run_id, "competitor", "analyst", "build_competitor_table", CompetitorTable,
+    table = base.run(run_id, "competitor", "analyst", "build_competitor_table", CompetitorTable,
                     {"idea": brief.idea, "target_market": brief.target_market, "product_pages": products},
                     sources=[p["url"] for p in products],
                     instructions="One row per product found in these extracts only. url must be one of the given URLs. "
                                  "price_text only if it appears in the extract. is_direct=true only if same buyer, same job "
                                  "and same channel as the founder's idea.")
+    for r in table.rows:  # "direct" must say why; an unexplained direct flag would push the gate toward PIVOT_BACK
+        if r.is_direct and not r.direct_reason.strip():
+            r.is_direct = False
+    return table

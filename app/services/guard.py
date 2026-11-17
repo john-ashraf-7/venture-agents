@@ -24,7 +24,7 @@ EXCLUDED_TYPES = {
     "physical goods": r"\b(physical (product|goods|item)s?|t-?shirts?|merch\w*|dropship\w*|hardware device|candles?|mugs?|clothing|apparel|jewelry|cosmetics)\b",
     "financial / investment / crypto product": r"\b(crypto\w*|bitcoin|ethereum|nft|token sale|trading (bot|signals?)|forex|stock picks?|investment advice|robo-?advis\w*|loan|lending|insurance product)\b",
     "health or medical advice": r"\b(medical advice|diagnos\w*|symptom checker|treatment plan|supplements?|therapy|mental health (coach|treatment)|diet plan for (diabetes|disease)|prescri\w*)\b",
-    "legal advice": r"\b(legal advice|lawyer|attorney|contract review service|immigration advice|legal (consult|representation))\b",
+    "legal advice": r"\b(legal advice|lawyer|attorney|immigration advice|legal (consult\w*|representation|opinions?|reviews?)|(contract|lease|will) reviews?)\b",
 }
 
 
