@@ -10,7 +10,7 @@ docker compose up
 
 Then open **http://localhost:8000**, paste a founder brief (or click an example brief) and press **Start run**. Progress streams live; the run stops at each gate for your decision.
 
-- Needs Docker Compose v2. With an NVIDIA GPU (NVIDIA Container Toolkit; tested on an RTX 3090, 24 GB) the first start pulls ~18 GB of models (`gpt-oss:20b`, `qwen2.5:7b`, `nomic-embed-text`) in the `ollama-pull` service; the UI starts right away and shows "models loading" until they are ready. The UI binds to 127.0.0.1 (set `APP_BIND=0.0.0.0` to expose it). Outbox approvals need the approval token printed in the app console (and embedded in the UI form).
+- Needs Docker Compose v2. With an NVIDIA GPU (NVIDIA Container Toolkit; tested on an RTX 3090, 24 GB) the first start pulls ~38 GB of models (`gpt-oss:20b`, `qwen3:32b`, `qwen2.5:7b`, `nomic-embed-text`) in the `ollama-pull` service; the UI starts right away and shows "models loading" until they are ready. The UI binds to 127.0.0.1 (set `APP_BIND=0.0.0.0` to expose it). Outbox approvals need the approval token printed in the app console (and embedded in the UI form).
 - One-shot setup with health checks, smoke tests and model warm-up: `bash scripts/rtx_quickstart.sh` (Linux/WSL2) or `scripts\rtx_quickstart.ps1` (Windows).
 - No GPU (CPU fallback, slow: minutes per step): `docker compose -f docker-compose.yml -f docker-compose.cpu.yml up`, optionally with smaller models via `PULL_MODELS="qwen3:4b nomic-embed-text"` and `ROLE_*` overrides in `.env`.
 - Smoke tests (no GPU needed, STUBBED LLM): `docker compose run --rm --no-deps app python -m pytest -q`
@@ -61,7 +61,8 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 | Role | Model (Ollama tag) | Why |
 |---|---|---|
 | intake, planner, idea scout, page reader, claim extractor, gate explainer, copywriter, builder, analyst | `gpt-oss:20b` (Apache-2.0) | default; strongest open model that fits 24 GB beside the checker; page-reader output is also verified in code |
-| claim checker, policy guard, devil's advocate, test writer, coach, eval judge, demand classifier | `qwen2.5:7b` (Apache-2.0), key `qwen25-7b` | default; a **different model family** checks what gpt-oss writes |
+| claim checker, demand classifier (the judges of what counts as evidence) | `qwen3:32b` (Apache-2.0) | default; the best judge that runs on 24 GB; a **different model family** checks what gpt-oss writes (models load one after another) |
+| policy guard, devil's advocate, test writer, coach, eval judge | `qwen2.5:7b` (Apache-2.0), key `qwen25-7b` | default; fast checks, also a different family |
 | shared memory / lessons relevance filter | `nomic-embed-text` (Apache-2.0) | local embeddings |
 | optional `safeguard` profile | `gpt-oss-safeguard:20b` | Policy Guard alternative, loaded one after another |
 | opt-in `PROFILE=quality` | `gpt-oss:120b` writers, `qwen3:32b` reader and checkers (Apache-2.0) | ~85 GB, an 80 GB GPU; set `PULL_MODELS="gpt-oss:120b qwen3:32b nomic-embed-text"`; not used for any committed run |

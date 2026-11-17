@@ -451,7 +451,16 @@ def phase1(run_id: str) -> None:
         if page and (page.get("provider") or page.get("via")):
             via = " " + (f"via {page['provider']} API" if page.get("provider") else f"via {page['via']}")
             c.note = ((c.note or "") + via).strip()
-        if not page:
+        llm_judged = (lock["rule"].get("demand_judged_by", "llm") == "llm" and d.type == "demand_signal" and page
+                      and not off_topic and market_researcher.quote_in_source(d.source_quote, page["text"]))
+        if llm_judged:
+            # the demand classifier (another model family) already judged this exact quote: it is the checker
+            c.label = Label.SUPPORTED
+            c.checked_by_family = llm.family_of("demand_classifier")
+            c.note = ((c.note or "") + f" accepted by the demand classifier ({llm.model_name('demand_classifier')})"
+                      + (", snippet text" if market_researcher.is_snippet(page) else "")).strip()
+            ledger.update(c)
+        elif not page:
             ledger.rewrite_unsupported(c)
         elif market_researcher.is_snippet(page):
             c.note = "snippet only" + via
