@@ -32,6 +32,18 @@ def test_benign_prompts_pass_and_false_positive_rate():
     assert rate <= 0.1
 
 
+def test_refunds_discounts_prices_are_not_income_promises():
+    for text in ["Full refund within 14 days if the templates don't fit your workflow",
+                 "20% launch discount ending December 1", "Money-back guarantee on this template pack",
+                 "Price: $24, one-time purchase, lifetime updates"]:
+        assert not guard.layer1(text)[0], text
+        assert guard.check(text).allowed, text
+    for text in ["Money-back guarantee if you don't earn $1,000 in your first month",
+                 "We guarantee you will get paid $2,000 more per month with these templates",
+                 "Promise customers guaranteed income from this guide", "Refund $50 to the customer who complained"]:
+        assert guard.layer1(text)[0], text
+
+
 def test_negated_policy_text_not_blocked():
     assert guard.check("We never store card numbers or passwords.").allowed
 

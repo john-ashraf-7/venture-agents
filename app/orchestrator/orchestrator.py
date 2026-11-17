@@ -363,6 +363,13 @@ def phase1(run_id: str) -> None:
         "# Research plan (fixed before any web page was read)", "",
         f"- Effort estimate (ASSUMPTION): {plan.hours_low:.0f}-{plan.hours_high:.0f} hours (available: {hours_avail or 'unknown'})",
         f"- Cost estimate (ASSUMPTION): ${plan.cost_low_usd:,.0f}-${plan.cost_high_usd:,.0f} (budget: {brief.budget_usd or 'unknown'})",
+        *([f"- Baseline used (ASSUMPTION, config/product_type_baselines.yaml): {plan.baseline['label']}: "
+           f"{plan.baseline['hours'][0]:g}-{plan.baseline['hours'][1]:g} hours, ${plan.baseline['cost_usd'][0]:g}-${plan.baseline['cost_usd'][1]:g}",
+           f"- Model's own estimate (ASSUMPTION): {plan.model_estimate['hours_low']:g}-{plan.model_estimate['hours_high']:g} hours, "
+           f"${plan.model_estimate['cost_low_usd']:g}-${plan.model_estimate['cost_high_usd']:g}"
+           + (f"; adjustment reason: {plan.adjustment_reason}" if plan.adjustment_reason else "; no adjustment reason given"),
+           f"- Clamped in code: {'yes' if plan.clamped else 'no'} (allowed {plan.baseline['allowed_hours'][0]:g}-{plan.baseline['allowed_hours'][1]:g} hours, "
+           f"${plan.baseline['allowed_cost_usd'][0]:g}-${plan.baseline['allowed_cost_usd'][1]:g})"] if plan.baseline else []),
         f"- Required skills (ASSUMPTION): {', '.join(plan.required_skills)}",
         f"- Founder capacity: {'TIGHT - scope reduced and guardrails tightened' if tight else 'fits or unknown'}",
         f"- Caps ({profile_name()}): {caps()}", "", "## Search terms (keywords from the planner)", "",

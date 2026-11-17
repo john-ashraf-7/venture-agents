@@ -1,0 +1,21 @@
+# Planner baselines per digital product type (ASSUMPTION: team estimates for a solo founder reaching a
+# first sellable version; not sourced market data). Cash cost = tools and assets only (founder time unpaid).
+# The planner may move a range by at most 50% (and only with a stated adjustment_reason);
+# code clamps the result to [0.5 x low, 1.5 x high]. Without a reason it is clamped to [low, high].
+# A brief's product_type is mapped to a key by keyword (first matching key wins; else `default`).
+baselines:
+  template_pack:
+    label: "Template pack / guide / checklist"
+    keywords: [template, guide, checklist, ebook, e-book, playbook, worksheet, swipe file, notion, spreadsheet, toolkit, pack, course notes]
+    hours: [10, 40]
+    cost_usd: [0, 150]
+  static_web_tool:
+    label: "Small static web tool"
+    keywords: [web tool, calculator, generator, static site, web app, widget, browser extension, tool, app]
+    hours: [20, 80]
+    cost_usd: [0, 200]
+  default:
+    label: "Other small digital product (default)"
+    keywords: []
+    hours: [20, 60]
+    cost_usd: [0, 200]

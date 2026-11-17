@@ -190,6 +190,26 @@ def _extract_json(text: str) -> str:
     return text[start:end + 1] if start != -1 and end != -1 else text
 
 
+# ----------------------------------------------------------------- traces -----------------
+def _trace(role: str, model: ModelSpec, messages: list[dict[str, str]], schema_name: str, run_id: Optional[str],
+           reply: Optional[str], tokens_in: int = 0, tokens_out: int = 0, error: Optional[str] = None) -> Optional[str]:
+    """Write one request and its raw reply to data/llm_traces/<sha256 of the request>.json; return the hash.
+
+    The request holds messages, schema name, model, role and run_id only (LLM calls carry no API keys).
+    A trace that cannot be written never breaks the run (returns None)."""
+    request = {"role": role, "model": model.name, "schema": schema_name, "run_id": run_id, "messages": messages}
+    blob = json.dumps(request, sort_keys=True, ensure_ascii=False)
+    digest = hashlib.sha256(blob.encode()).hexdigest()
+    try:
+        d = data_dir() / "llm_traces"
+        d.mkdir(parents=True, exist_ok=True)
+        (d / f"{digest}.json").write_text(json.dumps({"request": request, "reply": reply, "tokens_in": tokens_in,
+                                                      "tokens_out": tokens_out, "error": error}), encoding="utf-8")
+    except OSError:
+        return None
+    return digest
+
+
 # ----------------------------------------------------------------- call -------------------
 def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: Optional[str] = None,
          use_cache: bool = True, max_retries: int = 2, check: Optional[Callable[[T], Optional[str]]] = None,
@@ -228,10 +248,12 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
                 content, tin, tout = backend(model, msgs, json_schema, spec.temperature)
             except (httpx.HTTPError, KeyError) as e:
                 last_err = f"transport error: {e}"
-                record_call(run_id, role, model, 0, 0, time.time() - t0, error=last_err)
+                trace = _trace(role, model, msgs, schema.__name__, run_id, None, error=last_err)
+                record_call(run_id, role, model, 0, 0, time.time() - t0, error=last_err, trace=trace)
                 continue
             latency = time.time() - t0
-            record_call(run_id, role, model, tin, tout, latency)
+            trace = _trace(role, model, msgs, schema.__name__, run_id, content, tin, tout)
+            record_call(run_id, role, model, tin, tout, latency, trace=trace)
             try:
                 obj = schema.model_validate_json(_extract_json(content))
             except ValidationError as e:
@@ -280,11 +302,13 @@ def chat_text(role: str, messages: list[dict[str, str]], *, run_id: Optional[str
             r = httpx.post(f"{model.base_url}/api/chat", json=payload, timeout=float(env("LLM_TIMEOUT", "240")))
             r.raise_for_status()
         except httpx.HTTPError as e:
-            record_call(run_id, role, model, 0, 0, time.time() - t0, error=str(e))
+            trace = _trace(role, model, messages, "text", run_id, None, error=str(e))
+            record_call(run_id, role, model, 0, 0, time.time() - t0, error=str(e), trace=trace)
             raise LLMError(role, model.name, f"transport error: {e}") from e
         body = r.json()
         content, tin, tout = body["message"]["content"], int(body.get("prompt_eval_count", 0)), int(body.get("eval_count", 0))
-    record_call(run_id, role, model, tin, tout, time.time() - t0)
+    trace = _trace(role, model, messages, "text", run_id, content, tin, tout)
+    record_call(run_id, role, model, tin, tout, time.time() - t0, trace=trace)
     return content
 
 

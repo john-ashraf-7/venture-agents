@@ -6,9 +6,10 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
+from pydantic.json_schema import SkipJsonSchema
 
 
 def now_iso() -> str:
@@ -80,6 +81,13 @@ class PlanEstimate(BaseModel):
     cost_high_usd: float
     required_skills: list[str]
     search_terms: SearchTerms
+    adjustment_reason: Optional[str] = Field(default=None, description=(
+        "Only if you moved a range away from the given baseline: one sentence saying why. Otherwise null."))
+    # Filled in code after the model replies (hidden from the model's schema): baseline used and clamping.
+    baseline_key: SkipJsonSchema[Optional[str]] = None
+    baseline: SkipJsonSchema[Optional[dict[str, Any]]] = None
+    model_estimate: SkipJsonSchema[Optional[dict[str, float]]] = None
+    clamped: SkipJsonSchema[bool] = False
 
 
 class Scores(BaseModel):

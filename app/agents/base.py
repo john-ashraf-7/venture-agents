@@ -35,6 +35,6 @@ def run(run_id: Optional[str], agent: str, role: str, action: str, schema: type[
         decision_log.append(run_id, agent, action, sources=sources or [], model=llm.model_name(role),
                             cost=0.0, approved_by=None, role=role, tokens_in=last.get("tokens_in"),
                             tokens_out=last.get("tokens_out"), latency_s=last.get("latency_s"),
-                            cache_hit=last.get("cache_hit"), ref_cost_usd=last.get("ref_cost_usd"),
+                            cache_hit=last.get("cache_hit"), ref_cost_usd=last.get("ref_cost_usd"), trace=last.get("trace"),
                             knowledge_cards=[c["id"] for c in notes])
     return out

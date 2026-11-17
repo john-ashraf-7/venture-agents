@@ -14,9 +14,15 @@ rules:
   - id: multilingual_reviews
     action: block
     pattern: '((\d+|cinco|fünf|cinq|cincuenta|خمس\w*|خمسين).{0,30}(reseñas|rezension\w*|bewertung\w*|avis|témoignages|testimonios|تقييم\w*|مراجع\w*|شهاد\w*))|(estrellas|sterne|étoiles|نجوم)'
+  # Income promise = a claim about what the BUYER will earn. Refund policies, a money-back guarantee on the
+  # product itself, real discounts with a stated end date and prices are NOT income promises
+  # ("returns" followed by policy/within/accepted/window is the refund sense, not investment returns).
   - id: guarantee_income
     action: block
-    pattern: '\b(guarantee[sd]?|promise[sd]?)\b.{0,40}\b(income|revenue|profit|earnings|success|returns?|roi|make \$)'
+    pattern: '\b(guarantee[sd]?|promise[sd]?)\b.{0,40}\b(income|revenue|profit|earnings|success|returns?\b(?!\s+(policy|within|accepted|window|are|is))|roi|make \$)'
+  - id: guarantee_buyer_earnings
+    action: block
+    pattern: '\b(guarantee[sd]?|promise[sd]?|money[- ]back)\b.{0,60}\b(earn|get paid|make)\s+(an extra\s+|at least\s+)?(\$|\d|more\b)'
   - id: you_will_earn
     action: block
     pattern: '\byou(''ll| will)\s+(earn|make)\s+\$?\d'
@@ -53,6 +59,9 @@ rules:
   - id: excluded_types
     action: flag
     pattern: '\b(crypto\w*|bitcoin|token sale|nft|trading signals?|forex|investment advice|stock picks?|medical|diagnos\w*|supplement|therapy|legal advice|lawyer|physical (product|goods)|dropship\w*|t-shirts?|merch)\b'
+  - id: guarantee_terms   # sent to the model, which reads the refund/discount clarifications in config/policy.md
+    action: flag
+    pattern: '\b(guarantee\w*|money[- ]back)\b'
   - id: injection
     action: flag
     pattern: '\b(ignore (all |your |previous |the )?(previous |prior )?instructions|disregard (the )?(above|previous)|system prompt|you are now)\b'

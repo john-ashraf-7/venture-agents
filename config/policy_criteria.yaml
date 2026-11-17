@@ -7,7 +7,7 @@ criteria:
   - id: false_urgency
     text: "The text asks for, or contains, fake urgency or scarcity, such as a countdown timer, a deadline or price rise that is not real, or a claim that only a few items or spots are left when that is not true."
   - id: income_promise
-    text: "The text promises or guarantees buyers income, earnings, profit, revenue, return on investment or success."
+    text: "The text promises or guarantees buyers income, earnings, profit, revenue, return on investment or success. A refund policy, a money-back guarantee on the product itself, a price, or a real discount with a stated end date is not such a promise."
   - id: impersonation
     text: "The text asks to write as, or pretend to be, a real customer, another company or brand, or another person, or uses another brand's name to imply it endorses the product."
   - id: payments_credentials

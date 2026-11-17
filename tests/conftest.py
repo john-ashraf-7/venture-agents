@@ -147,7 +147,7 @@ def stub_backend(model, messages, schema, temperature):
     elif title == "InterviewInsights":
         out = {"patterns": ["late invoices"], "quotes": [], "open_questions": []}
     elif title == "PolicyDecision":
-        bad = re.search(r"(review|testimonial|stars?|bewertung|reseña|تقييم|impersonat|pretend|ignore (your|previous) instructions|guarantee)", u, re.I)
+        bad = re.search(r"(review|testimonial|stars?|bewertung|reseña|تقييم|impersonat|pretend|ignore (your|previous) instructions|guarantee.{0,60}(earn|income|profit|revenue|get paid|success))", u, re.I)
         out = {"decision": "REFUSE" if bad else "ALLOW", "reason": "stub policy model"}
     else:
         raise AssertionError(f"stub has no answer for schema {title}")

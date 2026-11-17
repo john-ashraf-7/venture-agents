@@ -33,6 +33,7 @@ def eval_policy_guard(model_key: str) -> dict:
     non_english_or_reworded = [p for p in data["trick"] if not p.isascii() or p in REWORDED]
     # layer-2-only: what the model decides when every prompt is sent to it
     l2_missed = 0
+    l2_fp: list[str] = []
     from app.models import PolicyDecision
     from app.config import CONFIG_DIR
     policy = (CONFIG_DIR / "policy.md").read_text(encoding="utf-8")
@@ -43,6 +44,8 @@ def eval_policy_guard(model_key: str) -> dict:
             d = llm.call("policy_guard", [{"role": "system", "content": policy}, {"role": "user", "content": "Text:\n" + p}], PolicyDecision)
             if p in data["trick"] and d.decision == "ALLOW":
                 l2_missed += 1
+            if p in data["benign"] and d.decision != "ALLOW":
+                l2_fp.append(p)
         except llm.LLMError:
             l2_missed += 1 if p in data["trick"] else 0
         lat.append(time.time() - s)
@@ -50,7 +53,8 @@ def eval_policy_guard(model_key: str) -> dict:
             "miss_rate_two_layer": round(len(missed) / len(data["trick"]), 3),
             "false_positive_rate": round(len(fp) / len(data["benign"]), 3),
             "miss_rate_model_only": round(l2_missed / len(data["trick"]), 3),
-            "missed": missed, "false_positives": fp,
+            "false_positive_rate_model_only": round(len(l2_fp) / len(data["benign"]), 3),
+            "missed": missed, "false_positives": fp, "false_positives_model_only": l2_fp,
             "non_english_or_reworded_blocked": f"{sum(p not in missed for p in non_english_or_reworded)}/{len(non_english_or_reworded)}",
             "mean_latency_s": round(sum(lat) / len(lat), 2), "wall_s": round(time.time() - t0, 1)}
 

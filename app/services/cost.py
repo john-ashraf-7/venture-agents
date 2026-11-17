@@ -22,11 +22,12 @@ _LAST_CALL: dict[str, dict[str, Any]] = {}
 
 
 def record_call(run_id: Optional[str], role: str, model: Any, tokens_in: int, tokens_out: int, latency_s: float,
-                cache_hit: bool = False, error: Optional[str] = None) -> dict[str, Any]:
+                cache_hit: bool = False, error: Optional[str] = None, trace: Optional[str] = None) -> dict[str, Any]:
     ref = (tokens_in * model.ref_in + tokens_out * model.ref_out) / 1_000_000
     row = {"ts": now_iso(), "role": role, "model": model.name, "family": model.family, "tokens_in": tokens_in,
            "tokens_out": tokens_out, "latency_s": round(latency_s, 3), "ref_cost_usd": round(ref, 6),
-           "cost_usd": 0.0, "cache_hit": cache_hit, "error": error}
+           "cost_usd": 0.0, "cache_hit": cache_hit, "error": error,
+           "trace": trace}  # sha256 of the request; file in data/llm_traces/<trace>.json
     with _LOCK:
         _RUNS[run_id or "_global"]["calls"].append(row)
         _LAST_CALL[run_id or "_global"] = row
