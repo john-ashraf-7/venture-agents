@@ -1,6 +1,6 @@
 # Market brief
 
-ASSUMPTION: The market for generic to-do list template packs is broad, targeting anyone seeking productivity tools. ASSUMPTION: Users may desire advanced features such as project management and cross-device sync. ASSUMPTION: There is a perceived need for more sophisticated templates beyond basic options. ASSUMPTION: Compliance with privacy, consumer law, and platform rules is manageable for digital template products. ASSUMPTION: The product can be delivered digitally with optional email for delivery.
+The Notion-based freelance pack is priced at 49 USD [C10]. Users report that sending reminders before the due date can feel pushy, and best practice is to send a friendly reminder at the end of the 30‑day period [C20][C23]. Existing reminder tools often use robotic templates that clients ignore or find insulting, leading many freelancers to rewrite each email manually [C25][C26]. Automatic payment reminders can be scheduled 7 days before and 3 days before the due date, or at the end of the billing period, to avoid awkward follow‑ups [C27][C28]. The kit also aligns with broader freelance startup guidance on pricing tiers, retainer structuring, and scope protection, which typically cost between 500 and 3,000 USD in year one [C40][C41][C42].
 
 ## Segments (ASSUMPTION unless cited)
 
@@ -9,10 +9,10 @@ ASSUMPTION: The market for generic to-do list template packs is broad, targeting
 
 ```json
 {
- "citation_coverage": 0.0,
- "citation_precision": 0.0,
+ "citation_coverage": 0.5,
+ "citation_precision": 0.095,
  "completeness": 0.5,
- "score": 0.167,
+ "score": 0.365,
  "revisions": 2,
  "escalated_to_founder": true
 }

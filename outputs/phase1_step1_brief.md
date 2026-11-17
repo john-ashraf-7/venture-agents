@@ -2,15 +2,20 @@
 
 ```json
 {
- "idea": "Another generic to-do list template pack for everyone",
+ "idea": "A pack of payment-reminder email templates and an invoicing checklist for new freelancers",
  "product_type": "template pack",
- "skills": [],
- "budget_usd": 50.0,
- "hours_per_week": 2.0,
- "weeks_available": 2.0,
- "target_market": "everyone who wants to be productive",
+ "skills": [
+  "copywriting",
+  "freelancing for 6 years"
+ ],
+ "budget_usd": 300.0,
+ "hours_per_week": 8.0,
+ "weeks_available": 6.0,
+ "target_market": "new freelance designers and writers",
  "values": [
-  "fast money"
+  "honest",
+  "practical",
+  "no hype"
  ],
  "missing_info": [],
  "questions_for_founder": []

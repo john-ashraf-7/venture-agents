@@ -1,0 +1,24 @@
+{
+ "required_headings": [
+  "Executive Summary",
+  "Target Audience",
+  "Problem Statement",
+  "Solution Overview",
+  "Product Features",
+  "Pricing & Packaging",
+  "Distribution Channels",
+  "Success Metrics"
+ ],
+ "min_sections": 8,
+ "min_words_per_section": 50,
+ "forbidden_phrases": [
+  "income promises",
+  "fake reviews",
+  "urgency",
+  "guaranteed income",
+  "guaranteed results",
+  "five-star",
+  "limited time only"
+ ],
+ "max_spelling_error_rate": 0.08
+}
