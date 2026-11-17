@@ -1,0 +1,28 @@
+{
+ "label": "MOCKED",
+ "metrics": {
+  "label": "MOCKED",
+  "store_visits_7d": 210,
+  "orders_7d": 4,
+  "refund_requests_7d": 1,
+  "support_tickets_7d": 3,
+  "conversion_rate": 0.019
+ },
+ "tickets": [
+  {
+   "id": "T1",
+   "label": "MOCKED",
+   "text": "I bought the pack but the download link expired."
+  },
+  {
+   "id": "T2",
+   "label": "MOCKED",
+   "text": "Can I get a refund? It wasn't what I expected."
+  },
+  {
+   "id": "T3",
+   "label": "MOCKED",
+   "text": "Do the templates work in Google Docs?"
+  }
+ ]
+}

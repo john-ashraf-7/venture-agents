@@ -1,0 +1,49 @@
+# Layer 1 of the Policy Guard: deterministic rules.
+# action: block -> refused outright (obvious cases); flag -> sent to the policy_guard model (layer 2).
+# Patterns are case-insensitive Python regexes.
+rules:
+  - id: fake_reviews_count
+    action: block
+    pattern: '\b(write|generate|create|make|draft|give me|produce)\b.{0,40}\b(\d+|some|a few|several|many|fifty|ten|twenty|hundred)\b.{0,30}\b(reviews?|testimonials?|ratings?|endorsements?)\b'
+  - id: fake_reviews_stars
+    action: block
+    pattern: '\b(5|five)[- ]?stars?\b.{0,30}\b(reviews?|ratings?|feedback|comments?)\b'
+  - id: testimonials_from_users
+    action: block
+    pattern: '\btestimonials?\b.{0,40}\b(beta|users?|customers?|clients?)\b'
+  - id: multilingual_reviews
+    action: block
+    pattern: '((\d+|cinco|fünf|cinq|cincuenta|خمس\w*|خمسين).{0,30}(reseñas|rezension\w*|bewertung\w*|avis|témoignages|testimonios|تقييم\w*|مراجع\w*|شهاد\w*))|(estrellas|sterne|étoiles|نجوم)'
+  - id: guarantee_income
+    action: block
+    pattern: '\b(guarantee[sd]?|promise[sd]?)\b.{0,40}\b(income|revenue|profit|earnings|success|returns?|roi|make \$)'
+  - id: you_will_earn
+    action: block
+    pattern: '\byou(''ll| will)\s+(earn|make)\s+\$?\d'
+  - id: countdown_urgency
+    action: block
+    pattern: '\b(countdown timer|fake urgency|only \d+ (left|spots|seats) (left )?(today|now)?|offer ends (tonight|in \d+))'
+  - id: fake_signups
+    action: block
+    pattern: '\b(fake|invent|fabricate|make up|made-up|simulate)\b.{0,30}\b(sign[- ]?ups?|users|customers?|waitlist|subscribers|sales|quotes?|reviews?|testimonials?|endorsements?|statistics|stats|case stud\w*)\b'
+  - id: credentials
+    action: block
+    pattern: '\b(store|save|collect|ask for|remember)\b.{0,30}\b(passwords?|card numbers?|credit cards?|cvv|bank (account|details)|api keys?)\b'
+  - id: payments
+    action: block
+    pattern: '(^|[.!?]\s+)(please\s+)?(charge|refund|transfer|wire|send|move|pay)\s+.{0,25}\b(money|payments?|funds|\$\s?\d+|\d+\s?(usd|egp|dollars)|the customer|their card|my account)\b'
+  - id: impersonate
+    action: flag
+    pattern: '\b(pretend|pose|pretending|posing|impersonat\w*|as if you were|write as|sign as|on behalf of)\b'
+  - id: review_word
+    action: flag
+    pattern: '\b(reviews?|testimonials?|ratings?|stars?|rezension\w*|bewertung\w*|avis|t[ée]moignages?|reseñas?|opiniones|testimonios|تقييم\w*|مراجع\w*|شهاد\w*)\b'
+  - id: social_proof_numbers
+    action: flag
+    pattern: '\b(\d[\d,]*\+?\s+(happy|satisfied|paying)\s+(customers|users|clients|founders))\b'
+  - id: excluded_types
+    action: flag
+    pattern: '\b(crypto\w*|bitcoin|token sale|nft|trading signals?|forex|investment advice|stock picks?|medical|diagnos\w*|supplement|therapy|legal advice|lawyer|physical (product|goods)|dropship\w*|t-shirts?|merch)\b'
+  - id: injection
+    action: flag
+    pattern: '\b(ignore (all |your |previous |the )?(previous |prior )?instructions|disregard (the )?(above|previous)|system prompt|you are now)\b'

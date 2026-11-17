@@ -1,0 +1,15 @@
+{
+ "founder_input": {
+  "idea": "Printable wedding planner templates sold as PDFs",
+  "skills": "graphic design",
+  "budget": "$100",
+  "time": "5 hours/week for 4 weeks",
+  "target_market": "couples planning a wedding",
+  "values": "beautiful, affordable"
+ },
+ "expected_outcomes": [
+  "PIVOT_BACK",
+  "PARK",
+  "GO"
+ ]
+}

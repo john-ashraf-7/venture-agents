@@ -1,0 +1,13 @@
+{
+ "founder_input": {
+  "idea": "Print-on-demand t-shirts with programming jokes",
+  "skills": "design",
+  "budget": "$300",
+  "time": "5 hours/week",
+  "target_market": "developers",
+  "values": "fun"
+ },
+ "expected_outcomes": [
+  "BLOCKED"
+ ]
+}

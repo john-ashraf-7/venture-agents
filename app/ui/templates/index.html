@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid">
+<div class="card">
+  <h1>New founder brief</h1>
+  <p class="mute small">The system can recommend <b>not</b> launching. Every gate rule is locked before evidence is gathered; you make the final call.</p>
+  <form method="post" action="/runs" id="briefform">
+    <label>Starting idea</label><textarea name="idea" rows="3" required></textarea>
+    <label>Skills</label><input name="skills">
+    <label>Budget</label><input name="budget" placeholder="e.g. $500">
+    <label>Available time</label><input name="time" placeholder="e.g. 10 hours/week for 8 weeks">
+    <label>Target market</label><input name="target_market">
+    <label>Values</label><input name="values">
+    <p><button>Start run (Phase 1: Discover)</button></p>
+  </form>
+  {% if examples %}
+  <p class="small">Example briefs (evals/briefs): {% for k, v in examples.items() %}
+    <a href="#" onclick='fill({{ v|tojson }});return false;'>{{ k }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+  {% endif %}
+</div>
+<div class="card">
+  <h2>Runs</h2>
+  <table><tr><th>run</th><th>status</th><th>phase</th><th>idea</th></tr>
+  {% for r in runs %}<tr><td><a href="/runs/{{ r.id }}">{{ r.id }}</a></td><td>{{ r.status }}</td><td>{{ r.phase }}</td>
+  <td class="small">{{ r.founder_input.idea[:70] }}</td></tr>{% endfor %}
+  </table>
+  <h2 style="margin-top:1rem">Experiment gate replay <span class="badge">SIMULATED</span></h2>
+  <p class="small mute">Same gate code, labeled fixtures. Never counted as evidence.</p>
+  <button class="ghost" onclick="replay('signups_12_of_100')">12 / 100 sign-ups</button>
+  <button class="ghost" onclick="replay('signups_130_of_100')">130 / 100 sign-ups</button>
+  <button class="ghost" onclick="replay('insufficient_sample')">too few visitors</button>
+  <pre id="replay" class="small"></pre>
+</div>
+</div>
+<script>
+function fill(v){for(const k in v){const el=document.querySelector(`#briefform [name=${k}]`);if(el)el.value=v[k];}}
+async function replay(n){const r=await fetch('/replay/'+n,{method:'POST'});const j=await r.json();
+document.getElementById('replay').textContent=`${j.label}: ${j.result.state} -> ${j.result.verdict}\n`+j.result.reasons.join('\n');}
+</script>
+{% endblock %}

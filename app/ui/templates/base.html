@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Venture Builder{% endblock %}</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--ink:#1d1d1f;--mute:#666;--line:#e3e3e0;--go:#137333;--stop:#b3261e;--park:#8a5a00;--pivot:#1a56b8;--badge:#fde68a}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+header{display:flex;align-items:center;gap:1rem;padding:.7rem 1.2rem;background:#111;color:#fff;flex-wrap:wrap}
+header a{color:#fff;text-decoration:none;font-weight:600}header .sp{flex:1}
+main{max-width:1180px;margin:0 auto;padding:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.2rem;margin:0 0 1rem}
+h1{font-size:1.4rem;margin:.2rem 0 .8rem}h2{font-size:1.1rem;margin:.2rem 0 .6rem}h3{font-size:1rem;margin:.6rem 0 .3rem}
+table{border-collapse:collapse;width:100%;font-size:.88rem}td,th{border-bottom:1px solid var(--line);padding:.35rem .4rem;text-align:left;vertical-align:top}
+.badge{display:inline-block;padding:.05rem .45rem;border-radius:4px;font-size:.75rem;font-weight:700;background:var(--badge);color:#5a4500}
+.v-GO{color:var(--go)}.v-STOP{color:var(--stop)}.v-PARK{color:var(--park)}.v-PIVOT_BACK{color:var(--pivot)}.v-REPEAT{color:var(--pivot)}
+.SUPPORTED{color:var(--go);font-weight:600}.ASSUMPTION{color:var(--park);font-weight:600}.PARTIAL{color:var(--pivot);font-weight:600}.UNSUPPORTED{color:var(--stop);font-weight:600}
+button,.btn{background:#111;color:#fff;border:0;border-radius:6px;padding:.45rem .9rem;cursor:pointer;font:inherit}
+button.ghost{background:#fff;color:#111;border:1px solid #111}button.danger{background:var(--stop)}
+input,textarea,select{font:inherit;padding:.4rem;border:1px solid #ccc;border-radius:6px;width:100%}
+label{display:block;font-weight:600;margin:.5rem 0 .2rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem}
+.mute{color:var(--mute)}.small{font-size:.82rem}
+#log{max-height:300px;overflow:auto;font:12px/1.4 ui-monospace,Consolas,monospace;background:#111;color:#cfe;padding:.6rem;border-radius:8px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:.6rem;margin:.4rem 0}.opt.rec{border-color:#111;border-width:2px}
+.first{font-size:1.15rem;font-weight:700}
+pre{white-space:pre-wrap;word-break:break-word}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">Venture Builder</a>
+  <span class="small">profile: <b>{{ profile }}</b> · founder mode: <b>{{ mode }}</b> · open-weight models only · $0 API cost</span>
+  <span class="sp"></span>
+  {% if killed %}
+  <form method="post" action="/unkill"><button class="ghost">Kill switch ON - release</button></form>
+  {% else %}
+  <form method="post" action="/kill" onsubmit="return confirm('Stop all agents and cancel every pending Outbox item?')"><button class="danger">KILL SWITCH</button></form>
+  {% endif %}
+</header>
+<main>
+{% for w in warnings %}<div class="card small" style="border-color:#e0b000">Config warning: {{ w }}</div>{% endfor %}
+{% block content %}{% endblock %}
+<div class="card small">
+  <h2>What is mocked</h2>
+  {% for m in mocks %}<div><span class="badge">{{ m.label }}</span> {{ m.component }} - <span class="mute">{{ m.detail }}</span></div>{% endfor %}
+</div>
+</main>
+</body>
+</html>

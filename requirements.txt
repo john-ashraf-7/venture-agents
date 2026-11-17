@@ -1,0 +1,11 @@
+fastapi==0.163.1
+uvicorn==0.54.0
+pydantic==2.14.3
+httpx==0.28.1
+Jinja2==3.1.6
+PyYAML==6.0.3
+trafilatura==2.3.1
+jsonschema==4.26.0
+pyspellchecker==0.9.1
+python-multipart==0.0.34
+pytest==9.2.0

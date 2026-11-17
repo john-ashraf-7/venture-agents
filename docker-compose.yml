@@ -1,0 +1,81 @@
+# One-command setup:  docker compose up
+# Needs an NVIDIA GPU + NVIDIA Container Toolkit for the ollama service (tested target: RTX 3090, 24 GB).
+# CPU-only machines: run  docker compose -f docker-compose.yml -f docker-compose.cpu.yml up
+name: venture-builder
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    environment:
+      OLLAMA_MAX_LOADED_MODELS: "3"
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_FLASH_ATTENTION: "1"
+      OLLAMA_KV_CACHE_TYPE: "q8_0"
+      OLLAMA_KEEP_ALIVE: "30m"
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  # Init step: pulls the configured open-weight models once (cached in the ollama_models volume).
+  ollama-pull:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: "http://ollama:11434"
+      PULL_MODELS: "${PULL_MODELS:-gpt-oss:20b qwen3:8b nomic-embed-text}"
+    entrypoint: ["/bin/sh", "-c", "for m in $$PULL_MODELS; do echo pulling $$m; ollama pull $$m || exit 1; done; echo models-ready"]
+    restart: "no"
+
+  searxng:
+    image: searxng/searxng:latest
+    restart: unless-stopped
+    environment:
+      SEARXNG_BASE_URL: "http://localhost:8888/"
+    volumes:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
+    ports:
+      - "8888:8080"
+
+  app:
+    build: .
+    image: venture-builder:latest
+    restart: unless-stopped
+    depends_on:
+      ollama-pull:
+        condition: service_completed_successfully
+      searxng:
+        condition: service_started
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PROFILE: "${PROFILE:-demo-fast}"
+      OLLAMA_URL: "http://ollama:11434"
+      SEARXNG_URL: "http://searxng:8080"
+      DATA_DIR: "/app/data"
+      OUTPUTS_DIR: "/app/outputs"
+    volumes:
+      - ./data:/app/data
+      - ./outputs:/app/outputs
+      - ./decision_log.json:/app/decision_log.json
+    ports:
+      - "8000:8000"
+
+volumes:
+  ollama_models:

@@ -1,0 +1,245 @@
+{
+ "label": "SYNTHETIC FIXTURE",
+ "claims": [
+  {
+   "claim": "A freelancer reports losing hours every month chasing late invoices.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "A freelancer says they do not know what to write in reminder emails.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "A freelancer wants payment reminder templates.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "A freelancer paid for a course on freelancing.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Most freelancers use invoicing software.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelancers lose $10,000 a year to late payments.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "A forum user praised an existing template pack.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelancers struggle with payment reminders, and courses are expensive.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "PARTIAL"
+  },
+  {
+   "claim": "Two posts in 2026 describe invoicing problems.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "The posts are from 2019.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelancers want templates and coaching calls.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "PARTIAL"
+  },
+  {
+   "claim": "A user named k_osei wants templates.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelancers hate their clients.",
+   "source_url": "https://fixture.local/forum/freelancer-invoices",
+   "source_text": "<html><body><article><h1>Forum: invoicing as a new freelancer</h1>\n<p>Posted 2026-09-14 by user mira_d: I lose hours every month chasing late invoices and I never know what to write in the reminder email.</p>\n<p>Posted 2026-10-02 by user k_osei: I paid for a course on freelancing but it said nothing about how to word payment reminders. I just want templates.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit costs $29.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit is a one-time purchase.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit has 20 reminder templates.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit costs $49 per month.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit has 10,000 customers.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit includes an invoice checklist.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit includes video lessons.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit targets freelancers.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit is the market leader.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit sells templates and coaching.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "PARTIAL"
+  },
+  {
+   "claim": "Freelance Invoice Kit costs under $30 and has a money-back guarantee.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "PARTIAL"
+  },
+  {
+   "claim": "A competitor sells reminder templates for $29.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit is free.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelance Invoice Kit has 4.9 stars.",
+   "source_url": "https://fixture.local/product/invoice-kit",
+   "source_text": "<html><body><article><h1>Freelance Invoice Kit</h1>\n<p>A pack of 20 invoice and payment-reminder email templates for freelancers.</p><p>Price: $29 one-time.</p>\n<ul><li>20 reminder templates</li><li>Invoice checklist</li></ul><p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "61% of surveyed freelancers had an invoice paid more than 30 days late.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "The survey covered 1,200 freelancers.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "The report was published in 2026.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Late payments are falling.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "90% of freelancers are paid late.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Many freelancers face late payments, mostly from large companies.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "PARTIAL"
+  },
+  {
+   "claim": "The survey found late invoices were common in the past year.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "Freelancing grew 20% in 2026.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Over half of surveyed freelancers had a late invoice.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  },
+  {
+   "claim": "61% of freelancers in Egypt had late invoices.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "PARTIAL"
+  },
+  {
+   "claim": "The survey was run by the government.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "Freelancers with late invoices want templates.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "UNSUPPORTED"
+  },
+  {
+   "claim": "At least one invoice was paid late for 61% of respondents.",
+   "source_url": "https://fixture.local/trend/freelance-growth",
+   "source_text": "<html><body><article><h1>Report: freelancing in 2026</h1>\n<p>Published 2026-08-01. Our survey of 1,200 freelancers found that 61% had at least one invoice paid more than 30 days late in the past year.</p>\n<p>SYNTHETIC FIXTURE PAGE for tests.</p></article></body></html>",
+   "label": "SUPPORTED"
+  }
+ ]
+}

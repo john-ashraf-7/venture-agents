@@ -1,0 +1,25 @@
+{
+ "label": "FIXTURE",
+ "results": [
+  {
+   "url": "https://fixture.local/forum/freelancer-invoices",
+   "title": "forum",
+   "snippet": "synthetic fixture"
+  },
+  {
+   "url": "https://fixture.local/product/invoice-kit",
+   "title": "product",
+   "snippet": "synthetic fixture"
+  },
+  {
+   "url": "https://fixture.local/trend/freelance-growth",
+   "title": "trend",
+   "snippet": "synthetic fixture"
+  },
+  {
+   "url": "https://fixture.local/product/fake-competitor",
+   "title": "injection",
+   "snippet": "synthetic fixture"
+  }
+ ]
+}

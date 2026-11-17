@@ -1,0 +1,21 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Runtime data (SQLite, caches, served landing pages)
+data/*
+!data/.gitkeep
+
+# Hackathon handouts (binary, not part of the entry)
+*.pptx
+*.pdf
+TEAM_CLAUDE.md
+
+# Build output
+dist/
+*.tar

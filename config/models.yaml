@@ -1,0 +1,77 @@
+# Model layer configuration. Agents never name a model; they name a ROLE.
+# Select a profile with PROFILE=<name>; override one role with ROLE_<ROLE_NAME>=<model-key>.
+#
+# ref_usd_per_mtok = reference price of a comparable HOSTED open-weight model, used only to
+# show what a run would cost if it were not run locally (ASSUMPTION, see README "Cost per run").
+# Local runs cost $0.00 in API fees.
+
+providers:
+  ollama: { kind: ollama, base_url: "http://ollama:11434" }   # native API (passes num_ctx + JSON schema)
+  openai_compat: { kind: openai, base_url: "http://ollama:11434/v1" }  # any OpenAI-compatible server
+
+models:
+  gpt-oss-20b:
+    provider: ollama
+    name: "gpt-oss:20b"
+    family: gpt-oss
+    num_ctx: 16384
+    vram_gb_est: 14
+    think: low
+    ref_usd_per_mtok: { in: 0.05, out: 0.20 }
+  qwen-8b:
+    provider: ollama
+    name: "qwen3:8b"
+    family: qwen
+    num_ctx: 8192
+    vram_gb_est: 6
+    think: false
+    ref_usd_per_mtok: { in: 0.035, out: 0.138 }
+  gpt-oss-safeguard-20b:
+    provider: ollama
+    name: "gpt-oss-safeguard:20b"
+    family: gpt-oss-safeguard
+    num_ctx: 8192
+    vram_gb_est: 14
+    think: low
+    ref_usd_per_mtok: { in: 0.075, out: 0.30 }
+  embed:
+    provider: ollama
+    name: "nomic-embed-text"
+    family: nomic
+    vram_gb_est: 1
+    ref_usd_per_mtok: { in: 0.0, out: 0.0 }
+
+roles:
+  intake:           { model: gpt-oss-20b, temperature: 0.2 }
+  planner:          { model: gpt-oss-20b, temperature: 0.2 }
+  idea_scout:       { model: gpt-oss-20b, temperature: 0.7 }
+  page_reader:      { model: qwen-8b,     temperature: 0.0, checks: null }
+  claim_extractor:  { model: gpt-oss-20b, temperature: 0.0 }
+  claim_checker:    { model: qwen-8b,     temperature: 0.0, escalate_to: null, checks: claim_extractor }
+  devils_advocate:  { model: qwen-8b,     temperature: 0.5 }
+  gate_explainer:   { model: gpt-oss-20b, temperature: 0.1 }
+  policy_guard:     { model: qwen-8b,     temperature: 0.0, policy_file: config/policy.md, checks: copywriter }
+  copywriter:       { model: gpt-oss-20b, temperature: 0.7 }
+  builder:          { model: gpt-oss-20b, temperature: 0.2 }
+  test_writer:      { model: qwen-8b,     temperature: 0.2 }
+  analyst:          { model: gpt-oss-20b, temperature: 0.2 }
+  coach:            { model: qwen-8b,     temperature: 0.3 }
+  judge:            { model: qwen-8b,     temperature: 0.0, checks: builder }   # evals only
+
+profiles:
+  # Live 3-minute demo: tight caps, claim checking only on gate-feeding claims.
+  demo-fast:
+    caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000 }
+    check_scope: gate
+  # Slower, larger caps, checker escalates to gpt-oss-20b when Qwen fails validation.
+  quality:
+    caps: { results_per_query: 8, max_queries: 6, max_pages: 12, page_chars: 12000 }
+    check_scope: all
+    role_overrides:
+      claim_checker: { escalate_to: gpt-oss-20b }
+  # Optional: Policy Guard on gpt-oss-safeguard:20b (loaded one after another, not beside gpt-oss-20b).
+  safeguard:
+    caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000 }
+    check_scope: gate
+    role_overrides:
+      policy_guard: { model: gpt-oss-safeguard-20b }

@@ -1,0 +1,39 @@
+# Mock registry. Every mocked/stubbed component is listed here; this drives the README table
+# and the MOCKED / STUBBED / SIMULATED badges in the UI.
+mocks:
+  - id: publish_connector
+    label: MOCKED
+    component: Outbox tier-1 "publish page / post / send email" connectors
+    detail: Approved items are written to outputs/ and marked "MOCKED delivery"; nothing leaves the machine.
+  - id: order_received
+    label: SIMULATED
+    component: Checkout / order_received event (app/commerce/payments.py)
+    detail: No payment code. A SIMULATED order event is created by a button; no money exists or moves.
+  - id: delivery
+    label: MOCKED
+    component: Automatic delivery of the digital product (app/commerce/delivery.py)
+    detail: Issues a local download token, idempotent per order id; no email is sent.
+  - id: refunds
+    label: MOCKED
+    component: Refund requests (app/commerce/refunds.py)
+    detail: Records the request, revokes the local download token, drafts a reply. Only the founder can refund, in their own payment account.
+  - id: metrics
+    label: MOCKED
+    component: Phase 6 metrics (visits, orders, tickets)
+    detail: Read from evals/fixtures/metrics_mock.json, labeled MOCKED everywhere.
+  - id: experiment_replay
+    label: SIMULATED
+    component: Experiment replay fixtures (12/100 and 130/100 sign-ups)
+    detail: Run through the same gate code to show STOP/GO behaviour; never counted as evidence.
+  - id: personas
+    label: SIMULATED
+    component: Interview rehearsal personas
+    detail: Built from the brief's target-market fields; answers stored as ASSUMPTION, never evidence.
+  - id: support_inbox
+    label: MOCKED
+    component: Support tickets in Phase 6
+    detail: Tickets come from a MOCKED fixture; replies are drafts in shadow mode until the founder signs off.
+  - id: stub_llm
+    label: STUBBED
+    component: Scripted LLM used only by the test suite (tests/conftest.py)
+    detail: Lets tests run without a GPU; never used by docker compose or the demo.

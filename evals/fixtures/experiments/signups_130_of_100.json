@@ -1,0 +1,667 @@
+{
+ "label": "SIMULATED",
+ "rule": {
+  "signups_threshold": 100,
+  "min_visitors": 500,
+  "window_days": 14,
+  "excluded_sources": [
+   "demo_audience",
+   "simulated"
+  ]
+ },
+ "started_at": "2026-11-01T00:00:00Z",
+ "now": "2026-11-16T00:00:00Z",
+ "visitors": 900,
+ "signups": [
+  {
+   "email": "sim0@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim1@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim2@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim3@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim4@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim5@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim6@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim7@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim8@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim9@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim10@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim11@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim12@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim13@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim14@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim15@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim16@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim17@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim18@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim19@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim20@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim21@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim22@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim23@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim24@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim25@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim26@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim27@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim28@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim29@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim30@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim31@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim32@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim33@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim34@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim35@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim36@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim37@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim38@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim39@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim40@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim41@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim42@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim43@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim44@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim45@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim46@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim47@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim48@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim49@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim50@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim51@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim52@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim53@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim54@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim55@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim56@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim57@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim58@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim59@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim60@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim61@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim62@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim63@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim64@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim65@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim66@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim67@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim68@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim69@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim70@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim71@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim72@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim73@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim74@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim75@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim76@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim77@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim78@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim79@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim80@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim81@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim82@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim83@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim84@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim85@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim86@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim87@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim88@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim89@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim90@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim91@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim92@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim93@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim94@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim95@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim96@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim97@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim98@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim99@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim100@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim101@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim102@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim103@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim104@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim105@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim106@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim107@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim108@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim109@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim110@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim111@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim112@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim113@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim114@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim115@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim116@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim117@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim118@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim119@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim120@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim121@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim122@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim123@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim124@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim125@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim126@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim127@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim128@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  },
+  {
+   "email": "sim129@fixture.local",
+   "ts": "2026-11-05T10:00:00Z",
+   "source": "direct"
+  }
+ ]
+}

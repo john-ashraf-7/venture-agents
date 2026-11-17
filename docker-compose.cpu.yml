@@ -1,0 +1,5 @@
+# Override for machines without an NVIDIA GPU (slow; use small models).
+#   PULL_MODELS="qwen3:4b gemma3:4b nomic-embed-text" docker compose -f docker-compose.yml -f docker-compose.cpu.yml up
+services:
+  ollama:
+    deploy: !reset {}

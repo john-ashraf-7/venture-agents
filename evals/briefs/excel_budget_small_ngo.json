@@ -1,0 +1,14 @@
+{
+ "founder_input": {
+  "idea": "Spreadsheet templates for small NGOs to track grants and donor reports",
+  "skills": "Excel, NGO accounting",
+  "budget": "$200",
+  "time": "8 hours/week for 6 weeks",
+  "target_market": "small NGOs in Egypt",
+  "values": "transparency"
+ },
+ "expected_outcomes": [
+  "GO",
+  "PARK"
+ ]
+}

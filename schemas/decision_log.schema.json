@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "decision_log.json",
+  "description": "One entry per agent action. Five keys are required by the hackathon format, plus timestamp and agent.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["timestamp", "agent", "action", "sources", "model", "cost", "approved_by"],
+    "properties": {
+      "timestamp": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+      "agent": {"type": "string"},
+      "action": {"type": "string"},
+      "sources": {"type": "array", "items": {"type": "string"}},
+      "model": {"type": ["string", "null"]},
+      "cost": {"type": "number", "minimum": 0},
+      "approved_by": {"enum": ["founder", null]},
+      "outcome": {"type": ["string", "null"]},
+      "options_considered": {"type": "array"},
+      "initiated_by": {"enum": ["founder", "agent"]},
+      "chosen_by": {"type": ["string", "null"]},
+      "recommendation": {"type": ["string", "null"]},
+      "override": {"type": "boolean"},
+      "override_reason": {"type": ["string", "null"]}
+    },
+    "additionalProperties": true
+  }
+}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}{{ st.id }} - Venture Builder{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ st.founder_input.idea[:120] }}</h1>
+  <div class="small">Run <b>{{ st.id }}</b> · status <b id="status">{{ st.status }}</b> · phase <b>{{ st.phase }}</b> of 6 · version {{ st.version }}
+   · cost so far <b>${{ "%.2f"|format(cost.cost_usd) }}</b> (reference ${{ "%.4f"|format(cost.ref_cost_usd) }}, {{ cost.tokens_in + cost.tokens_out }} tokens, {{ cost.llm_calls }} calls, {{ cost.wall_clock_s }} s)
+   {% for k, v in st.timings.items() %} · {{ k }} = <b>{{ v }} s</b>{% endfor %}
+   · pending approvals <b>{{ outbox|selectattr("status","equalto","pending_approval")|list|length }}</b></div>
+  {% if st.error %}<p class="v-STOP"><b>{{ st.error }}</b></p>{% endif %}
+  <div class="small" style="margin-top:.4rem">
+  {% for n, name in [(1,"Discover"),(2,"Validate"),(3,"Build"),(4,"Commercial"),(5,"Sell & deliver"),(6,"Operate")] %}
+    <span class="badge" style="background:{{ '#c7f0d0' if n < st.phase else ('#fde68a' if n == st.phase else '#eee') }}">{{ n }} {{ name }}</span>
+  {% endfor %}
+  {% for g, r in st.gates.items() %}<span class="small"> · {{ g }}: <b class="v-{{ r.result.verdict }}">{{ r.result.verdict }}</b>{% if r.decision %} → founder {{ r.decision.choice }}{% endif %}</span>{% endfor %}
+  </div>
+</div>
+
+{% if awaiting %}{% set g = st.gates[awaiting.gate] %}
+<div class="card" style="border:2px solid #111">
+  <h2>Gate: {{ awaiting.gate }} - your decision</h2>
+  <p class="first v-{{ g.result.verdict }}">{{ g.explanation.split('. ')[0] }}.</p>
+  <p>{{ g.explanation }}</p>
+  <table><tr><th>check (code)</th><th>value</th><th>locked threshold</th><th>pass</th></tr>
+  {% for c in g.result.checks %}<tr><td>{{ c.name }}</td><td>{{ c.value }}</td><td>{{ c.threshold }}</td><td>{{ c.passed }}</td></tr>{% endfor %}</table>
+  <p class="small mute">Rule locked: {{ g.locked_rule.get('change_our_mind', '') }}</p>
+  <div class="grid"><div><h3>Bull case</h3><p class="small">{{ g.devils_advocate.bull_case }}</p></div>
+  <div><h3>Bear case</h3><p class="small">{{ g.devils_advocate.bear_case }}</p></div></div>
+  <form method="post" action="/runs/{{ st.id }}/gates/{{ awaiting.gate }}/decide">
+  {% for o in g.options %}
+    <label class="opt {{ 'rec' if o.recommended }}" style="font-weight:400"><input type="radio" name="choice" value="{{ o.choice }}" style="width:auto" {{ 'checked' if o.recommended }}>
+      <b class="v-{{ o.choice }}">{{ o.choice }}</b> {{ o.label }}{% if o.recommended %} <span class="badge">recommended</span>{% endif %}
+      {% if o.weakest_evidence %} <span class="badge" style="background:#f8c4c0;color:#700">weakest evidence</span>{% endif %}
+      <div class="small mute">Evidence: {{ o.evidence }} · Risk: {{ o.risk }}</div></label>
+  {% endfor %}
+  <label>Reason (required to override the recommendation)</label><input name="reason">
+  <label>New niche (only for PIVOT_BACK; your words)</label><input name="niche">
+  <p><button>Record my decision</button></p>
+  </form>
+  <form onsubmit="return reconsider(event)"><label>Push back (no new evidence = no change)</label>
+  <input name="message" placeholder="Are you sure? I'm sure this will work."><button class="ghost" style="margin-top:.4rem">Ask</button><span id="recon" class="small"></span></form>
+</div>
+{% endif %}
+
+<div class="grid">
+<div class="card"><h2>Live progress</h2><div id="log"></div></div>
+<div class="card"><h2>Artifacts (outputs/runs/{{ st.id }})</h2>
+  <ul class="small">{% for k, f in st.artifacts.items() %}<li><a href="/runs/{{ st.id }}/file/{{ f }}" target="_blank">{{ f }}</a></li>{% endfor %}
+  <li><a href="/runs/{{ st.id }}/file/decision_log.json" target="_blank">decision_log.json</a></li></ul>
+  <form method="post" action="/runs/{{ st.id }}/publish" onsubmit="return pub(event)"><button class="ghost">Publish this run to outputs/ + decision_log.json</button> <span id="pub" class="small"></span></form>
+</div>
+</div>
+
+<div class="card" id="outbox"><h2>Outbox (the only path outward)</h2>
+  <p class="small mute">Tier 0 automatic · Tier 1 needs your approval, one by one; connectors are <span class="badge">MOCKED</span> · Tier 2 (money, credentials) always blocked.</p>
+  <table><tr><th>item</th><th>tier</th><th>target</th><th>status</th><th></th></tr>
+  {% for it in outbox %}<tr><td><b>{{ it.title }}</b><div class="small mute">{{ it.content[:220] }}</div></td><td>{{ it.tier }}</td>
+  <td class="small">{{ it.target }} ({{ it.target_provenance }})</td><td>{{ it.status }}<div class="small mute">{{ it.reason }}</div></td>
+  <td>{% if it.status == 'pending_approval' %}
+    <form method="post" action="/outbox/{{ it.id }}/approve"><button>Approve</button></form>
+    <form method="post" action="/outbox/{{ it.id }}/reject"><button class="ghost">Reject</button></form>{% endif %}</td></tr>{% endfor %}
+  </table>
+  {% if landing_served %}<p>Landing page served locally: <a href="/lp/{{ st.id }}" target="_blank">/lp/{{ st.id }}</a> · demo-audience link (never counted): <a href="/lp/{{ st.id }}?src=demo" target="_blank">/lp/{{ st.id }}?src=demo</a></p>{% endif %}
+  {% if exp %}<p>Experiment: <b>{{ exp.state }}</b> - {{ exp.reasons|join(' ') }}</p>{% endif %}
+</div>
+
+<div class="grid">
+<div class="card"><h2>Citation dashboard</h2>
+  <p class="small">Run: coverage <b>{{ metrics.citation_coverage }}</b> · precision <b>{{ metrics.citation_precision }}</b> · labels {{ metrics.by_label }}</p>
+  <table><tr><th>artifact</th><th>claims</th><th>coverage</th><th>precision</th></tr>
+  {% for a, m in artifact_metrics.items() %}<tr><td>{{ a }}</td><td>{{ m.claims }}</td><td>{{ m.citation_coverage }}</td><td>{{ m.citation_precision }}</td></tr>{% endfor %}</table>
+  <h3>Spot-check: 5 random SUPPORTED claims</h3>
+  {% for c in spot %}<div class="small" style="margin:.3rem 0"><b>{{ c.id }}</b> {{ c.text }}<br><span class="mute">“{{ c.source_quote }}” - <a href="{{ c.source_url }}" target="_blank" rel="noopener">{{ c.source_url[:60] }}</a></span></div>{% else %}<p class="small mute">No SUPPORTED claims yet.</p>{% endfor %}
+</div>
+<div class="card"><h2>Founder control</h2>
+  <table>{% for k, v in control.items() %}<tr><td>{{ k }}</td><td>{{ v }}</td></tr>{% endfor %}</table>
+  <h3>Ask the system (guarded)</h3>
+  <form onsubmit="return askit(event)"><textarea name="request_text" rows="2" placeholder="e.g. draft a launch email"></textarea><button style="margin-top:.4rem">Send</button></form>
+  <pre id="askout" class="small"></pre>
+</div>
+</div>
+
+<div class="card"><h2>Evidence ledger</h2>
+  <table><tr><th>id</th><th>label</th><th>type</th><th>claim</th><th>source quote</th><th>checked by</th></tr>
+  {% for c in claims %}<tr><td>{{ c.id }}</td><td class="{{ c.label.value }}">{{ c.label.value }}</td><td>{{ c.type }}</td><td class="small">{{ c.text }}{% if c.note %}<div class="mute">{{ c.note }}</div>{% endif %}</td>
+  <td class="small">{% if c.source_url %}“{{ (c.source_quote or '')[:140] }}” <a href="{{ c.source_url }}" target="_blank" rel="noopener">source</a>{% else %}ASSUMPTION{% endif %}</td>
+  <td class="small">{{ c.checked_by_model or '-' }}</td></tr>{% endfor %}</table>
+</div>
+
+{% if hypotheses %}<div class="card"><h2>Hypothesis tracker</h2>
+  {% for h in hypotheses %}<div class="opt"><b>{{ h.text }}</b> <span class="small mute">(risk {{ h.risk }})</span>
+  <div class="small">For: {% for c in h.for %}<span class="SUPPORTED">{{ c.id }}</span> “{{ (c.source_quote or c.text)[:100] }}” {% else %}none{% endfor %}</div>
+  <div class="small">Against / open: {% for c in h.against_or_open %}<span class="{{ c.label.value }}">{{ c.id }}</span> {{ c.text[:80] }}; {% else %}none{% endfor %}</div></div>{% endfor %}
+</div>{% endif %}
+
+<div class="grid">
+<div class="card"><h2>Interview rehearsal <span class="badge">SIMULATED</span></h2>
+  <p class="small mute">Practise your Mom Test questions. Persona answers are stored as ASSUMPTION, never evidence.</p>
+  <form onsubmit="return rehearse(event)"><select name="persona"><option value="0">Persona 1</option><option value="1">Persona 2</option><option value="2">Persona 3</option></select>
+  <input name="question" placeholder="When did you last ...?" style="margin-top:.4rem"><button style="margin-top:.4rem">Ask</button></form><pre id="reh" class="small"></pre>
+  <h3>Paste real interview notes</h3>
+  <form onsubmit="return notes(event)"><textarea name="notes" rows="3"></textarea><button style="margin-top:.4rem">Analyze</button></form><pre id="notesout" class="small"></pre>
+</div>
+<div class="card"><h2>Sale to cash <span class="badge">SIMULATED</span> <span class="badge">MOCKED</span></h2>
+  <p class="small mute">No payment code. Checkout belongs in your own payment provider.</p>
+  <form onsubmit="return simorder(event)"><button class="ghost">Simulate order_received → mocked delivery</button></form><pre id="orderout" class="small"></pre>
+  {% for oid, d in deliveries.items() %}<div class="small">{{ oid }}: {% if d.active %}<a href="{{ d.url }}" target="_blank">download (MOCKED)</a>{% else %}access revoked{% endif %}</div>{% endfor %}
+  {% if shadow %}<h3>Phase 6 shadow mode</h3><p class="small">{{ shadow|length }} support drafts ready (would-send only).</p>
+  <form method="post" action="/runs/{{ st.id }}/shadow/signoff"><button>Sign off: queue them in the Outbox</button></form>{% endif %}
+</div>
+</div>
+
+<script>
+const RUN = {{ st.id|tojson }};
+const log = document.getElementById('log');
+const es = new EventSource(`/runs/${RUN}/events`);
+es.onmessage = (m) => { const e = JSON.parse(m.data); const d = document.createElement('div');
+  d.textContent = `${e.ts.slice(11,19)} [${e.kind}] ${e.message}`; log.appendChild(d); log.scrollTop = log.scrollHeight;
+  if (['gate','done','error','blocked','killed'].includes(e.kind)) setTimeout(() => location.reload(), 1200); };
+async function post(url, form){ const r = await fetch(url, {method:'POST', body: new FormData(form)}); return r.json(); }
+async function reconsider(e){ e.preventDefault(); const j = await post(`/runs/${RUN}/gates/{{ awaiting.gate if awaiting else '' }}/reconsider`, e.target);
+  document.getElementById('recon').textContent = ' ' + j.message; return false; }
+async function askit(e){ e.preventDefault(); const j = await post(`/runs/${RUN}/ask`, e.target);
+  document.getElementById('askout').textContent = j.refused ? 'REFUSED: ' + j.message : j.draft + '\n\n' + j.note; return false; }
+async function rehearse(e){ e.preventDefault(); const j = await post(`/runs/${RUN}/rehearse`, e.target);
+  document.getElementById('reh').textContent = `${j.label} ${j.persona.name}: ${j.reply}\nCoach: ${j.coach_flags.length ? j.coach_flags.join('; ') : 'good question'}\nStored as ${j.stored_as}`; return false; }
+async function notes(e){ e.preventDefault(); const j = await post(`/runs/${RUN}/interview_notes`, e.target);
+  document.getElementById('notesout').textContent = JSON.stringify(j, null, 1); return false; }
+async function simorder(e){ e.preventDefault(); const r = await fetch(`/runs/${RUN}/simulate_order`, {method:'POST'}); const j = await r.json();
+  document.getElementById('orderout').textContent = JSON.stringify(j, null, 1); return false; }
+async function pub(e){ e.preventDefault(); const r = await fetch(`/runs/${RUN}/publish`, {method:'POST'}); const j = await r.json();
+  document.getElementById('pub').textContent = `copied ${j.copied.length} files`; return false; }
+</script>
+{% endblock %}
