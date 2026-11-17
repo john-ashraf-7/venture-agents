@@ -1,0 +1,472 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T193529_b4c1",
+  "status": "awaiting_founder",
+  "seconds": 63.1,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com payment reminder emails",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "mojeek",
+     "stackoverflow",
+     "superuser"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com payment reminder emails",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "mojeek",
+     "stackoverflow",
+     "superuser"
+    ]
+   },
+   {
+    "query": "payment reminder emails \"I wish there was\"",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "mojeek"
+    ]
+   },
+   {
+    "query": "site:reddit.com new freelancers payment reminder emails",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "mojeek"
+    ]
+   },
+   {
+    "query": "template pack for new freelancers",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse",
+     "mojeek"
+    ]
+   },
+   {
+    "query": "best template pack new freelancers 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "alternatives to Freelancer Starter Pack",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   },
+   {
+    "query": "Freelancer Starter Pack pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "Freelancer Starter Pack price per month",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "bing",
+   "duckduckgo",
+   "google cse",
+   "mojeek",
+   "stackoverflow",
+   "superuser"
+  ],
+  "engines_unresponsive": [
+   "duckduckgo: CAPTCHA",
+   "mojeek: Suspended: access denied",
+   "mojeek: access denied",
+   "qwant: Suspended: access denied",
+   "qwant: access denied",
+   "startpage: Suspended: CAPTCHA"
+  ],
+  "distinct_result_domains": 32,
+  "pages_read": 18,
+  "pages_failed": [
+   {
+    "url": "https://www.etsy.com/market/freelancer_pack_template",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://superuser.com/q/1695137",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.paypal.com/",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.reddit.com/r/freelance/comments/d747bn/resource_top_6_mistakes_new_freelancers_make_when/",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://stackoverflow.com/q/79010409",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://stackoverflow.com/q/77659821",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=44090387",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://www.reddit.com/r/webdev/comments/12buld7/whats_the_best_platform_to_receive_payments_as_a/",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://myearlybird.ai/blog-posts/alternatives-to-upwork",
+    "reason": "error_ConnectError"
+   },
+   {
+    "url": "https://www.getly.store/product/freelancer-starter-pack-5-kits",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://www.freelancer.com/login",
+    "reason": "bot_check"
+   },
+   {
+    "url": "https://robertsspaceindustries.com/en/pledge/Upgrades/Freelancer",
+    "reason": "bot_check"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://colorlib.com/wp/freelancer-website-templates/": 6000,
+   "https://bizkitly.com/template-packs/freelancer-starter/": 1640,
+   "https://thebestegypt.com/winners": 3141,
+   "https://freelancer-templates.org/": 5396,
+   "https://www.packd.cloud/blog/best-digital-toolkits-freelancers-side-hustlers-2026": 6000,
+   "https://news.ycombinator.com/item?id=45877027": 6000,
+   "https://www.jerrypournelle.com/archives2/archives2mail/mail113.html": 6000,
+   "https://news.google.com/": 554,
+   "https://www.kashier.io/": 6000,
+   "https://affordable-evaluations.com/alcohol-drug-evaluations-salce-extended-evaluation/": 6000,
+   "https://useme.com/en/blog/freelancer-alternatives/": 6000,
+   "https://comeup.com/en/experts/the-9-greatest-alternatives-to-freelancer-com-for-freelancers-and-businesses": 6000,
+   "https://www.fiverr.com/resources/guides/business/freelancer-alternatives": 6000,
+   "https://www.freelancer.com/": 2410,
+   "https://starcitizen.tools/List_of_ship_packages": 6000,
+   "https://www.freelancer.com/membership/?w=f": 4651,
+   "https://www.upwork.com/work/freelancerplus": 6000,
+   "https://thrux.app/freelancer-guide/": 2887
+  },
+  "demand_signals_at_gate": 1,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "arabic_tutoring_guide",
+  "run_id": "run_20261117T193632_50fb",
+  "status": "awaiting_founder",
+  "seconds": 77.6,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com tutor arabic online",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com tutor arabic online",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "tutor arabic online \"I wish there was\"",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo"
+    ]
+   },
+   {
+    "query": "site:reddit.com university students tutor arabic online",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "guide templates for university students",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "best guide templates university students 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "bing",
+     "duckduckgo"
+    ]
+   },
+   {
+    "query": "alternatives to College Study Guide Template",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "College Study Guide Template pricing",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "bing",
+   "duckduckgo",
+   "google cse"
+  ],
+  "engines_unresponsive": [
+   "duckduckgo: CAPTCHA",
+   "google cse: Suspended: too many requests",
+   "mojeek: Suspended: access denied",
+   "mojeek: access denied",
+   "qwant: Suspended: access denied",
+   "qwant: access denied",
+   "startpage: Suspended: CAPTCHA"
+  ],
+  "distinct_result_domains": 25,
+  "pages_read": 14,
+  "pages_failed": [
+   {
+    "url": "https://zhuanlan.zhihu.com/p/1999441688184246283",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://www.toutiao.com/article/7616740780745490979/",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://testolimited.com/i-wish-there-were-or-i-wish-there-was-which-sounds-most-natural",
+    "reason": "http_404"
+   },
+   {
+    "url": "https://egyptwindow.net/",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://www.figma.com/community/classroom-activities/study-templates",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.adobe.com/uk/express/discover/how-to/planner/study",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://www.etsy.com/market/study_guide_template_for_college",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.etsy.com/market/college_study_guide_template",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://thebestegypt.com/winners": 3141,
+   "https://www.goodnotes.com/blog/best-goodnotes-templates-college-students": 5797,
+   "https://thegoodocs.com/notes-template/college-study-guide-template.php": 1377,
+   "https://www.bestbuy.com/": 598,
+   "https://www.sohu.com/a/1101796400_122615111": 2865,
+   "https://www.tutor.com/": 1692,
+   "https://www.nafeza.gov.eg/ar": 1089,
+   "https://dictionary.cambridge.org/dictionary/english/tutor": 6000,
+   "https://nafeza.gov.eg/ar/login": 670,
+   "https://www.tutor.com/our-tutors": 4116,
+   "https://www.airtable.com/templates/study-guides/expgvEEs9ehSRRYrR": 6000,
+   "https://thegoodocs.com/freebies/study-notes/": 4146,
+   "https://studypdf.net/": 5870,
+   "https://scholarsail.com/tools/text-editor/study-guide": 5138
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T193750_6027",
+  "status": "awaiting_founder",
+  "seconds": 59.9,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com grant tracking",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "askubuntu",
+     "bing",
+     "stackoverflow",
+     "superuser"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com grant tracking",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "askubuntu",
+     "bing",
+     "stackoverflow",
+     "superuser"
+    ]
+   },
+   {
+    "query": "grant tracking \"I wish there was\"",
+    "results": 4,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "site:reddit.com small NGOs grant tracking",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "template pack for small NGOs",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "best template pack small NGOs 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "askubuntu",
+   "bing",
+   "duckduckgo",
+   "google cse",
+   "stackoverflow",
+   "superuser"
+  ],
+  "engines_unresponsive": [
+   "duckduckgo: CAPTCHA",
+   "mojeek: Suspended: access denied",
+   "qwant: Suspended: access denied",
+   "startpage: Suspended: CAPTCHA"
+  ],
+  "distinct_result_domains": 19,
+  "pages_read": 10,
+  "pages_failed": [
+   {
+    "url": "https://www.etsy.com/market/canva_template_for_nonprofit_organizations",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://superuser.com/q/1841027",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://dxdiag.org/",
+    "reason": "timeout"
+   },
+   {
+    "url": "https://askubuntu.com/q/1569764",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.zhihu.com/question/64377139",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://windowsreport.com/how-to-open-use-directx-diagnostic-tool/",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://stackoverflow.com/q/79962756",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.zhihu.com/question/1903231775980913051",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://pm4ngos.org/tools-templates/": 1799,
+   "https://www.wpcharitable.com/best-wordpress-non-profit-themes/": 6000,
+   "https://slidesgo.com/": 6000,
+   "https://www.wpbeginner.com/showcase/best-wordpress-themes-for-nonprofits/": 6000,
+   "https://elements.envato.com/wordpress/ngo": 926,
+   "https://www.minitool.com/news/dxdiag.html": 3403,
+   "https://support.google.com/youtube/answer/6159254?hl=it": 1538,
+   "https://communities.apple.com/de/thread/200017510": 1180,
+   "https://support.google.com/youtube/answer/161805?hl=pt-BR&co=GENIE.Platform%3DDesktop": 750,
+   "https://communities.apple.com/pt/thread/7234": 1180
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ }
+]

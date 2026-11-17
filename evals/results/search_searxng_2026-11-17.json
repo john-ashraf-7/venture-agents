@@ -1,0 +1,322 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T193212_1fb5",
+  "status": "awaiting_founder",
+  "seconds": 42.1,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com payment reminder email templates",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "stackoverflow"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com payment reminder email templates",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "stackoverflow"
+    ]
+   },
+   {
+    "query": "payment reminder email templates \"I wish there was\"",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "site:reddit.com new freelance designers payment reminder email templates",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "template pack for new freelance designers",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   },
+   {
+    "query": "best template pack new freelance designers 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "bing",
+   "google cse",
+   "stackoverflow"
+  ],
+  "engines_unresponsive": [
+   "duckduckgo: CAPTCHA",
+   "mojeek: Suspended: access denied",
+   "qwant: Suspended: access denied",
+   "startpage: Suspended: CAPTCHA"
+  ],
+  "distinct_result_domains": 21,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://stackoverflow.com/q/77659821",
+    "reason": "error: HTTPStatusError"
+   },
+   {
+    "url": "https://www.paypal.com/",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.gloriacondy.com/shop/p/f8zmnqagvdwvt2omb3mp7sh7dsp8ki": 6000,
+   "https://stackoverflow.com/q/77659821": 140,
+   "https://www.paypal.com/": 191,
+   "https://news.google.com/": 437,
+   "https://foxtrotbranding.com/freelance-design-business-kit": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "arabic_tutoring_guide",
+  "run_id": "run_20261117T193255_9aaf",
+  "status": "awaiting_founder",
+  "seconds": 87.4,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com tutor arabic online",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com tutor arabic online",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "tutor arabic online \"I wish there was\"",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "site:reddit.com university students tutor arabic online",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "guide template pack for university students",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   },
+   {
+    "query": "best guide template pack university students 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   },
+   {
+    "query": "alternatives to Tutor.com",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   },
+   {
+    "query": "Tutor.com pricing",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "bing",
+   "google cse"
+  ],
+  "engines_unresponsive": [
+   "duckduckgo: CAPTCHA",
+   "mojeek: Suspended: access denied",
+   "mojeek: access denied",
+   "qwant: Suspended: access denied",
+   "qwant: access denied",
+   "startpage: Suspended: CAPTCHA"
+  ],
+  "distinct_result_domains": 19,
+  "pages_read": 10,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/ChatGPTPromptGenius/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/ChatGPT/comments/10tevu1/new_jailbreak_proudly_unveiling_the_tried_and/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/tutordotcom/comments/17qnxp5/what_a_good_alternative_to_tutorcom/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://alternativeto.net/",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.reddit.com/r/ChatGPTPromptGenius/": 155,
+   "https://www.reddit.com/r/ChatGPT/comments/10tevu1/new_jailbreak_proudly_unveiling_the_tried_and/": 207,
+   "https://www.tutor.com/": 1692,
+   "https://support.google.com/chrome/answer/173424?hl=ar&co=GENIE.Platform%3DDesktop": 4122,
+   "https://github.com/Hello-SimpleAI/chatgpt-comparison-detection": 4488,
+   "https://www.tutor.com/faq/pricing": 1740,
+   "https://www.reddit.com/r/tutordotcom/comments/17qnxp5/what_a_good_alternative_to_tutorcom/": 226,
+   "https://alternativeto.net/": 184,
+   "https://dictionary.cambridge.org/dictionary/english/alternative": 1975,
+   "https://cosmoai.com/blog/tutor-com-reviews": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T193422_a987",
+  "status": "awaiting_founder",
+  "seconds": 56.0,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com grant tracking",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "askubuntu",
+     "bing",
+     "duckduckgo",
+     "stackoverflow",
+     "superuser"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com grant tracking",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "askubuntu",
+     "bing",
+     "duckduckgo",
+     "stackoverflow",
+     "superuser"
+    ]
+   },
+   {
+    "query": "grant tracking \"I wish there was\"",
+    "results": 4,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "site:reddit.com small NGOs grant tracking",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing"
+    ]
+   },
+   {
+    "query": "template pack for small NGOs",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "best template pack small NGOs 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "bing",
+     "duckduckgo",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "askubuntu",
+   "bing",
+   "duckduckgo",
+   "google cse",
+   "stackoverflow",
+   "superuser"
+  ],
+  "engines_unresponsive": [
+   "duckduckgo: CAPTCHA",
+   "mojeek: Suspended: access denied",
+   "qwant: Suspended: access denied",
+   "startpage: Suspended: CAPTCHA"
+  ],
+  "distinct_result_domains": 17,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://superuser.com/q/1841027",
+    "reason": "error: HTTPStatusError"
+   },
+   {
+    "url": "https://www.zhihu.com/question/19943967",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://superuser.com/q/1841027": 146,
+   "https://www.zhihu.com/question/19943967": 115,
+   "https://create.kahoot.it/register": 2574,
+   "https://elements.envato.com/wordpress/ngo": 926,
+   "https://www.wpcharitable.com/best-wordpress-non-profit-themes/": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ }
+]

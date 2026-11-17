@@ -41,12 +41,12 @@ def test_escalation_used_in_quality_profile(monkeypatch):
 
     def by_model(model, messages, schema, t):
         seen.append(model.name)
-        if model.name == "qwen3:8b":
+        if model.name == "qwen3:32b":
             return "not json", 1, 1
         return json.dumps({"label": "SUPPORTED", "reason": "ok"}), 1, 1
     llm.set_backend(by_model)
     out = llm.call("claim_checker", [{"role": "user", "content": "q-esc"}], CheckResult, use_cache=False)
-    assert out.label == "SUPPORTED" and seen[-1] == "gpt-oss:20b"
+    assert out.label == "SUPPORTED" and seen[-1] == "gpt-oss:120b"
 
 
 def test_cache_hit():

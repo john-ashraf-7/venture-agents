@@ -15,6 +15,7 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 - No GPU: `PULL_MODELS="qwen3:4b nomic-embed-text" docker compose -f docker-compose.yml -f docker-compose.cpu.yml up` and set `ROLE_*` overrides in `.env` (slow).
 - Smoke tests (no GPU needed, STUBBED LLM): `docker compose run --rm --no-deps app python -m pytest -q`
 - Headless timed run: `docker compose exec app python -m app.cli run --brief evals/briefs/invoice_templates.json`
+- Optional: put your own free Tavily key in `.env` (`TAVILY_API_KEY=...`, see `.env.example`) to use Tavily search; without it the app uses self-hosted SearXNG and needs no key.
 
 ## What works and what is mocked
 
@@ -22,7 +23,8 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 |---|---|---|
 | Intake (parse brief, ask for missing info, block excluded product types) | **Working** | `app/agents/intake.py`, `app/services/guard.py` |
 | Desk-gate rule locked (sha256 + timestamp) before research | **Working** | `app/gates.py` `lock_rule` |
-| Capped web search (self-hosted SearXNG) with on-disk cache fallback | **Working** | labeled "cached search from <time>" when the live search fails |
+| Capped web search (self-hosted SearXNG) with on-disk cache fallback | **Working** | labeled "cached search from <time>" when the live search fails; queries built in code from templates; failed pages replaced from a 12-URL pool; search snippets used as PARTIAL, never-counted evidence |
+| Optional Tavily search (used only with your own free `TAVILY_API_KEY`) | **Working** (optional) | off without a key; per-query fallback to SearXNG on error or no credits, reason logged; for pages our own fetch cannot read (Reddit 403s, bot walls), the page text Tavily returns with demand results, then its Extract API, is used instead, labelled by origin (`tavily-search-raw`, `tavily-extract`) and still read by the isolated reader with quotes matched word for word |
 | Isolated page reader (no tools, structured fields only) | **Working** | `app/services/reader.py`; quotes, names and prices not found on the page are dropped in code; bot-check pages are skipped |
 | Claim extraction + code quote check + cross-family Claim Checker + Evidence Ledger | **Working** | unsupported claims rewritten as ASSUMPTION, never deleted |
 | Idea variants, theory of value, competitor table, compliance quick check, Mom Test script | **Working** | |
@@ -56,20 +58,21 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 
 | Role | Model (Ollama tag) | Why |
 |---|---|---|
-| intake, planner, idea scout, claim extractor, gate explainer, copywriter, builder, analyst | `gpt-oss:20b` (Apache-2.0) | strongest open model that fits 24 GB beside the checker |
-| page reader, claim checker, policy guard, devil's advocate, test writer, coach, eval judge | `qwen3:8b` (Apache-2.0) | a **different model family** checks what gpt-oss wrote |
+| intake, planner, idea scout, claim extractor, gate explainer, copywriter, builder, analyst | `gpt-oss:120b` (Apache-2.0) | strongest open model we can name; pulled by `docker compose up` (needs a large GPU, e.g. 80 GB) |
+| page reader, claim checker, policy guard, devil's advocate, test writer, coach, eval judge | `qwen3:32b` (Apache-2.0) | a **different model family** checks what gpt-oss writes; the page reader's output is also verified in code |
 | shared memory / lessons relevance filter | `nomic-embed-text` (Apache-2.0) | local embeddings |
 | optional `safeguard` profile | `gpt-oss-safeguard:20b` | Policy Guard alternative, loaded one after another |
 | fallback for the checker roles | `qwen2.5:7b` (Apache-2.0), model key `qwen25-7b` | same family split; use when qwen3:8b is not pulled |
 
-**The committed demo run (`outputs/`) used the fallback:** gpt-oss:20b for the writer roles, `qwen2.5:7b` for every checker role (`ROLE_<ROLE>=qwen25-7b` in `.env`), and no embedding model, so lessons relevance used the built-in keyword-overlap fallback. Ollama ran natively on the host and only SearXNG ran in Docker. The `decision_log.json` `model` field shows the exact tag of every call.
+**Default models changed after the committed demo run.** `docker compose up` now pulls `gpt-oss:120b` + `qwen3:32b` + `nomic-embed-text` (~85 GB) and needs roughly an 80 GB GPU to keep both loaded; smaller GPUs swap models (much slower). Lighter setup for a 24 GB GPU (what our demo used): `PULL_MODELS="gpt-oss:20b qwen3:8b nomic-embed-text"` plus `ROLE_<ROLE>=gpt-oss-20b` for the writer roles and `ROLE_<ROLE>=qwen-8b` for the checker roles in `.env`. **The committed demo run (`outputs/`) used:** gpt-oss:20b for the writer roles, `qwen2.5:7b` for every checker role (`ROLE_<ROLE>=qwen25-7b` in `.env`), and no embedding model, so lessons relevance used the built-in keyword-overlap fallback. Ollama ran natively on the host and only SearXNG ran in Docker. The `decision_log.json` `model` field shows the exact tag of every call.
 
-- Everything is free and local: Ollama serves the models, SearXNG is self-hosted search, storage is a SQLite file in `data/`. No API keys, no paid services, no accounts.
+- Everything is free and local by default: Ollama serves the models, SearXNG is self-hosted search, storage is a SQLite file in `data/`. No API keys, no paid services and no accounts are required.
+- Optional search provider: **Tavily** (hosted search API for agents). `SEARCH_PROVIDER=auto` (default) uses it only when you add your own key (`TAVILY_API_KEY` in `.env`; free tier about 1,000 credits a month, 1 credit per search; 6-8 searches per Phase 1 run in our tests). With no key, or when Tavily errors or runs out of credits, that query falls back to SearXNG and the decision log `note` says why. `SEARCH_PROVIDER=searxng` never calls Tavily. Demand searches are limited to the gate's community sites. Comparison on three briefs: `evals/results/search_tavily.json`.
 - Search: self-hosted SearXNG (`searxng/settings.yml`) with engines routed per purpose in `config/search.yaml` (demand: hackernews, duckduckgo, bing, mojeek, Stack Exchange sites; competitors and pricing: duckduckgo, bing, startpage, mojeek, qwant, google cse). Responses are cached for 24 h per (query, engines) and live queries are sent one at a time, 1 s apart, to avoid rate-limit suspensions. Results are deduped, capped at 2 per domain, and template galleries in `config/search_filters.yaml` are moved to the end. From a single home IP some engines still refuse (CAPTCHA or suspension); every run logs which engines answered.
 - Profiles: `PROFILE=demo-fast` (default: 5 results/query, 3 queries, 5 pages, checks only gate claims), `PROFILE=quality` (larger caps, claim checker escalates to gpt-oss:20b on failure), `PROFILE=safeguard`. Per-role override: `ROLE_<ROLE>=<model-key>` (e.g. `ROLE_CLAIM_CHECKER=gpt-oss-20b`; the app warns when a checker shares the writer's family).
 - VRAM: estimated ~20 GB for gpt-oss:20b + qwen3:8b + embeddings with q8_0 KV cache. Measured peak VRAM during Phase 1 runs on an RTX 3090 (gpt-oss:20b + qwen2.5:7b): **19.6-20.1 GB** (whole-GPU `nvidia-smi`, including ~1.5 GB used by the desktop; recorded in `outputs/runs/<run>/timing.json`).
 - Context length: the app calls Ollama's native `/api/chat` with `options.num_ctx` from `config/models.yaml` (gpt-oss:20b 16384, qwen 8192); `ollama ps` and the Ollama server log confirm these sizes. The optional `openai_compat` provider (OpenAI-compatible `/v1`) ignores per-request `num_ctx`; with it, set `OLLAMA_CONTEXT_LENGTH` on the Ollama server instead.
-- Timing target: intake to desk-gate verdict in about 2 minutes in `demo-fast` on the RTX 3090. Measured with live search: **12-66 s** across five runs (cached LLM replies make repeat runs faster).
+- Timing target: intake to desk-gate verdict in about 2 minutes in `demo-fast` on the RTX 3090. Measured with live search: **12-66 s** across five runs before the search upgrade; **60-78 s** after it (more queries, up to 12 candidate pages per purpose; `evals/results/search_before_after.md`).
 
 ## Cost per run
 

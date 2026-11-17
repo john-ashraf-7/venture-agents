@@ -125,8 +125,13 @@ def test_cost_survives_a_new_process():
     assert before > 0 and cost.summary(rid)["llm_calls"] == before
 
 
-def test_pricing_pages_get_reserved_slots():
-    from app.agents.market_researcher import PRICING_HINT
-    assert PRICING_HINT.search("https://www.todoist.com/pricing")
-    assert PRICING_HINT.search("https://x.gumroad.com/l/kit")
-    assert not PRICING_HINT.search("https://nicepage.com/c/pricing-templates")
+def test_partial_and_snippet_claims_never_count_at_the_gate():
+    from app.agents import market_researcher
+    from app.models import Claim, Label
+    from app.services import ledger
+    base = dict(id="C1", run_id="r", text="t", type="demand_signal", source_url="https://reddit.com/r/a",
+                source_quote="q", writer_family="gpt-oss", checked_by_family="qwen")
+    assert ledger.counts_for_gate(Claim(**base, label=Label.SUPPORTED))
+    assert not ledger.counts_for_gate(Claim(**base, label=Label.PARTIAL))
+    page = market_researcher.snippet_page("https://example.org/p", "Example title\nPro plan $12/month for teams", "pricing")
+    assert market_researcher.is_snippet(page) and page["extract"]["problem_statements"] == []

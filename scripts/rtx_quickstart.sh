@@ -12,7 +12,7 @@ docker run --rm --gpus all ubuntu:22.04 nvidia-smi -L >/dev/null 2>&1 && echo "G
 
 [ -f .env ] || cp .env.example .env
 
-echo "== build + start (first run pulls gpt-oss:20b, qwen3:8b, nomic-embed-text: ~19 GB)"
+echo "== build + start (first run pulls gpt-oss:120b, qwen3:32b, nomic-embed-text: ~85 GB)"
 docker compose up -d --build
 
 echo "== waiting for the app"
@@ -26,8 +26,8 @@ echo "== smoke tests inside the image (stubbed LLM, no GPU needed)"
 docker compose exec -T app python -m pytest -q
 
 echo "== warm up both models (first load is slow)"
-docker compose exec -T ollama ollama run qwen3:8b "ok" >/dev/null 2>&1 || true
-docker compose exec -T ollama ollama run gpt-oss:20b "ok" >/dev/null 2>&1 || true
+docker compose exec -T ollama ollama run qwen3:32b "ok" >/dev/null 2>&1 || true
+docker compose exec -T ollama ollama run gpt-oss:120b "ok" >/dev/null 2>&1 || true
 
 echo
 echo "Open http://localhost:8000"

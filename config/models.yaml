@@ -5,8 +5,8 @@
 # show what a run would cost if it were not run locally (ASSUMPTION, see README "Cost per run").
 # Local runs cost $0.00 in API fees.
 #
-# VRAM (RTX 3090, 24 GB): keep_alive per model unloads what the current step does not need. gpt-oss-20b
-# drafts, plans, reads pages and extracts claims through all of Phase 1, so it stays loaded; the small
+# VRAM: keep_alive (optional, per model) unloads what the current step does not need. On a 24 GB card
+# (gpt-oss-20b + a small Qwen via ROLE_* overrides) gpt-oss-20b stays loaded through Phase 1 and the small
 # checkers unload soon after their burst. num_ctx is per MODEL, not per role: Ollama reloads a model
 # whenever num_ctx changes between calls, so a per-role cap on a shared model would cost a reload.
 # Ollama server env (docker-compose.yml / native install): OLLAMA_MAX_LOADED_MODELS=3,
@@ -20,6 +20,15 @@ providers:
   local_transformers: { kind: local_transformers }
 
 models:
+  # Default writer (~65 GB, pulled by ollama-pull; needs a large GPU such as 80 GB).
+  gpt-oss-120b:
+    provider: ollama
+    name: "gpt-oss:120b"
+    family: gpt-oss
+    num_ctx: 16384
+    vram_gb_est: 65
+    think: low
+    ref_usd_per_mtok: { in: 0.15, out: 0.60 }
   gpt-oss-20b:
     provider: ollama
     name: "gpt-oss:20b"
@@ -38,6 +47,15 @@ models:
     vram_gb_est: 6
     think: false
     ref_usd_per_mtok: { in: 0.035, out: 0.138 }
+  # Default checker family (~20 GB, pulled by ollama-pull): Qwen checks what gpt-oss-120b writes.
+  qwen3-32b:
+    provider: ollama
+    name: "qwen3:32b"
+    family: qwen
+    num_ctx: 16384
+    vram_gb_est: 20
+    think: false
+    ref_usd_per_mtok: { in: 0.10, out: 0.30 }
   # Fallback for machines that already have qwen2.5 pulled (select with ROLE_<NAME>=qwen25-7b).
   qwen25-7b:
     provider: ollama
@@ -93,37 +111,39 @@ models:
     ref_usd_per_mtok: { in: 0.0, out: 0.0 }
 
 roles:
-  intake:           { model: gpt-oss-20b, temperature: 0.2 }
-  planner:          { model: gpt-oss-20b, temperature: 0.2 }
-  idea_scout:       { model: gpt-oss-20b, temperature: 0.7 }
-  page_reader:      { model: gpt-oss-20b, temperature: 0.0, checks: null }   # evals/results/page_reader.md: same speed, half the invented values; output is code-verified
-  claim_extractor:  { model: gpt-oss-20b, temperature: 0.0 }
-  # MiniCheck support probability -> label: >= t_high SUPPORTED, >= t_low PARTIAL, else UNSUPPORTED
-  # (tuned on evals/labeled/claims.json, evals/results/minicheck_thresholds.json). The Qwen prompt
-  # checker stays selectable: ROLE_CLAIM_CHECKER=qwen-8b (or qwen25-7b).
-  claim_checker:    { model: minicheck-flan-t5, temperature: 0.0, escalate_to: null, checks: claim_extractor, t_high: 0.9, t_low: 0.5, top_chunks: 3, chunk_words: 300 }
+  # Big-model defaults: writers on gpt-oss-120b; the page reader and every checker (claim_checker, policy_guard,
+  # judge) on qwen3-32b, a different family. PULL_MODELS pulls these two (~85 GB). Smaller machines: override per
+  # role in .env (e.g. ROLE_INTAKE=gpt-oss-20b, ROLE_CLAIM_CHECKER=qwen-8b) and set PULL_MODELS to match.
+  intake:           { model: gpt-oss-120b, temperature: 0.2 }
+  planner:          { model: gpt-oss-120b, temperature: 0.2 }
+  idea_scout:       { model: gpt-oss-120b, temperature: 0.7 }
+  page_reader:      { model: qwen3-32b,    temperature: 0.0, checks: null }   # output is code-verified (quotes, names, prices must be on the page)
+  claim_extractor:  { model: gpt-oss-120b, temperature: 0.0 }
+  # Claim checker alternative: ROLE_CLAIM_CHECKER=minicheck-flan-t5 (MiniCheck in the app container; label bands
+  # t_high / t_low below, to be tuned on evals/labeled/claims.json -> evals/results/minicheck_thresholds.json).
+  claim_checker:    { model: qwen3-32b,    temperature: 0.0, escalate_to: null, checks: claim_extractor, t_high: 0.9, t_low: 0.5, top_chunks: 3, chunk_words: 300 }
   reranker:         { model: bge-reranker-v2-m3, temperature: 0.0 }   # app/services/rerank.py (not wired into search yet)
-  devils_advocate:  { model: qwen-8b,     temperature: 0.5 }
-  gate_explainer:   { model: gpt-oss-20b, temperature: 0.1 }
-  policy_guard:     { model: qwen-8b,     temperature: 0.0, policy_file: config/policy.md, checks: copywriter }
-  copywriter:       { model: gpt-oss-20b, temperature: 0.7 }
-  builder:          { model: gpt-oss-20b, temperature: 0.2 }
-  test_writer:      { model: qwen-8b,     temperature: 0.2 }
-  analyst:          { model: gpt-oss-20b, temperature: 0.2 }
-  coach:            { model: qwen-8b,     temperature: 0.3 }
-  judge:            { model: qwen-8b,     temperature: 0.0, checks: builder }   # evals only
+  devils_advocate:  { model: qwen3-32b,    temperature: 0.5 }
+  gate_explainer:   { model: gpt-oss-120b, temperature: 0.1 }
+  policy_guard:     { model: qwen3-32b,    temperature: 0.0, policy_file: config/policy.md, checks: copywriter }
+  copywriter:       { model: gpt-oss-120b, temperature: 0.7 }
+  builder:          { model: gpt-oss-120b, temperature: 0.2 }
+  test_writer:      { model: qwen3-32b,    temperature: 0.2 }
+  analyst:          { model: gpt-oss-120b, temperature: 0.2 }
+  coach:            { model: qwen3-32b,    temperature: 0.3 }
+  judge:            { model: qwen3-32b,    temperature: 0.0, checks: builder }   # evals only
 
 profiles:
   # Live 3-minute demo: tight caps, claim checking only on gate-feeding claims.
   demo-fast:
     caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000, demand_queries: 4, competitor_queries: 2, pricing_queries: 2 }
     check_scope: gate
-  # Slower, larger caps, checker escalates to gpt-oss-20b when Qwen fails validation.
+  # Slower, larger caps, every claim checked; the checker escalates to gpt-oss-120b when Qwen fails validation.
   quality:
     caps: { results_per_query: 8, max_queries: 6, max_pages: 12, page_chars: 12000, demand_queries: 8, competitor_queries: 3, pricing_queries: 3 }
     check_scope: all
     role_overrides:
-      claim_checker: { escalate_to: gpt-oss-20b }   # used only when claim_checker is an LLM (Qwen) checker
+      claim_checker: { escalate_to: gpt-oss-120b }
   # Optional: Policy Guard on gpt-oss-safeguard:20b (loaded one after another, not beside gpt-oss-20b).
   safeguard:
     caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000, demand_queries: 4, competitor_queries: 2, pricing_queries: 2 }
