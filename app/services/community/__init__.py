@@ -155,6 +155,37 @@ def hackernews(query: str, limit: int, run_id: Optional[str] = None, context: st
     return out
 
 
+def pullpush(query: str, limit: int, run_id: Optional[str] = None, context: str = "") -> list[CommunityPost]:
+    """Reddit posts and comments from the PullPush archive API (no key, no scraping of reddit.com).
+    The text, author and date come from the archive's copy of the Reddit post; the URL points to Reddit."""
+    pcfg = config()["providers"].get("pullpush", {})
+    out: list[CommunityPost] = []
+    for kind in pcfg.get("kinds", ["submission", "comment"]):
+        def fetch(kind: str = kind) -> list[CommunityPost]:
+            with _client() as c:
+                r = c.get(f"https://api.pullpush.io/reddit/search/{kind}/", params={"q": query, "size": limit, "sort_type": "score", "sort": "desc"})
+                r.raise_for_status()
+                posts = []
+                for h in r.json().get("data", []) or []:
+                    title = h.get("title") or h.get("link_title") or ""
+                    text = strip_html(h.get("selftext") or h.get("body") or "")
+                    if kind == "submission":
+                        text = (title + "\n" + text).strip()
+                    if not text or text in ("[removed]", "[deleted]") or not mentions(text + " " + title, query):
+                        continue
+                    link = h.get("permalink") or ""
+                    url = ("https://www.reddit.com" + link) if link.startswith("/") else (h.get("url") or "")
+                    if not url.startswith("https://www.reddit.com/"):
+                        continue
+                    posts.append(CommunityPost(
+                        source="reddit (PullPush archive)", url=url, author_handle_hash=hash_handle(h.get("author")),
+                        created_at=iso_date(h.get("created_utc")), text=text[:4000], score=int(h.get("score") or 0),
+                        thread_title=title))
+                return posts
+        out += _cached_call(run_id, "pullpush", query, f"{kind}|{query}|{limit}", fetch)
+    return out
+
+
 def stackexchange_sites(context: str) -> list[str]:
     """`always` sites (softwarerecs) plus every site whose words appear in the brief context; fallback otherwise."""
     pcfg = config()["providers"]["stackexchange"]
@@ -220,8 +251,8 @@ def reddit(query: str, limit: int, run_id: Optional[str] = None, context: str = 
     return _cached_call(run_id, "reddit", query, f"search|{query}|{limit}", fetch)
 
 
-PROVIDERS: dict[str, Callable[..., list[CommunityPost]]] = {"hackernews": hackernews, "stackexchange": stackexchange,
-                                                           "reddit": reddit}
+PROVIDERS: dict[str, Callable[..., list[CommunityPost]]] = {"pullpush": pullpush, "hackernews": hackernews,
+                                                           "stackexchange": stackexchange, "reddit": reddit}
 
 
 def search_community(problem_terms: list[str], audience: str, limit: int, run_id: Optional[str] = None,

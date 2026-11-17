@@ -52,6 +52,8 @@ def devils_advocate(run_id: str, result: gates.GateResult) -> DevilsAdvocate:
     try:
         return base.run(run_id, "devils_advocate", "devils_advocate", f"bull_bear_{result.gate}", DevilsAdvocate,
                         {"gate_facts": facts},
-                        instructions="Give the strongest bull case and bear case in 2 sentences each, using only these facts.")
+                        instructions="Give the strongest bull case and bear case in 2 sentences each, using only these facts. "
+                                     "Quote every number exactly as given (e.g. 1 direct competitor is not 'no direct "
+                                     "competitors') and never contradict a check's value.")
     except Exception as e:
         return DevilsAdvocate(bull_case="unavailable", bear_case=f"unavailable ({type(e).__name__})")

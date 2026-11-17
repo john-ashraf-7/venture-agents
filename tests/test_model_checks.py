@@ -40,11 +40,12 @@ def test_keywords_close_variants_pass():
 def test_keywords_off_brief_detected_and_fallback_uses_brief_phrases():
     bad = SearchTerms(problem="cash flow crisis", audience="small business owners", product_type="template pack",
                       synonyms=["accounting software", "late invoices"])
-    assert set(keywords.off_brief_terms(bad, BRIEF)) == {"cash flow crisis", "small business owners", "accounting software"}
+    # problem and synonyms are the model's words for the pain; only the buyer and product type are checked
+    assert set(keywords.off_brief_terms(bad, BRIEF)) == {"small business owners"}
     fixed, replaced = keywords.fallback(bad, BRIEF)
     assert keywords.off_brief_terms(fixed, BRIEF) == []
     assert fixed.audience == "freelance designers" and fixed.product_type == "template pack"
-    assert "late invoices" in fixed.synonyms and len(replaced) == 3
+    assert fixed.problem == "cash flow crisis" and "late invoices" in fixed.synonyms and replaced == ["small business owners"]
 
 
 def _plan_backend(terms_seq, calls):

@@ -67,11 +67,11 @@ class Brief(BaseModel):
 
 class SearchTerms(BaseModel):
     """Keywords only. Search queries are built from these in code (app/services/search/queries.py)."""
-    problem: str = Field(description="the buyer's problem in 2-5 plain words, e.g. 'late invoice payments'")
+    problem: str = Field(description="the buyer's pain in 2-5 plain words as they would say it, never the product, e.g. 'clients paying late'")
     audience: str = Field(description="the buyer in 1-3 words, e.g. 'freelance designers'")
     product_type: str = Field(description="what is sold in 1-3 words, e.g. 'invoice templates'")
     synonyms: list[str] = Field(default_factory=list, max_length=3,
-                                description="up to 3 other short ways buyers name the problem")
+                                description="up to 3 other short ways buyers describe that pain")
 
 
 class PlanEstimate(BaseModel):

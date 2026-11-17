@@ -1,6 +1,7 @@
 """Keyword check for the planner's SearchTerms (code, no model).
 
-Every keyword (problem, audience, product_type, synonyms) must come from the brief: each content word
+The buyer (audience) and product_type must come from the brief; problem and synonyms are the model's words for
+the buyer's pain. Each checked content word
 must appear in the brief or be a close variant of a brief word (same simple lemma, or fuzzy ratio
 >= 0.85). The planner gets one corrective retry; anything still off-brief is replaced by a noun phrase
 taken from the brief itself. Query templates (app/services/search/queries.py) are not touched here.
@@ -49,7 +50,9 @@ def off_brief(term: str, brief: Brief) -> bool:
 
 
 def off_brief_terms(terms: SearchTerms, brief: Brief) -> list[str]:
-    values = [terms.problem, terms.audience, terms.product_type] + list(terms.synonyms)
+    # problem and synonyms are the model's call (the buyer's pain in their own words, often not in the brief);
+    # the buyer and the product type must come from the brief
+    values = [terms.audience, terms.product_type]
     return [v for v in values if off_brief(v, brief)]
 
 
@@ -60,7 +63,7 @@ def check_message(brief: Brief):
         if not bad:
             return None
         return ("These search_terms use words that are not in the brief: " + ", ".join(repr(b) for b in bad)
-                + ". Use the brief's own words (or a plural/verb form of them) for problem, audience, product_type and synonyms.")
+                + ". Use the brief's own words (or a plural/verb form of them) for audience and product_type.")
     return _check
 
 
@@ -93,11 +96,10 @@ def fallback(terms: SearchTerms, brief: Brief) -> tuple[SearchTerms, list[str]]:
         replaced.append(value)
         return next((o for o in options if o), value)
 
-    problem = pick(terms.problem, sorted(idea_np, key=len, reverse=True) + market_np)
+    problem = terms.problem or next(iter(sorted(idea_np, key=len, reverse=True)), "")
     audience = pick(terms.audience, market_np + idea_np)
     product_type = pick(terms.product_type, type_np + idea_np)
-    synonyms = [s for s in terms.synonyms if not off_brief(s, brief)]
-    replaced += [s for s in terms.synonyms if s not in synonyms]
+    synonyms = list(terms.synonyms)
     for np_ in idea_np:
         if len(synonyms) >= len(terms.synonyms) or len(synonyms) >= 3:
             break

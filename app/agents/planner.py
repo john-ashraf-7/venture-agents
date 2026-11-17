@@ -60,8 +60,9 @@ def estimate(run_id: str, brief: Brief, lessons: list[str]) -> PlanEstimate:
                                  "(these are ASSUMPTIONS). Start from baseline_estimate. You may move a range by at "
                                  "most 50% and only if something in the brief justifies it; then say why in "
                                  "adjustment_reason (otherwise leave it null and keep the baseline). Fill search_terms with short keywords only (no years, no "
-                                 "full sentences, do not copy the idea text): the buyer's problem as they would say it, "
-                                 "the buyer, the product type, and up to 3 synonyms. Use words from the brief. "
+                                 "full sentences, do not copy the idea text). problem = the buyer's PAIN as they would say it, never the "
+                                 "product (e.g. 'clients paying late', not 'payment reminder templates'); synonyms = up to 3 other ways "
+                                 "buyers describe that pain; audience and product_type in the brief's own words. "
                                  "Code builds the search queries.",
                     check=keywords.check_message(brief))
     plan = clamp(plan, key, b)

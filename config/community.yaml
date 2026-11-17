@@ -10,6 +10,10 @@ per_query_limit: 8       # posts asked for per provider call
 max_posts: 10            # community pages added to Phase 1 per run
 
 providers:
+  pullpush:              # Reddit posts/comments via the PullPush archive API, no key (never fetches reddit.com)
+    enabled: true
+    budget: 6
+    kinds: [submission, comment]
   hackernews:            # Hacker News via Algolia, no key
     enabled: true
     budget: 6            # API calls per run

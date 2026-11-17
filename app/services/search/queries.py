@@ -31,7 +31,7 @@ PLAIN_BANNED = re.compile(r"\b(forum|forums|discussion|discussions)\b", re.I)
 
 
 def _clean(s: str) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"[\"'`]", "", s or "")).strip()
+    return re.sub(r"\s+", " ", re.sub(r"[\"'`/]", " ", s or "")).strip()
 
 
 def competitor_name(name: str) -> str:

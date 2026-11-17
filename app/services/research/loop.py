@@ -200,7 +200,11 @@ def run(run_id: str, brief: Brief, terms: SearchTerms, round1: list[tuple[str, s
         used["rounds"] += 1
         n = used["rounds"]
         if n == 1:
-            planned = round1[: b["searches"]]
+            planned = []
+            for pq, qq in round1:  # hyphen and plural variants of the same query waste searches
+                if not near_duplicate(qq, [x for _, x in planned], float(c.get("near_duplicate_jaccard", 0.8))):
+                    planned.append((pq, qq))
+            planned = planned[: b["searches"]]
             per_purpose = int(c.get("round1_pages_per_purpose", 3))
             dropped: list[dict[str, str]] = []
         else:
