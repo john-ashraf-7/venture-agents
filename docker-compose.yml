@@ -38,7 +38,7 @@ services:
         condition: service_healthy
     environment:
       OLLAMA_HOST: "http://ollama:11434"
-      PULL_MODELS: "${PULL_MODELS:-gpt-oss:20b qwen3:32b qwen2.5:7b nomic-embed-text}"
+      PULL_MODELS: "${PULL_MODELS:-gpt-oss:120b qwen3:32b nomic-embed-text}"
     entrypoint: ["/bin/sh", "-c", "for m in $$PULL_MODELS; do echo pulling $$m; ollama pull $$m || exit 1; done; echo models-ready"]
     restart: "no"
 
