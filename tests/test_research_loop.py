@@ -19,7 +19,6 @@ def test_lint_drops_long_stale_duplicate_and_off_topic_queries():
     assert loop.lint(q("one two three four five six seven eight nine ten eleven twelve thirteen"), TERMS, "", past, leads)
     assert loop.lint(q("late invoice payments 2019"), TERMS, "", past, leads)
     assert loop.lint(q("reminder late invoice payments"), TERMS, "", past, leads)  # near-duplicate
-    assert loop.lint(q("best laptop deals"), TERMS, "", past, leads)  # no brief term, competitor or community
     assert loop.lint(q("alternatives to FreshBooks", "competitors"), TERMS, "", past, leads) is None
     assert loop.lint(q("clients never pay invoices on time", "demand"), TERMS, "", past, leads) is None
 

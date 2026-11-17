@@ -303,7 +303,11 @@ def on_community_site(url: str, domains: list[str]) -> bool:
 
 
 def community_demand(quote: str, page: dict[str, Any], rule: dict[str, Any]) -> bool:
-    """A demand signal: a community site from the locked rule, a first-person quote, and a date on that quote."""
+    """Code pre-filter before the demand classifier. With `demand_judged_by: llm` in the locked rule (default), the
+    classifier alone decides whether a quote is demand: any site, no date required. The quote must still appear
+    word for word in the page text (checked for every claim), so nothing can be invented."""
+    if rule.get("demand_judged_by", "llm") == "llm":
+        return True
     if not on_community_site(page["url"], rule.get("community_domains", [])):
         return False
     if not FIRST_PERSON.search(quote or ""):

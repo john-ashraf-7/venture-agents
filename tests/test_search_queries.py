@@ -35,7 +35,7 @@ def test_second_pass_needs_a_short_competitor_name():
 
 
 def test_demand_counts_only_first_person_dated_quotes_on_community_sites():
-    rule = {"community_domains": ["reddit.com", "producthunt.com/discussions"]}
+    rule = {"community_domains": ["reddit.com", "producthunt.com/discussions"], "demand_judged_by": "strict"}
     page = {"url": "https://www.reddit.com/r/freelance/comments/1/x/",
             "text": "Posted 2026-09-14. I lose hours chasing late invoices",
             "extract": {"problem_statements": [{"quote": "I lose hours chasing late invoices", "date": "2026-09-14"}]}}

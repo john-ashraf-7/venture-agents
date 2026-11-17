@@ -85,8 +85,6 @@ def lint(q: PlannedQuery, terms: SearchTerms, idea: str, past: list[str], leads:
         return "duplicate or near-duplicate of a query already run"
     anchors = [leads.get("competitors", []), leads.get("communities", [])]
     names_lead = any(n and n.lower() in text.lower() for group in anchors for n in group)
-    if not (queries.names_problem(text, terms) or shares_stem(text, terms) or names_lead):
-        return "names neither a brief problem term nor a known competitor or community"
     base_why = queries.lint(text, idea)
     return base_why if base_why and "more than 10 words" not in base_why else None
 

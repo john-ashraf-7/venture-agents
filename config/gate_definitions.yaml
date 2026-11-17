@@ -12,6 +12,10 @@ desk_gate:
   # quote is a first-person problem statement with a date. Articles, galleries and vendor blogs never count.
   community_domains: [reddit.com, news.ycombinator.com, stackexchange.com, stackoverflow.com, superuser.com,
                       askubuntu.com, indiehackers.com, producthunt.com/discussions, quora.com, techcommunity.microsoft.com]
+  # Who decides whether a quote is demand: "llm" = the demand classifier judges any page (no site or date rule);
+  # "strict" = also require a community site, a first-person pronoun and a source date. Quotes must always
+  # appear word for word in the source text.
+  demand_judged_by: llm
   # Below this research coverage, weak demand means "not searchable", not "no demand": the gate says PARK, never STOP.
   coverage_min: { pages_read: 5, verifiable_sources: 1 }
   counts_only:
