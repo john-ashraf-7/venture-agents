@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from pydantic import BaseModel
 
@@ -20,14 +20,16 @@ def ctx(obj: Any) -> str:
 
 
 def run(run_id: Optional[str], agent: str, role: str, action: str, schema: type[T], context: dict[str, Any],
-        *, sources: Optional[list[str]] = None, instructions: str = "") -> T:
+        *, sources: Optional[list[str]] = None, instructions: str = "",
+        check: Optional[Callable[[T], Optional[str]]] = None, check_retries: int = 1) -> T:
     """Run one agent step. `context` holds typed artifacts only (never the founder's raw text)."""
     if run_id:
         events.emit(run_id, "step", f"{agent}: {action} ...", agent=agent)
     notes = knowledge.for_agent(agent)
     system = (prompt(agent) or prompt(role)) + knowledge.as_prompt(notes)
     user = (instructions + "\n\n" if instructions else "") + "\n\n".join(f"## {k}\n{ctx(v)}" for k, v in context.items())
-    out = llm.call(role, [{"role": "system", "content": system}, {"role": "user", "content": user}], schema, run_id=run_id)
+    out = llm.call(role, [{"role": "system", "content": system}, {"role": "user", "content": user}], schema, run_id=run_id,
+                   check=check, check_retries=check_retries)
     if run_id:
         last = cost.last_call(run_id)
         decision_log.append(run_id, agent, action, sources=sources or [], model=llm.model_name(role),

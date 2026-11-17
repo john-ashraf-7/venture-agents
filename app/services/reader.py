@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 from typing import Any, Optional
 
 import httpx
@@ -89,8 +90,16 @@ def looks_blocked(text: str) -> bool:
     return bool(BOT_WALL.search(text[:3000])) and len(words) < 400
 
 
+QUOTE_CHARS = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201b": "'", "\u2032": "'", "`": "'", "\u00b4": "'",
+                             "\u201c": '"', "\u201d": '"', "\u201f": '"', "\u2033": '"', "\u00ab": '"', "\u00bb": '"'})
+
+
 def _norm(s: str) -> str:
-    return re.sub(r"\W+", " ", (s or "").lower()).strip()
+    """Compare text, not typography: NFKC (ligatures, full-width forms), one style of quote mark, an
+    apostrophe inside a word dropped (don't = dont = don’t), then every non-word run to one space."""
+    s = unicodedata.normalize("NFKC", s or "").translate(QUOTE_CHARS).lower()
+    s = re.sub(r"(?<=\w)'(?=\w)", "", s)
+    return re.sub(r"\W+", " ", s).strip()
 
 
 def off_page_values(extract: PageExtract, text: str) -> list[str]:
@@ -99,15 +108,24 @@ def off_page_values(extract: PageExtract, text: str) -> list[str]:
     return [v for v in values if _norm(v) not in page]
 
 
-def keep_only_page_words(extract: PageExtract, text: str) -> PageExtract:
-    """Drop any quote, product name or price the model returned that is not on the page."""
+def keep_only_page_words(extract: PageExtract, text: str, *, run_id: Optional[str] = None, url: str = "") -> PageExtract:
+    """Drop any quote, product name or price the model returned that is not on the page.
+    Each drop is logged as `quote_not_found` in the run's decision log."""
     page = _norm(text)
     on_page = lambda v: bool(v) and len(_norm(v)) >= 4 and _norm(v) in page
+    dropped: list[tuple[str, str]] = [("quote", q.quote) for q in extract.problem_statements if not on_page(q.quote)]
     extract.problem_statements = [q for q in extract.problem_statements if on_page(q.quote)]
     if extract.price_text and not on_page(extract.price_text):
+        dropped.append(("price_text", extract.price_text))
         extract.price_text, extract.has_public_price = None, False
     if extract.product_name and not on_page(extract.product_name):
+        dropped.append(("product_name", extract.product_name))
         extract.product_name = None
+    if run_id:
+        from app.services import decision_log
+        for field_name, value in dropped:
+            decision_log.append(run_id, "page_reader", "quote_not_found", sources=[url] if url else [],
+                                model=None, field=field_name, value=value[:200])
     return extract
 
 
@@ -121,7 +139,7 @@ def read(url: str, text: str, run_id: Optional[str] = None) -> PageExtract:
         {"role": "system", "content": _prompt()},
         {"role": "user", "content": f"URL: {url}\n" + wrap(text)},
     ], PageExtract, run_id=run_id, check=lambda ex: _off_page_message(ex, text))
-    return keep_only_page_words(extract, text)
+    return keep_only_page_words(extract, text, run_id=run_id, url=url)
 
 
 def _off_page_message(extract: PageExtract, text: str) -> Optional[str]:

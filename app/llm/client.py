@@ -184,11 +184,12 @@ def _extract_json(text: str) -> str:
 
 # ----------------------------------------------------------------- call -------------------
 def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: Optional[str] = None,
-         use_cache: bool = True, max_retries: int = 2, check: Optional[Callable[[T], Optional[str]]] = None) -> T:
+         use_cache: bool = True, max_retries: int = 2, check: Optional[Callable[[T], Optional[str]]] = None,
+         check_retries: int = 1) -> T:
     """Resolve the role's model, request JSON matching `schema`, validate, retry, escalate, log.
 
     `check` returns an error message for a schema-valid reply that is still wrong (e.g. a quote that is not
-    on the page). The model gets one retry with that message, then the call escalates. If every model fails
+    on the page). The model gets `check_retries` retries with that message, then the call escalates. If every model fails
     the check, the last reply is returned and the caller's own code filter decides what to keep."""
     events.check_kill()
     spec = resolve(role)
@@ -211,7 +212,7 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
                         return obj
                 except ValidationError:
                     pass
-        for attempt in range(max_retries + 1):
+        for attempt in range(max(max_retries, check_retries) + 1):
             events.check_kill()
             t0 = time.time()
             backend = _BACKEND_OVERRIDE or _http_backend
@@ -237,7 +238,7 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
                 _cache_put(key, {"content": obj.model_dump_json(), "model": model.name})
                 return obj
             checked_out, last_err = obj, problem
-            if attempt >= 1:  # one corrective retry per model, then escalate
+            if attempt >= check_retries:  # corrective retries per model, then escalate
                 break
             msgs = msgs + [{"role": "assistant", "content": content[:4000]},
                            {"role": "user", "content": problem + "\nReturn corrected JSON only."}]

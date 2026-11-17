@@ -23,6 +23,12 @@ rules:
   - id: countdown_urgency
     action: block
     pattern: '\b(countdown timer|fake urgency|only \d+ (left|spots|seats) (left )?(today|now)?|offer ends (tonight|in \d+))'
+  - id: false_deadline
+    action: block
+    pattern: '\b(price (goes|will go|is going) up|offer ends|sale ends|deal ends|expires?)\s+(in \d+\s*(min\w*|hours?|hrs?)|tonight|at midnight)\b'
+  - id: income_outcome
+    action: block
+    pattern: '\b(double|triple|10x)\s+(their|your|the)\s+(income|revenue|earnings|sales)\b|\b(believe|think|feel)\b.{0,30}\b(earn|make)\s+\$?\d'
   - id: fake_signups
     action: block
     pattern: '\b(fake|invent|fabricate|make up|made-up|simulate)\b.{0,30}\b(sign[- ]?ups?|users|customers?|waitlist|subscribers|sales|quotes?|reviews?|testimonials?|endorsements?|statistics|stats|case stud\w*)\b'
@@ -38,6 +44,9 @@ rules:
   - id: review_word
     action: flag
     pattern: '\b(reviews?|testimonials?|ratings?|stars?|rezension\w*|bewertung\w*|avis|t[ée]moignages?|reseñas?|opiniones|testimonios|تقييم\w*|مراجع\w*|شهاد\w*)\b'
+  - id: urgency_words
+    action: flag
+    pattern: '\b(last chance|limited time|hurry|only \d+ (left|remaining)|\d+\s*(hours?|minutes?) left|ends? (tonight|today|soon))\b'
   - id: social_proof_numbers
     action: flag
     pattern: '\b(\d[\d,]*\+?\s+(happy|satisfied|paying)\s+(customers|users|clients|founders))\b'
