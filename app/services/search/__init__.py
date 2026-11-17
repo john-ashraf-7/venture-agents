@@ -78,6 +78,9 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
             return {"query": query, "results": fx["results"][:n], "origin": "fixture",
                     "note": "fixture search results (evals/fixtures/search)", "engines": [], "unresponsive": []}
         return {"query": query, "results": [], "origin": "none", "note": "no fixture", "engines": [], "unresponsive": []}
+    from app.services.search import tavily  # OPTIONAL provider, off unless SEARCH_PROVIDER=tavily and a key is set
+    if tavily.enabled():
+        return tavily.search(query, n, purpose)
     cfg = load_yaml("search.yaml")
     engines = cfg["routes"].get(purpose, cfg["routes"]["competitors"])
     cache = _cache_path(query + "|" + ",".join(engines))
