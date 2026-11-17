@@ -1,0 +1,27 @@
+{
+ "run_id": "run_20261117T182431_227d",
+ "cost_usd": 0.0,
+ "cost_note": "Local open-weight models: $0.00 API cost. Electricity not included.",
+ "ref_cost_usd": 0.000927,
+ "ref_cost_note": "ASSUMPTION: same tokens at hosted open-model reference prices (config/models.yaml).",
+ "llm_calls": 22,
+ "cache_hits": 5,
+ "tokens_in": 16116,
+ "tokens_out": 2451,
+ "llm_seconds": 39.5,
+ "wall_clock_s": 65.5,
+ "by_model": {
+  "gpt-oss:20b": {
+   "calls": 8,
+   "tokens_in": 3546,
+   "tokens_out": 1275,
+   "ref_cost_usd": 0.000432
+  },
+  "qwen2.5:7b": {
+   "calls": 14,
+   "tokens_in": 12570,
+   "tokens_out": 1176,
+   "ref_cost_usd": 0.0004950000000000001
+  }
+ }
+}
