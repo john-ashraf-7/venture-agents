@@ -1,0 +1,741 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T210306_3d08",
+  "status": "awaiting_founder",
+  "seconds": 49.5,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "payment-reminder email templates \"I wish there was\"",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment-reminder email templates frustrated OR annoying OR \"hate\"",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment reminder \"I wish there was\"",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment reminder frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment-reminder email templates template pack",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack for payment-reminder email templates 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "freelance designer payment reminder email template examples",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to invoicing checklist for new writers",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:quora.com freelance payment reminder template advice",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to payment reminder email templates for new freelancers",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "freelance designers community payment reminder template feedback",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "freelance writer payment reminder email template examples",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 21,
+  "pages_read": 14,
+  "pages_failed": [
+   {
+    "url": "https://www.quora.com/How-do-I-write-a-payment-reminder",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-is-the-best-way-to-write-a-polite-reminder-email-about-overdue-payments-without-causing-offense",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/How-do-you-write-an-unpaid-invoice-reminder-email",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-is-a-way-to-remind-someone-for-payment-of-service",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-is-the-sample-of-a-reminder-email-to-the-client",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-are-the-best-reminder-email-subject-lines",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.softwaresuggest.com/blog/outstanding-payment-reminder-email-samples": 6000,
+   "https://www.zoho.com/cpaas/articles/payment-reminder-email-template-examples.html": 6000,
+   "https://www.scalesuite.com.au/resources/payment-reminder-email-templates": 6000,
+   "https://www.zoom.com/en/blog/invoice-for-freelance-writing": 6000,
+   "https://invoicemonk.com/en/blog/5-essential-elements-of-an-invoice-a-guide-for-small-business-owners": 6000,
+   "https://turbotax.intuit.com/tax-tips/self-employment-taxes/tax-tips-for-freelance-writers-and-self-published-authors/L1v0lGVru": 6000,
+   "https://www.indiehackers.com/post/how-to-set-up-automated-invoice-reminders-as-a-freelancer-step-by-step-YYBO3zWs1sPDgrJHr04Q": 3369,
+   "https://www.indiehackers.com/post/validating-a-simple-automated-reminder-tool-for-late-freelance-invoices-1188f8d732": 6000,
+   "https://nudgebilling.com/invoice-reminder-email-templates": 3429,
+   "https://invoicemonk.com/en/blog/client-communication-templates": 6000,
+   "https://onigiri.one/blog/friendly-reminder-email-example": 6000,
+   "https://www.producthunt.com/products/invoice-payment-reminder/makers": 756,
+   "https://www.indiehackers.com/post/i-built-a-notion-template-specifically-for-freelance-graphic-designers-heres-why-gMyQMTqC29rhOtAs1RVx": 1102,
+   "https://www.indiehackers.com/post/i-built-a-notion-workspace-for-freelance-designers-to-stay-organized-WzVelcdw1Z9N8nZMMnoh": 1286
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 18,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://news.ycombinator.com/item?id=47082761",
+    "reason": "The author describes their own problem, not the brief's specific problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=42609007",
+    "reason": "The author does not describe their own problem and the quote does not mention payment reminders."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=26439591",
+    "reason": "The quote does not describe a problem the author has, but rather a situation they are in. It also does not mention payment reminders or invoicing, which are the brief's problems."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=10083238",
+    "reason": "The post is about tax deficiencies, not payment-reminder emails or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=46184985",
+    "reason": "The quote is seeking feedback on features, not describing a problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=7139137",
+    "reason": "The quote does not describe a problem and is not about payment-reminder email templates or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=2043130",
+    "reason": "The quote does not describe a problem and is unrelated to the brief's problem about payment-reminder email templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=955882",
+    "reason": "The quote does not describe a personal problem and is not about payment-reminder email templates or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=2558662",
+    "reason": "The quote is about setting up systems, not payment reminders or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=5819702",
+    "reason": "The quote does not describe a problem and is not related to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=8543248",
+    "reason": "The quote is about design work and does not describe a problem related to payment-reminder email templates or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=41748040",
+    "reason": "The quote does not describe a personal problem and is about an AI tool, not payment-reminder email templates or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=17259796",
+    "reason": "The quote is about the author's experience and does not describe a problem or relate to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=19317550",
+    "reason": "The quote does not describe a problem and is not about payment-reminder email templates or invoicing."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ },
+ {
+  "brief": "crowded_todo_app",
+  "run_id": "run_20261117T210355_8a22",
+  "status": "awaiting_founder",
+  "seconds": 60.7,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "generic to-do list \"I wish there was\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "generic to-do list frustrated OR annoying OR \"hate\"",
+    "results": 3,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack for generic to-do list 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "To-Do List Templates pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to To-Do List Templates for productivity",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "quora \"generic to-do list\" productivity tips",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 16,
+  "pages_read": 12,
+  "pages_failed": [
+   {
+    "url": "https://www.quora.com/Which-system-to-do-list-vs-done-list-is-more-productive-and-actually-helps-accomplish-goals-and-tasks",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-are-the-best-ways-to-stay-productive",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/How-do-you-make-effective-lists-of-things-to-do-at-work",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://onplanners.com/templates/to-do-list": 5198,
+   "https://calendarkart.com/to-do-list-template": 6000,
+   "https://www.goskills.com/excel/resources/free-excel-templates": 6000,
+   "https://www.101planners.com/checklist-template-word-excel": 6000,
+   "https://www.todoist.com": 4073,
+   "https://2sync.com/blog/best-notion-to-do-list-templates": 6000,
+   "https://freetodolist.com": 5546,
+   "https://excel.cloud.microsoft/create/en/project-planning-to-do-lists": 4415,
+   "https://conceptboard.com/blog/to-do-list-template": 3932,
+   "https://gretchenrubin.com/articles/alternatives-to-to-do-list": 3760,
+   "https://girlknowstech.com/to-do-lists-apps": 6000,
+   "https://www.wrike.com/blog/to-do-list-template": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://news.ycombinator.com/item?id=33827923",
+    "reason": "The quote is about the history of printing and computing technologies, not a to-do list template pack."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=22456710",
+    "reason": "The quote does not describe a personal problem and is unrelated to to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=14155483",
+    "reason": "The quote does not describe a problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=40589828",
+    "reason": "The quote does not describe a problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=29999436",
+    "reason": "The quote does not describe a personal problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=9037774",
+    "reason": "The quote does not describe a personal problem and is not related to the brief's problem about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=7826978",
+    "reason": "The author is using a generic todo list, not specifically a to-do list template pack."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=4615038",
+    "reason": "The quote does not describe a problem and is not about the brief's problem."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T210456_ae84",
+  "status": "awaiting_founder",
+  "seconds": 30.3,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "track grants donor reports \"I wish there was\"",
+    "results": 3,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "track grants donor reports frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "grant tracking \"I wish there was\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "grant tracking frustrated OR annoying OR \"hate\"",
+    "results": 3,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "track grants donor reports template pack",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack for track grants donor reports 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 12,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://www.quora.com/What-is-the-nonprofit-accounting-treatment-for-grants-vs-donations",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.mangoapps.com/templates/mini_apps/donations-grants": 6000,
+   "https://humanprose.org/packs/ngo-grants": 6000,
+   "https://monday.com/templates/template/10028953/donors-management": 2021,
+   "https://www.getalignmint.org/blog/grant-tracking-spreadsheet": 6000,
+   "https://www.reddit.com/r/nonprofit/comments/1w2gc7m/do_we_really_need_to_track_every_expense_against": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/1w2gc7m/do_we_really_need_to_track_every_expense_against",
+    "reason": "The problem is about donors mislabeling gifts as grants, not tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=50125529",
+    "reason": "The quote describes a personal finance issue, not a problem for NGOs tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=44511623",
+    "reason": "The quote does not describe a personal problem and is unrelated to tracking grants or donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=42961123",
+    "reason": "The quote does not describe a personal problem and is unrelated to the brief's problem of tracking grants and donor reports for small NGOs."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=39781760",
+    "reason": "The quote is about app permissions, not tracking grants or donor reports for NGOs."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=37630580",
+    "reason": "The quote does not describe a problem and is unrelated to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=27845536",
+    "reason": "The quote is about tracking iOS impressions and is not related to the brief's problem of tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=46176036",
+    "reason": "The quote does not describe a problem and is unrelated to the brief's problem of tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=16067744",
+    "reason": "The quote does not describe a personal problem and is unrelated to tracking grants or donor reports."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ },
+ {
+  "brief": "etsy_planner",
+  "run_id": "run_20261117T210526_9197",
+  "status": "awaiting_founder",
+  "seconds": 82.7,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "wedding planning templates \"I wish there was\"",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planning templates frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planner PDFs \"I wish there was\"",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planner PDFs frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planning templates PDF",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best PDF templates for wedding planning 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planner PDF alternatives to Canva",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planning templates reviews site:reddit.com",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "wedding planner PDF community weddingplanning.com",
+    "results": 4,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 17,
+  "pages_read": 7,
+  "pages_failed": [
+   {
+    "url": "https://www.producthunt.com/products/wedding-planner-c",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-are-the-features-that-any-online-wedding-planning-website-should-include",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.producthunt.com/products/wedding-planning-assistant",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.templateroller.com/tags/1553-wedding-planning-templates": 931,
+   "https://www.zola.com/expert-advice/your-ultimate-wedding-planning-checklist": 6000,
+   "https://onplanners.com/wedding-planner-templates": 5784,
+   "https://planifypro.com/blog/templates/canva-planner-templates": 6000,
+   "https://www.thatstheone.com/planners/blog/the-canva-alternative": 6000,
+   "https://vowinvites.com/blog/canva-vs-the-knot-wedding-invitations": 6000,
+   "https://www.seatcanvas.app/alternative": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://news.ycombinator.com/item?id=39842238",
+    "reason": "The quote does not describe a personal problem and is not about wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=11183927",
+    "reason": "The quote does not describe a personal problem and is not about wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=46487947",
+    "reason": "The quote does not describe a problem and is not about wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=4220445",
+    "reason": "The quote does not describe a problem and is not about wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=38853535",
+    "reason": "The quote does not describe a personal problem and does not address wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=34881485",
+    "reason": "The quote does not describe a personal problem and is not about wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=18774828",
+    "reason": "The quote does not describe a personal problem and is not about wedding planning templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=48976579",
+    "reason": "The quote does not describe a problem and is not about wedding planning templates."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ },
+ {
+  "brief": "arabic_tutoring_guide",
+  "run_id": "run_20261117T210649_f9b0",
+  "status": "awaiting_founder",
+  "seconds": 53.9,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "online Arabic tutoring \"I wish there was\"",
+    "results": 3,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "online Arabic tutoring frustrated OR annoying OR \"hate\"",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "lesson plan templates \"I wish there was\"",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "lesson plan templates frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "online Arabic tutoring guide templates",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best guide templates for online Arabic tutoring 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 12,
+  "pages_read": 3,
+  "pages_failed": [
+   {
+    "url": "https://www.pinterest.com/ideas/online-arabic-classes-schedule/909025793435",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://thearabiclanguagealfshy.quora.com/I-have-been-learning-Arabic-with-online-teacher-for-6-months-and-now-I-would-like-to-learn-the-Emiratis-Arabic-Is-it-a",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/I-hate-Arabic-class-but-my-mums-are-forcing-me-to-learn-Arabic-I-hate-it-because-I-have-other-things-at-school-How-do-I-get-out-of-learning-Arabic",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/Where-can-you-download-free-lesson-plan-templates",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-are-examples-of-lesson-plans",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://cseducators.stackexchange.com/questions/2757/lesson-plan-for-teaching-java-graphics",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.italki.com/en/teacher/3499285": 635,
+   "https://arabify.org/best-arabic-apps": 6000,
+   "https://www.classcentral.com/report/top-arabic-learning-apps": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://news.ycombinator.com/item?id=41710507",
+    "reason": "The quote is about validation and regression testing, not a personal problem or online Arabic tutoring."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=39386058",
+    "reason": "The quote does not describe a problem and is not about online Arabic tutoring."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=20037339",
+    "reason": "The post describes a personal goal unrelated to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=888205",
+    "reason": "The quote does not describe a personal problem and is unrelated to online Arabic tutoring."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=5809542",
+    "reason": "The quote does not describe a personal problem and is not about online Arabic tutoring."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=48889600",
+    "reason": "The quote does not describe a personal problem and is not about online Arabic tutoring."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ }
+]

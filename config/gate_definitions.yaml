@@ -1,7 +1,7 @@
 # Desk-evidence gate (end of Phase 1). These defaults are copied into a run's gate rule at
 # intake, shown to the founder, then LOCKED (sha256 + timestamp) before any research runs.
 desk_gate:
-  demand_signals_min: 3
+  demand_signals_min: 1   # lowered from 3 on 2026-11-17 (founder decision); committed before the runs that use it
   paying_competitors_min: 1
   direct_competitors_max: 4
   blocking_compliance_flags_max: 0
