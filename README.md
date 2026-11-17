@@ -15,6 +15,7 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 - No GPU: `PULL_MODELS="qwen3:4b nomic-embed-text" docker compose -f docker-compose.yml -f docker-compose.cpu.yml up` and set `ROLE_*` overrides in `.env` (slow).
 - Smoke tests (no GPU needed, STUBBED LLM): `docker compose run --rm --no-deps app python -m pytest -q`
 - Headless timed run: `docker compose exec app python -m app.cli run --brief evals/briefs/invoice_templates.json`
+- Optional: put your own free Tavily key in `.env` (`TAVILY_API_KEY=...`, see `.env.example`) to use Tavily search; without it the app uses self-hosted SearXNG and needs no key.
 
 ## What works and what is mocked
 
@@ -23,6 +24,7 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 | Intake (parse brief, ask for missing info, block excluded product types) | **Working** | `app/agents/intake.py`, `app/services/guard.py` |
 | Desk-gate rule locked (sha256 + timestamp) before research | **Working** | `app/gates.py` `lock_rule` |
 | Capped web search (self-hosted SearXNG) with on-disk cache fallback | **Working** | labeled "cached search from <time>" when the live search fails; queries built in code from templates; failed pages replaced from a 12-URL pool; search snippets used as PARTIAL, never-counted evidence |
+| Optional Tavily search (used only with your own free `TAVILY_API_KEY`) | **Working** (optional) | off without a key; per-query fallback to SearXNG on error or no credits, reason logged |
 | Isolated page reader (no tools, structured fields only) | **Working** | `app/services/reader.py`; quotes, names and prices not found on the page are dropped in code; bot-check pages are skipped |
 | Claim extraction + code quote check + cross-family Claim Checker + Evidence Ledger | **Working** | unsupported claims rewritten as ASSUMPTION, never deleted |
 | Idea variants, theory of value, competitor table, compliance quick check, Mom Test script | **Working** | |
@@ -64,7 +66,8 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 
 **The committed demo run (`outputs/`) used the fallback:** gpt-oss:20b for the writer roles, `qwen2.5:7b` for every checker role (`ROLE_<ROLE>=qwen25-7b` in `.env`), and no embedding model, so lessons relevance used the built-in keyword-overlap fallback. Ollama ran natively on the host and only SearXNG ran in Docker. The `decision_log.json` `model` field shows the exact tag of every call.
 
-- Everything is free and local: Ollama serves the models, SearXNG is self-hosted search, storage is a SQLite file in `data/`. No API keys, no paid services, no accounts.
+- Everything is free and local by default: Ollama serves the models, SearXNG is self-hosted search, storage is a SQLite file in `data/`. No API keys, no paid services and no accounts are required.
+- Optional search provider: **Tavily** (hosted search API for agents). `SEARCH_PROVIDER=auto` (default) uses it only when you add your own key (`TAVILY_API_KEY` in `.env`; free tier about 1,000 credits a month, 1 credit per search; 6-8 searches per Phase 1 run in our tests). With no key, or when Tavily errors or runs out of credits, that query falls back to SearXNG and the decision log `note` says why. `SEARCH_PROVIDER=searxng` never calls Tavily. Demand searches are limited to the gate's community sites. Comparison on three briefs: `evals/results/search_tavily.json`.
 - Search: self-hosted SearXNG (`searxng/settings.yml`) with engines routed per purpose in `config/search.yaml` (demand: hackernews, duckduckgo, bing, mojeek, Stack Exchange sites; competitors and pricing: duckduckgo, bing, startpage, mojeek, qwant, google cse). Responses are cached for 24 h per (query, engines) and live queries are sent one at a time, 1 s apart, to avoid rate-limit suspensions. Results are deduped, capped at 2 per domain, and template galleries in `config/search_filters.yaml` are moved to the end. From a single home IP some engines still refuse (CAPTCHA or suspension); every run logs which engines answered.
 - Profiles: `PROFILE=demo-fast` (default: 5 results/query, 3 queries, 5 pages, checks only gate claims), `PROFILE=quality` (larger caps, claim checker escalates to gpt-oss:20b on failure), `PROFILE=safeguard`. Per-role override: `ROLE_<ROLE>=<model-key>` (e.g. `ROLE_CLAIM_CHECKER=gpt-oss-20b`; the app warns when a checker shares the writer's family).
 - VRAM: estimated ~20 GB for gpt-oss:20b + qwen3:8b + embeddings with q8_0 KV cache. Measured peak VRAM during Phase 1 runs on an RTX 3090 (gpt-oss:20b + qwen2.5:7b): **19.6-20.1 GB** (whole-GPU `nvidia-smi`, including ~1.5 GB used by the desktop; recorded in `outputs/runs/<run>/timing.json`).
