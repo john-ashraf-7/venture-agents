@@ -2,8 +2,11 @@
 
 Layer 1: deterministic regex rules (config/policy_rules.yaml). Obvious cases are blocked outright;
          others are flagged.
-Layer 2: the policy_guard role (a different model family from the drafter) reads config/policy.md
-         and decides on flagged text only.
+Layer 2: the policy_guard role (a different model family from the drafter).
+         - an LLM guard (Qwen) reads config/policy.md and decides on flagged text only;
+         - a Granite Guardian guard (family granite-guardian) checks every text that layer 1 did not
+           block, one criterion of config/policy_criteria.yaml at a time, stopping at the first "yes"
+           (yes = risk present). Long texts are checked in chunks (~8K context).
 Runs on founder inputs, every final artifact shown/exported, and every Outbox item.
 """
 from __future__ import annotations
@@ -68,10 +71,54 @@ def excluded_type(text: str) -> Optional[str]:
     return None
 
 
+GRANITE_FAMILY = "granite-guardian"
+CHUNK_CHARS = 6000  # ~1.5K tokens of text per call; criterion + template fit well inside 8K context
+YES = re.compile(r"\b(yes|no)\b", re.I)
+
+
+@lru_cache(maxsize=1)
+def _criteria() -> list[tuple[str, str]]:
+    return [(c["id"], c["text"]) for c in load_yaml("policy_criteria.yaml").get("criteria", [])]
+
+
+def _chunks(text: str, size: int = CHUNK_CHARS, overlap: int = 300) -> list[str]:
+    if len(text) <= size:
+        return [text]
+    return [text[i:i + size] for i in range(0, len(text) - overlap, size - overlap)]
+
+
+def granite_answer(reply: str) -> Optional[bool]:
+    """'yes' -> True (risk present), 'no' -> False; the last yes/no word wins (after any reasoning)."""
+    words = YES.findall(re.sub(r"<think>.*?</think>", " ", reply or "", flags=re.S))
+    return words[-1].lower() == "yes" if words else None
+
+
+def granite_check(text: str, *, run_id: Optional[str] = None) -> tuple[bool, str, str]:
+    """Return (risk_found, criterion_id, reason). Fails closed on an unreadable answer."""
+    for cid, criterion in _criteria():
+        for i, part in enumerate(_chunks(text)):
+            reply = llm.chat_text("policy_guard", [{"role": "system", "content": criterion},
+                                                   {"role": "user", "content": part}], run_id=run_id)
+            ans = granite_answer(reply)
+            if ans is None:
+                return True, cid, f"Guard answer unreadable ({reply[:60]!r}); failing closed on criterion {cid}."
+            if ans:
+                where = f" (part {i + 1})" if len(text) > CHUNK_CHARS else ""
+                return True, cid, f"Granite Guardian: criterion {cid} met{where}: {criterion}"
+    return False, "", "Granite Guardian: no criterion met."
+
+
 def check(text: str, *, run_id: Optional[str] = None, context: str = "founder_input", agent: str = "policy_guard") -> GuardResult:
     blocked, flagged = layer1(text)
+    granite = llm.family_of("policy_guard") == GRANITE_FAMILY
     if blocked:
         res = GuardResult(False, "rules", blocked, f"Blocked by rule(s) {', '.join(blocked)}: this asks for something the system must never do.")
+    elif granite:
+        try:
+            risk, cid, reason = granite_check(text, run_id=run_id)
+            res = GuardResult(not risk, "model", flagged + ([f"criterion:{cid}"] if cid else []), reason)
+        except Exception as e:  # fail closed
+            res = GuardResult(False, "model", flagged, f"Policy guard unavailable ({type(e).__name__}); failing closed.")
     elif flagged:
         policy = (CONFIG_DIR / "policy.md").read_text(encoding="utf-8")
         try:
@@ -85,7 +132,7 @@ def check(text: str, *, run_id: Optional[str] = None, context: str = "founder_in
             res = GuardResult(False, "model", flagged, f"Policy guard unavailable ({type(e).__name__}); failing closed.")
     else:
         res = GuardResult(True, "none")
-    if run_id and (not res.allowed or res.layer == "model"):
+    if run_id and (not res.allowed or (res.layer == "model" and flagged)):
         decision_log.append(run_id, agent, "policy_refusal" if not res.allowed else "policy_allow_after_review",
                             model=llm.model_name("policy_guard") if res.layer == "model" else None,
                             context=context, rule_ids=res.rule_ids, reason=res.reason, excerpt=text[:200])

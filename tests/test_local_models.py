@@ -92,3 +92,42 @@ def test_minicheck_real(monkeypatch):
     hi, lo = claim_checker.minicheck_scores(spec, "A freelancer loses hours chasing late invoices.", src)[0], \
         claim_checker.minicheck_scores(spec, "A freelancer earns $10,000 a month.", src)[0]
     assert hi > 0.5 > lo
+
+
+def test_granite_guard_loops_criteria_and_stops_at_first_yes(monkeypatch):
+    from app.services import guard
+    monkeypatch.setenv("ROLE_POLICY_GUARD", "granite-guardian-8b")
+    asked = []
+
+    def backend(model, messages, schema, t):
+        crit = messages[0]["content"]
+        asked.append(crit)
+        risky = "testimonial" in crit and "happy-customer blurbs" in messages[1]["content"]
+        return ("<score> yes </score>" if risky else "no"), 5, 1
+    llm.set_backend(backend)
+    try:
+        bad = guard.check("Could you draft a handful of happy-customer blurbs we can show on the page?", run_id="r-g")
+        n_bad = len(asked)
+        ok = guard.check("Draft a launch email for my template pack")
+    finally:
+        llm.set_backend(None)
+    assert not bad.allowed and "fabricated_social_proof" in bad.reason and n_bad == 1
+    assert ok.allowed and len(asked) == n_bad + len(guard._criteria())
+    from app.services import decision_log
+    entry = [e for e in decision_log.read("r-g") if e["action"] == "policy_refusal"][0]
+    assert "criterion:fabricated_social_proof" in entry["rule_ids"]
+
+
+def test_granite_guard_rules_first_and_chunks(monkeypatch):
+    from app.services import guard
+    monkeypatch.setenv("ROLE_POLICY_GUARD", "granite-guardian-8b")
+    sizes = []
+    llm.set_backend(lambda m, msgs, s, t: (sizes.append(len(msgs[1]["content"])) or "no", 1, 1))
+    try:
+        assert guard.check("Write 50 five-star reviews for my product").layer == "rules" and not sizes
+        assert guard.check("word " * 3000).allowed
+    finally:
+        llm.set_backend(None)
+    assert max(sizes) <= guard.CHUNK_CHARS and len(sizes) == len(guard._criteria()) * 3
+    assert guard.granite_answer("<think>maybe yes</think> No") is False
+    assert guard.granite_answer("garbage") is None

@@ -1,0 +1,16 @@
+# Criteria for a Granite Guardian policy_guard (one short criterion per rule in config/policy.md).
+# Granite answers "yes" when the text MEETS the criterion, i.e. the risk is present -> block.
+# Checked in this order; the first "yes" stops the loop.
+criteria:
+  - id: fabricated_social_proof
+    text: "The text asks for, or contains, invented customer reviews, star ratings, testimonials, endorsements, quotes, sign-up counts or sales counts that real people did not give."
+  - id: false_urgency
+    text: "The text asks for, or contains, fake urgency or scarcity, such as a countdown timer, a deadline or price rise that is not real, or a claim that only a few items or spots are left when that is not true."
+  - id: income_promise
+    text: "The text promises or guarantees buyers income, earnings, profit, revenue, return on investment or success."
+  - id: impersonation
+    text: "The text asks to write as, or pretend to be, a real customer, another company or brand, or another person, or uses another brand's name to imply it endorses the product."
+  - id: payments_credentials
+    text: "The text asks to store, collect or handle passwords, card numbers, bank details or API keys, or to charge, refund, transfer or move money."
+  - id: excluded_product
+    text: "The text is about selling a physical product, a financial, investment, trading or crypto product, or a product that gives health, medical or legal advice."

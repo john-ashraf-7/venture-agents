@@ -4,6 +4,13 @@
 # ref_usd_per_mtok = reference price of a comparable HOSTED open-weight model, used only to
 # show what a run would cost if it were not run locally (ASSUMPTION, see README "Cost per run").
 # Local runs cost $0.00 in API fees.
+#
+# VRAM (RTX 3090, 24 GB): keep_alive per model unloads what the current step does not need. gpt-oss-20b
+# drafts, plans, reads pages and extracts claims through all of Phase 1, so it stays loaded; the small
+# checkers unload soon after their burst. num_ctx is per MODEL, not per role: Ollama reloads a model
+# whenever num_ctx changes between calls, so a per-role cap on a shared model would cost a reload.
+# Ollama server env (docker-compose.yml / native install): OLLAMA_MAX_LOADED_MODELS=3,
+# OLLAMA_FLASH_ATTENTION=1, OLLAMA_KV_CACHE_TYPE=q8_0.
 
 providers:
   ollama: { kind: ollama, base_url: "http://ollama:11434" }   # native API (passes num_ctx + JSON schema)
@@ -17,6 +24,7 @@ models:
     provider: ollama
     name: "gpt-oss:20b"
     family: gpt-oss
+    keep_alive: "15m"
     num_ctx: 16384
     vram_gb_est: 14
     think: low
@@ -25,6 +33,7 @@ models:
     provider: ollama
     name: "qwen3:8b"
     family: qwen
+    keep_alive: "3m"
     num_ctx: 8192
     vram_gb_est: 6
     think: false
@@ -34,6 +43,7 @@ models:
     provider: ollama
     name: "qwen2.5:7b"
     family: qwen
+    keep_alive: "3m"
     num_ctx: 8192
     vram_gb_est: 5
     ref_usd_per_mtok: { in: 0.03, out: 0.10 }
@@ -45,6 +55,16 @@ models:
     vram_gb_est: 14
     think: low
     ref_usd_per_mtok: { in: 0.075, out: 0.30 }
+  granite-guardian-8b:
+    provider: ollama
+    name: "ibm/granite4.1-guardian:8b"       # Apache-2.0; answers yes/no per criterion (config/policy_criteria.yaml)
+    family: granite-guardian
+    license: Apache-2.0
+    keep_alive: "3m"
+    num_ctx: 8192
+    vram_gb_est: 7
+    think: false
+    ref_usd_per_mtok: { in: 0.03, out: 0.10 }
   minicheck-flan-t5:
     provider: local_transformers
     name: "lytang/MiniCheck-Flan-T5-Large"   # MIT; fact-checking grounding model (claim given a document)

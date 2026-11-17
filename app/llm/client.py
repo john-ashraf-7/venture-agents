@@ -125,6 +125,8 @@ def _http_backend(model: ModelSpec, messages: list[dict[str, str]], schema: dict
         }
         if model.think is not None:
             payload["think"] = model.think
+        if model.extra.get("keep_alive") is not None:  # unload models the next steps do not need
+            payload["keep_alive"] = model.extra["keep_alive"]
         r = httpx.post(f"{model.base_url}/api/chat", json=payload, timeout=timeout)
         r.raise_for_status()
         body = r.json()
@@ -253,6 +255,36 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
     if checked_out is not None:
         return checked_out
     raise LLMError(role, candidates[-1].name, last_err or "unknown failure")
+
+
+def chat_text(role: str, messages: list[dict[str, str]], *, run_id: Optional[str] = None,
+              num_predict: int = 64) -> str:
+    """Plain-text chat (no JSON schema) for classifier models whose output is a fixed word (e.g. yes/no).
+    Ollama provider only; the stubbed test backend is used when installed."""
+    events.check_kill()
+    spec = resolve(role)
+    model = spec.model
+    t0 = time.time()
+    if _BACKEND_OVERRIDE:
+        content, tin, tout = _BACKEND_OVERRIDE(model, messages, {"title": "text"}, spec.temperature)
+    else:
+        payload: dict[str, Any] = {"model": model.name, "messages": messages, "stream": False,
+                                   "options": {"temperature": spec.temperature, "num_ctx": model.num_ctx,
+                                               "num_predict": num_predict}}
+        if model.think is not None:
+            payload["think"] = model.think
+        if model.extra.get("keep_alive") is not None:
+            payload["keep_alive"] = model.extra["keep_alive"]
+        try:
+            r = httpx.post(f"{model.base_url}/api/chat", json=payload, timeout=float(env("LLM_TIMEOUT", "240")))
+            r.raise_for_status()
+        except httpx.HTTPError as e:
+            record_call(run_id, role, model, 0, 0, time.time() - t0, error=str(e))
+            raise LLMError(role, model.name, f"transport error: {e}") from e
+        body = r.json()
+        content, tin, tout = body["message"]["content"], int(body.get("prompt_eval_count", 0)), int(body.get("eval_count", 0))
+    record_call(run_id, role, model, tin, tout, time.time() - t0)
+    return content
 
 
 def family_of(role: str) -> str:
