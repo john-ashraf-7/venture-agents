@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import threading
@@ -404,6 +405,23 @@ def phase1(run_id: str) -> None:
                              instructions="Summarize the market in 4-6 sentences. Cite claim ids like [C2] for every factual "
                                           "statement, only SUPPORTED or PARTIAL claims. Mark anything else 'ASSUMPTION:'.")
     q = quality.score(summary, claims)
+    qcfg = gate_definitions()["quality"]
+    revisions = 0
+    valid_ids = {c.id for c in all_c if c.label in (Label.SUPPORTED, Label.PARTIAL)}
+    while revisions < qcfg["max_revisions"]:
+        cited = set(re.findall(r"\[(C\d+)\]", summary.summary))
+        bad = sorted(cited - valid_ids)
+        if q["score"] >= qcfg["min_score"] and not bad:
+            break
+        revisions += 1
+        summary = agent_base.run(run_id, "market_researcher", "analyst", f"revise_market_brief_{revisions}", MarketSummary,
+                                 {"previous": summary, "checker_findings": {"invalid_citations": bad, "quality": q},
+                                  "valid_claims": [{"id": c.id, "label": c.label.value, "text": c.text} for c in all_c]},
+                                 instructions="Revise: cite only valid SUPPORTED/PARTIAL claim ids; mark the rest 'ASSUMPTION:'.")
+        q = quality.score(summary, claims)
+    q["revisions"] = revisions
+    if q["score"] < qcfg["min_score"]:
+        q["escalated_to_founder"] = True
     keep(run_id, "market_summary", summary)
     write(run_id, 1, "step5", "evidence_ledger", "# Evidence ledger\n\n" + json.dumps(ledger.metrics(all_c), indent=1)
           + "\n\n" + ledger.to_markdown(all_c) + "\n")

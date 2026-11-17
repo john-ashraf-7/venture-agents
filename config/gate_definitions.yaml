@@ -30,7 +30,7 @@ definitions:
 
 verdict_mapping:   # applied in code (app/gates.py), first matching row wins
   - { when: compliance_flag, verdict: STOP }
-  - { when: demand_below_min_and_zero, verdict: STOP }
+  - { when: demand_below_half_of_min, verdict: STOP }
   - { when: demand_below_min, verdict: PARK }
   - { when: no_paying_competitor, verdict: PARK }
   - { when: too_many_direct_competitors, verdict: PIVOT_BACK }

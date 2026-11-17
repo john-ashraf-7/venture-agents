@@ -26,7 +26,8 @@
   <p class="small mute">Rule locked: {{ g.locked_rule.get('change_our_mind', '') }}</p>
   <div class="grid"><div><h3>Bull case</h3><p class="small">{{ g.devils_advocate.bull_case }}</p></div>
   <div><h3>Bear case</h3><p class="small">{{ g.devils_advocate.bear_case }}</p></div></div>
-  <form method="post" action="/runs/{{ st.id }}/gates/{{ awaiting.gate }}/decide">
+  <form method="post" action="/runs/{{ st.id }}/gates/{{ awaiting.gate }}/decide"
+        {% if mode == 'delegate' %}onsubmit="return confirm('Delegate mode: confirm this decision? It is recorded as yours.') && confirm('Second confirmation: nothing outward happens without Outbox approval. Proceed?')"{% endif %}>
   {% for o in g.options %}
     <label class="opt {{ 'rec' if o.recommended }}" style="font-weight:400"><input type="radio" name="choice" value="{{ o.choice }}" style="width:auto" {{ 'checked' if o.recommended }}>
       <b class="v-{{ o.choice }}">{{ o.choice }}</b> {{ o.label }}{% if o.recommended %} <span class="badge">recommended</span>{% endif %}

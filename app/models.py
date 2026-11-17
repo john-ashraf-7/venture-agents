@@ -277,6 +277,7 @@ class GuidePack(BaseModel):
 
 
 class TestSpec(BaseModel):
+    __test__ = False  # not a pytest class
     required_headings: list[str]
     min_sections: int = Field(ge=1)
     min_words_per_section: int = Field(ge=10)
