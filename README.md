@@ -69,7 +69,7 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 - Profiles: `PROFILE=demo-fast` (default: 5 results/query, 3 queries, 5 pages, checks only gate claims), `PROFILE=quality` (larger caps, claim checker escalates to gpt-oss:20b on failure), `PROFILE=safeguard`. Per-role override: `ROLE_<ROLE>=<model-key>` (e.g. `ROLE_CLAIM_CHECKER=gpt-oss-20b`; the app warns when a checker shares the writer's family).
 - VRAM: estimated ~20 GB for gpt-oss:20b + qwen3:8b + embeddings with q8_0 KV cache. Measured peak VRAM during Phase 1 runs on an RTX 3090 (gpt-oss:20b + qwen2.5:7b): **19.6-20.1 GB** (whole-GPU `nvidia-smi`, including ~1.5 GB used by the desktop; recorded in `outputs/runs/<run>/timing.json`).
 - Context length: the app calls Ollama's native `/api/chat` with `options.num_ctx` from `config/models.yaml` (gpt-oss:20b 16384, qwen 8192); `ollama ps` and the Ollama server log confirm these sizes. The optional `openai_compat` provider (OpenAI-compatible `/v1`) ignores per-request `num_ctx`; with it, set `OLLAMA_CONTEXT_LENGTH` on the Ollama server instead.
-- Timing target: intake to desk-gate verdict in about 2 minutes in `demo-fast` on the RTX 3090. Measured with live search: **12-66 s** across five runs (cached LLM replies make repeat runs faster).
+- Timing target: intake to desk-gate verdict in about 2 minutes in `demo-fast` on the RTX 3090. Measured with live search: **12-66 s** across five runs before the search upgrade; **60-78 s** after it (more queries, up to 12 candidate pages per purpose; `evals/results/search_before_after.md`).
 
 ## Cost per run
 
