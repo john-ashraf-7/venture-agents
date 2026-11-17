@@ -1,9 +1,10 @@
 """OPTIONAL search provider: Tavily (https://tavily.com), a hosted search API built for agents.
 
-Off by default. Used only when SEARCH_PROVIDER=tavily and TAVILY_API_KEY (the founder's own key, free tier
-about 1,000 credits a month) are set; otherwise app.services.search.search stays on self-hosted SearXNG.
-Each live query is one "basic" search (1 credit). Results go through the same 24h on-disk cache and the same
-noise filter (filter_results) as SearXNG, and come back in the same shape.
+SEARCH_PROVIDER=auto (default) uses Tavily only when TAVILY_API_KEY (the founder's own key, free tier about
+1,000 credits a month) is set; SEARCH_PROVIDER=tavily does the same; SEARCH_PROVIDER=searxng never calls it.
+With no key, or when Tavily errors or is out of credits, app.services.search.search falls back to self-hosted
+SearXNG for that query and logs why. Each live query is one "basic" search (1 credit). Results go through the
+same 24h on-disk cache and the same noise filter (filter_results) as SearXNG, and come back in the same shape.
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ API_URL = "https://api.tavily.com/search"
 
 
 def enabled() -> bool:
-    return env("SEARCH_PROVIDER", "searxng").lower() == "tavily" and bool(env("TAVILY_API_KEY"))
+    return env("SEARCH_PROVIDER", "auto").lower() in ("auto", "tavily") and bool(env("TAVILY_API_KEY"))
 
 
 def _options(purpose: str, n: int) -> dict[str, Any]:
@@ -65,7 +66,8 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
         except (httpx.HTTPError, ValueError) as e:
             # never echo the request (it carries the key); status code only
             status = getattr(getattr(e, "response", None), "status_code", None)
-            unresponsive = [["tavily", f"HTTP {status}" if status else type(e).__name__]]
+            reason = {401: "invalid key", 429: "rate limited", 432: "out of credits", 433: "out of credits"}.get(status, "")
+            unresponsive = [["tavily", f"HTTP {status} {reason}".strip() if status else type(e).__name__]]
             if cached:
                 return {**_from_cache(query, cached, n), "unresponsive": unresponsive}
             return {"query": query, "results": [], "origin": "none", "note": "Tavily unavailable and no cache",

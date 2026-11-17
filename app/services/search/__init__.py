@@ -1,5 +1,8 @@
 """Capped web search through self-hosted SearXNG, with an on-disk cache.
 
+SEARCH_PROVIDER=auto (default) uses OPTIONAL Tavily first when TAVILY_API_KEY is set (see tavily.py), and
+falls back to SearXNG per query when there is no key or Tavily fails; SEARCH_PROVIDER=searxng never calls it.
+
 SEARCH_MODE=live        fresh cache (24h, keyed by query + engines) first, else query SearXNG with the engines routed
                         for the purpose (config/search.yaml), one query at a time with a short delay; on failure
                         fall back to the cache, labeled "cached search from <time>"
@@ -78,9 +81,18 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
             return {"query": query, "results": fx["results"][:n], "origin": "fixture",
                     "note": "fixture search results (evals/fixtures/search)", "engines": [], "unresponsive": []}
         return {"query": query, "results": [], "origin": "none", "note": "no fixture", "engines": [], "unresponsive": []}
-    from app.services.search import tavily  # OPTIONAL provider, off unless SEARCH_PROVIDER=tavily and a key is set
+    from app.services.search import tavily  # OPTIONAL provider, used only when the founder's own key is set
     if tavily.enabled():
-        return tavily.search(query, n, purpose)
+        tv = tavily.search(query, n, purpose)
+        if tv["results"]:
+            return tv
+        out = _searxng(query, n, purpose, mode)
+        why = "; ".join(u[1] for u in tv["unresponsive"]) or tv["note"]
+        return {**out, "note": f"{out['note']} (fallback: Tavily {why})", "unresponsive": tv["unresponsive"] + out["unresponsive"]}
+    return _searxng(query, n, purpose, mode)
+
+
+def _searxng(query: str, n: int, purpose: str, mode: str) -> dict[str, Any]:
     cfg = load_yaml("search.yaml")
     engines = cfg["routes"].get(purpose, cfg["routes"]["competitors"])
     cache = _cache_path(query + "|" + ",".join(engines))
