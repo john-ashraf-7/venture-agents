@@ -2,7 +2,7 @@
 
 Recommendation: STOP.
 
-This is run 4 of 4 for this brief (every run is kept in outputs/runs/).
+This is run 5 of 5 for this brief (every run is kept in outputs/runs/).
 
 ## Why
 
@@ -11,7 +11,7 @@ This is run 4 of 4 for this brief (every run is kept in outputs/runs/).
 ## Explanation
 
 Recommendation: STOP.
-The gate evaluation found zero verified demand signals, falling short of the required minimum of three. Additionally, the founder’s fit assessment failed because the high‑end cost and effort exceed the available budget and time, and essential skills are missing. No paying competitors were identified, and while direct competitors and compliance flags passed, the unmet demand and founder fit criteria are decisive. Therefore, the verdict is to halt the idea at this stage.
+The gate evaluation found zero verified demand signals, falling short of the required minimum of three. No paying competitors were identified, and the founder’s fit assessment failed due to budget, time, and skill gaps. The other checks passed, but the unmet demand signal requirement alone triggers the STOP verdict. Therefore, the recommendation is to halt the idea at this stage.
 
 ## Founder decision
 

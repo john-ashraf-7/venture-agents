@@ -1,6 +1,6 @@
 {
- "id": "run_20261117T183206_8d5e:desk_evidence_v1",
- "run_id": "run_20261117T183206_8d5e",
+ "id": "run_20261117T184248_d8e0:desk_evidence_v1",
+ "run_id": "run_20261117T184248_d8e0",
  "name": "desk_evidence_v1",
  "rule": {
   "demand_signals_min": 3,
@@ -28,5 +28,5 @@
   "counting": "distinct (source_url, type) SUPPORTED claims of types demand_signal, paying_competitor, trend, checked by a different model family"
  },
  "sha256": "bfeda5860658215fcc182c95a5f95a12987ef1322c2a984eaa9cce0b1d2a12c8",
- "locked_at": "2026-11-17T18:32:06Z"
+ "locked_at": "2026-11-17T18:42:48Z"
 }
