@@ -158,6 +158,8 @@ def stub_backend(model, messages, schema, temperature):
 @pytest.fixture(autouse=True)
 def isolated_env(tmp_path, monkeypatch):
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    # MiniCheck (the default claim_checker) needs torch + weights; tests use the STUBBED LLM checker instead.
+    monkeypatch.setenv("ROLE_CLAIM_CHECKER", "qwen-8b")
     monkeypatch.setenv("OUTPUTS_DIR", str(tmp_path / "outputs"))
     monkeypatch.setenv("DECISION_LOG_PATH", str(tmp_path / "decision_log.json"))
     monkeypatch.setenv("SEARCH_MODE", "fixtures")

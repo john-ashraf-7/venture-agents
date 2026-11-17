@@ -1,0 +1,7 @@
+# Local open-weight models in the app container (provider local_transformers in config/models.yaml):
+# MiniCheck-Flan-T5-Large (claim_checker) and bge-reranker-v2-m3 (reranker).
+# torch is installed first from the CPU wheel index in the Dockerfile.
+transformers==5.5.4
+huggingface_hub==1.33.0
+sentencepiece==0.2.2
+protobuf==7.36.2

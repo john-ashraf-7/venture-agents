@@ -111,6 +111,7 @@ def eval_gate_explainer(model_key: str) -> dict:
 def eval_claim_checker(model_key: str) -> dict:
     os.environ["ROLE_CLAIM_CHECKER"] = model_key
     from app.config import prompt
+    from app.agents import claim_checker
     from app.services.reader import html_to_text, wrap
     data = json.loads((EVALS_DIR / "labeled" / "claims.json").read_text(encoding="utf-8"))["claims"]
     right, lat = 0, []
@@ -118,10 +119,13 @@ def eval_claim_checker(model_key: str) -> dict:
     for c in data:
         s = time.time()
         try:
-            r = llm.call("claim_checker", [{"role": "system", "content": prompt("claim_checker")},
-                                           {"role": "user", "content": f"CLAIM: {c['claim']}\nSOURCE URL: {c['source_url']}\n" + wrap(html_to_text(c['source_text']))}],
-                         CheckResult, use_cache=False)
-            got = r.label
+            if llm.resolve("claim_checker").model.provider_kind == "local_transformers":
+                got = claim_checker.label_claim(c["claim"], c["source_url"], html_to_text(c["source_text"])).label
+            else:  # unchanged prompt for LLM checkers: the whole page text, not an excerpt
+                r = llm.call("claim_checker", [{"role": "system", "content": prompt("claim_checker")},
+                                               {"role": "user", "content": f"CLAIM: {c['claim']}\nSOURCE URL: {c['source_url']}\n" + wrap(html_to_text(c['source_text']))}],
+                             CheckResult, use_cache=False)
+                got = r.label
         except llm.LLMError:
             got = "ERROR"
         lat.append(time.time() - s)

@@ -1,0 +1,6 @@
+# Purpose texts for the reranker (app/services/rerank.py). Each search purpose names what a good
+# result looks like; {placeholders} are filled from SearchTerms / the competitor name.
+purposes:
+  demand: "A first-person post by a real person describing this problem: {problem}"
+  competitors: "A product that offers {product_type} for {audience}"
+  pricing: "The pricing page or price list of {competitor}"

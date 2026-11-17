@@ -70,7 +70,9 @@ services:
       SEARXNG_URL: "http://searxng:8080"
       DATA_DIR: "/app/data"
       OUTPUTS_DIR: "/app/outputs"
+      HF_HOME: "/root/.cache/huggingface"   # MiniCheck + bge-reranker weights, downloaded once at first start
     volumes:
+      - hf_cache:/root/.cache/huggingface
       - ./data:/app/data
       - ./outputs:/app/outputs
       - ./decision_log.json:/app/decision_log.json
@@ -79,3 +81,4 @@ services:
 
 volumes:
   ollama_models:
+  hf_cache:

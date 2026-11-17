@@ -45,6 +45,7 @@ class ModelSpec:
     think: Any = None
     ref_in: float = 0.0
     ref_out: float = 0.0
+    extra: dict[str, Any] = field(default_factory=dict)  # provider-specific settings (e.g. device, keep_alive)
 
 
 @dataclass
@@ -61,13 +62,17 @@ def _model(key: str) -> ModelSpec:
     cfg = load_yaml("models.yaml")
     m = cfg["models"][key]
     prov = cfg["providers"][m["provider"]]
-    base = prov["base_url"]
+    base = prov.get("base_url", "")
     if prov.get("kind", "ollama") == "ollama" and env("OLLAMA_URL"):
         base = env("OLLAMA_URL")
     price = m.get("ref_usd_per_mtok") or {}
     return ModelSpec(key=key, name=m["name"], family=m.get("family", key), provider_kind=prov.get("kind", "ollama"),
                      base_url=base.rstrip("/"), num_ctx=int(m.get("num_ctx", 8192)), vram_gb_est=float(m.get("vram_gb_est", 0)),
-                     think=m.get("think"), ref_in=float(price.get("in", 0)), ref_out=float(price.get("out", 0)))
+                     think=m.get("think"), ref_in=float(price.get("in", 0)), ref_out=float(price.get("out", 0)),
+                     extra={k: v for k, v in m.items() if k in MODEL_EXTRA_KEYS})
+
+
+MODEL_EXTRA_KEYS = ("device", "fp16", "keep_alive", "license")
 
 
 def resolve(role: str) -> RoleSpec:

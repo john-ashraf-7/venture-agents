@@ -8,6 +8,9 @@
 providers:
   ollama: { kind: ollama, base_url: "http://ollama:11434" }   # native API (passes num_ctx + JSON schema)
   openai_compat: { kind: openai, base_url: "http://ollama:11434/v1" }  # any OpenAI-compatible server
+  # Small models run inside the app container with Hugging Face transformers (weights cached in the
+  # hf_cache volume, downloaded once). device: auto = GPU if visible, else CPU.
+  local_transformers: { kind: local_transformers }
 
 models:
   gpt-oss-20b:
@@ -42,6 +45,26 @@ models:
     vram_gb_est: 14
     think: low
     ref_usd_per_mtok: { in: 0.075, out: 0.30 }
+  minicheck-flan-t5:
+    provider: local_transformers
+    name: "lytang/MiniCheck-Flan-T5-Large"   # MIT; fact-checking grounding model (claim given a document)
+    family: flan-t5
+    license: MIT
+    device: auto
+    fp16: false            # T5 overflows in fp16; fp32 on GPU is ~3 GB
+    num_ctx: 2048          # max input tokens per (chunk, claim) pair
+    vram_gb_est: 3
+    ref_usd_per_mtok: { in: 0.0, out: 0.0 }
+  bge-reranker-v2-m3:
+    provider: local_transformers
+    name: "BAAI/bge-reranker-v2-m3"          # Apache-2.0; multilingual cross-encoder
+    family: bge
+    license: Apache-2.0
+    device: cpu            # set to auto/cuda to use the GPU (RERANKER_DEVICE env overrides)
+    fp16: true
+    num_ctx: 512
+    vram_gb_est: 0
+    ref_usd_per_mtok: { in: 0.0, out: 0.0 }
   embed:
     provider: ollama
     name: "nomic-embed-text"
@@ -55,7 +78,11 @@ roles:
   idea_scout:       { model: gpt-oss-20b, temperature: 0.7 }
   page_reader:      { model: gpt-oss-20b, temperature: 0.0, checks: null }   # evals/results/page_reader.md: same speed, half the invented values; output is code-verified
   claim_extractor:  { model: gpt-oss-20b, temperature: 0.0 }
-  claim_checker:    { model: qwen-8b,     temperature: 0.0, escalate_to: null, checks: claim_extractor }
+  # MiniCheck support probability -> label: >= t_high SUPPORTED, >= t_low PARTIAL, else UNSUPPORTED
+  # (tuned on evals/labeled/claims.json, evals/results/minicheck_thresholds.json). The Qwen prompt
+  # checker stays selectable: ROLE_CLAIM_CHECKER=qwen-8b (or qwen25-7b).
+  claim_checker:    { model: minicheck-flan-t5, temperature: 0.0, escalate_to: null, checks: claim_extractor, t_high: 0.9, t_low: 0.5, top_chunks: 3, chunk_words: 300 }
+  reranker:         { model: bge-reranker-v2-m3, temperature: 0.0 }   # app/services/rerank.py (not wired into search yet)
   devils_advocate:  { model: qwen-8b,     temperature: 0.5 }
   gate_explainer:   { model: gpt-oss-20b, temperature: 0.1 }
   policy_guard:     { model: qwen-8b,     temperature: 0.0, policy_file: config/policy.md, checks: copywriter }
@@ -76,7 +103,7 @@ profiles:
     caps: { results_per_query: 8, max_queries: 6, max_pages: 12, page_chars: 12000, demand_queries: 8, competitor_queries: 3, pricing_queries: 3 }
     check_scope: all
     role_overrides:
-      claim_checker: { escalate_to: gpt-oss-20b }
+      claim_checker: { escalate_to: gpt-oss-20b }   # used only when claim_checker is an LLM (Qwen) checker
   # Optional: Policy Guard on gpt-oss-safeguard:20b (loaded one after another, not beside gpt-oss-20b).
   safeguard:
     caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000, demand_queries: 4, competitor_queries: 2, pricing_queries: 2 }
