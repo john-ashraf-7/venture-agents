@@ -16,3 +16,32 @@ server:
   image_proxy: false
   bind_address: "0.0.0.0"
   port: 8080
+
+outgoing:
+  request_timeout: 6.0
+  max_request_timeout: 10.0
+
+# Engine names checked against this SearXNG image's engine list. Not available here: "reddit" (no engine
+# module in this version; Reddit is reached with site:reddit.com queries) and a generic "stackexchange"
+# engine (the stackexchange module runs as stackoverflow / superuser / askubuntu).
+engines:
+  - name: bing
+    disabled: false
+  - name: startpage
+    inactive: false
+    disabled: false
+  - name: mojeek
+    inactive: false
+    disabled: false
+  - name: qwant
+    disabled: false
+  - name: hackernews
+    disabled: false
+  - name: stackoverflow
+    disabled: false
+  - name: superuser
+    disabled: false
+  - name: askubuntu
+    disabled: false
+  - name: wikipedia
+    disabled: false

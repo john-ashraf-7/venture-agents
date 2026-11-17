@@ -1,0 +1,20 @@
+# Applied in code to every result list (app/services/search): duplicates removed, at most
+# max_per_domain results per domain, and low-priority domains moved to the end (not removed).
+max_per_domain: 2
+# SEO template galleries and content farms that crowded out first-hand sources in the baseline runs
+# (evals/results/search_baseline.json and the 24 earlier runs).
+low_priority_domains:
+  - clickup.com
+  - canva.com
+  - wordlayouts.com
+  - template.net
+  - nicepage.com
+  - slidegeeks.com
+  - themeforest.net
+  - muz.li
+  - scribd.com
+  - projectmanager.com
+  - hubspot.com
+  - templatelab.com
+  - smartsheet.com
+  - vertex42.com

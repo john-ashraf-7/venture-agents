@@ -39,7 +39,7 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
     searches, urls = [], []
     skip = skip or set()
     for purpose, q in planned:
-        res = {**search.search(q, c["results_per_query"]), "purpose": purpose}
+        res = {**search.search(q, c["results_per_query"], purpose), "purpose": purpose}
         searches.append(res)
         decision_log.append(run_id, "market_researcher", "web_search", sources=[r["url"] for r in res["results"]],
                             model=None, query=q, purpose=purpose, origin=res["origin"], note=res["note"],

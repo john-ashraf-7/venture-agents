@@ -12,13 +12,14 @@ from typing import Optional
 
 from app.models import SearchTerms
 
-DEMAND = ["site:reddit.com {problem}", "site:reddit.com {audience} {problem}", '{problem} "I wish there was"',
-          '{problem} frustrated OR annoying OR "hate"', "site:news.ycombinator.com {problem}"]
+DEMAND = ["site:reddit.com {problem}", "site:news.ycombinator.com {problem}", '{problem} "I wish there was"',
+          "site:reddit.com {audience} {problem}", '{problem} frustrated OR annoying OR "hate"']
 COMPETITORS = ["{product_type} for {audience}", "best {product_type} {audience} {year}"]
 SECOND_PASS = ["alternatives to {competitor}"]
 PRICING = ["{competitor} pricing"]
 PRICING_FALLBACK = "{competitor} price per month"
 
+COPY_WINDOW = 6
 PLAIN_BANNED = re.compile(r"\b(forum|forums|discussion|discussions)\b", re.I)
 
 
@@ -49,10 +50,10 @@ def lint(query: str, idea: str = "", year: Optional[int] = None) -> Optional[str
     if PLAIN_BANNED.search(plain):
         return "uses 'forum'/'discussion' as a plain word (use site: or community engines instead)"
     idea_words = re.findall(r"\w+", (idea or "").lower())
-    if len(idea_words) >= 4:
+    if len(idea_words) >= COPY_WINDOW:  # keywords naturally overlap the idea; a run of 6 words is a copy
         q = " ".join(re.findall(r"\w+", query.lower()))
-        for i in range(len(idea_words) - 3):
-            if " ".join(idea_words[i:i + 4]) in q:
+        for i in range(len(idea_words) - COPY_WINDOW + 1):
+            if " ".join(idea_words[i:i + COPY_WINDOW]) in q:
                 return "copies the brief's idea text"
     return None
 

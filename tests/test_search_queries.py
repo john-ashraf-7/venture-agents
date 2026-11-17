@@ -15,7 +15,8 @@ def test_lint_rejects_bad_queries():
     assert queries.lint(f"best invoice templates {YEAR - 2}")
     assert queries.lint("freelancer invoice forum")
     assert queries.lint("late payment discussion")
-    assert queries.lint("templates for my generic to-do list pack", idea="Another generic to-do list template pack")
+    assert queries.lint("generic to-do list template pack for everyone", idea="Another generic to-do list template pack for everyone")
+    assert queries.lint("guide templates for university students", idea="A guide and lesson-plan templates for university students who tutor") is None
     assert queries.lint(f"best invoice templates {YEAR}") is None
     assert queries.lint("site:reddit.com late invoice payments") is None
 
@@ -46,3 +47,26 @@ def test_demand_counts_only_first_person_dated_quotes_on_community_sites():
     assert not community_demand("Freelancers lose hours chasing invoices", third_person, rule)
     assert on_community_site("https://www.producthunt.com/discussions/abc", rule["community_domains"])
     assert not on_community_site("https://www.producthunt.com/products/abc", rule["community_domains"])
+
+
+def test_noise_filter_dedupes_caps_domains_and_demotes_galleries():
+    from app.services.search import filter_results
+    rows = [{"url": u} for u in ["https://www.canva.com/a", "https://reddit.com/r/x/1", "https://reddit.com/r/x/2",
+                                 "https://reddit.com/r/x/3", "https://reddit.com/r/x/1", "https://example.org/p"]]
+    out = [r["url"] for r in filter_results(rows)]
+    assert out == ["https://reddit.com/r/x/1", "https://reddit.com/r/x/2", "https://example.org/p", "https://www.canva.com/a"]
+
+
+def test_fresh_cache_is_used_and_labelled(monkeypatch, tmp_path):
+    import json
+    import time
+
+    from app.services import search
+    monkeypatch.setenv("SEARCH_MODE", "live")
+    monkeypatch.setenv("SEARXNG_URL", "http://127.0.0.1:9")  # nothing listens: a live call would fail
+    engines = search.load_yaml("search.yaml")["routes"]["demand"]
+    search._cache_path("q|" + ",".join(engines)).write_text(json.dumps(
+        {"query": "q", "results": [{"url": "https://reddit.com/r/a", "title": "t", "snippet": "s"}],
+         "cached_at": "2026-11-17T10:00:00Z", "cached_ts": time.time()}), encoding="utf-8")
+    res = search.search("q", 5, "demand")
+    assert res["origin"] == "cache" and res["note"].startswith("cached search from") and res["results"]

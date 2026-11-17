@@ -1,0 +1,12 @@
+# SearXNG engines per search purpose (names must exist in searxng/settings.yml for this image).
+# Checked on 2026-11-17: bing, mojeek, duckduckgo, hackernews answer; startpage (CAPTCHA), qwant (access
+# denied), google cse and brave (rate-limit suspensions) often fail from one IP but stay listed so they are
+# used when they recover. SearXNG reports failures in unresponsive_engines, which every run logs.
+routes:
+  demand: [hackernews, duckduckgo, bing, mojeek, stackoverflow, superuser, askubuntu]
+  competitors: [duckduckgo, bing, startpage, mojeek, qwant, google cse]
+  alternatives: [duckduckgo, bing, startpage, mojeek, qwant, google cse]
+  pricing: [duckduckgo, bing, startpage, mojeek, qwant, google cse]
+  pricing_fallback: [duckduckgo, bing, startpage, mojeek, qwant, google cse]
+cache_ttl_hours: 24
+delay_between_queries_s: 1.0
