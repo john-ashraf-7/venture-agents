@@ -241,8 +241,8 @@ def extract_claims(run_id: str, brief: Brief, pages: list[dict[str, Any]]) -> Cl
                        {"idea": brief.idea, "target_market": brief.target_market, "page_extracts": compact},
                        sources=[p["url"] for p in batch],
                        instructions="Write atomic claims (one fact each) ONLY from these page extracts; usually several per "
-                                    "page. Types: demand_signal (a person describing this problem in their own words, "
-                                    "with date if known), paying_competitor (a product with a visible price), competitor, "
+                                    "page. Types: demand_signal (a person describing this problem in their own words or asking how "
+                                    "to solve it, e.g. a forum or Q&A question title, with date if known), paying_competitor (a product with a visible price), competitor, "
                                     "trend, market_size, compliance, other. source_url must be the URL of the extract the "
                                     "claim comes from; source_quote must be words copied exactly from that extract's fields.")
         if not out.claims and run_id:

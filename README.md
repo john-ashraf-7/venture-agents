@@ -26,7 +26,7 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 | Capped web search (self-hosted SearXNG) with on-disk cache fallback | **Working** | labeled "cached search from <time>" when the live search fails; queries built in code from templates; failed pages replaced from a 12-URL pool; search snippets used as PARTIAL, never-counted evidence |
 | Optional Tavily search (used only with your own free `TAVILY_API_KEY`) | **Working** (optional) | off without a key; per-query fallback to SearXNG on error or no credits, reason logged; for pages our own fetch cannot read (Reddit 403s, bot walls), the page text Tavily returns with demand results, then its Extract API, is used instead, labelled by origin (`tavily-search-raw`, `tavily-extract`) and still read by the isolated reader with quotes matched word for word |
 | Iterative research loop: broad pass, then planner-led rounds (competitor alternatives and pricing, community search, audience wording) with code lint, budgets and stop rules; low coverage gives PARK, not STOP | **Working** | `app/services/research/loop.py`; every round is logged (`research_round`) |
-| Community demand from official APIs (Hacker News Algolia, Stack Exchange; Reddit only with your own OAuth keys); never scrapes reddit.com | **Working** | quote and date come from the API; a demand classifier (other model family) must agree the post is a first-person statement of the brief's problem |
+| Community demand from APIs: Reddit via the keyless PullPush archive, Hacker News Algolia, Stack Exchange (official Reddit API only with your own OAuth keys); never scrapes reddit.com | **Working** | quote and date come from the API; a demand classifier (other model family) must agree the post is a first-person statement of the brief's problem |
 | Isolated page reader (no tools, structured fields only) | **Working** | `app/services/reader.py`; quotes, names and prices not found on the page are dropped in code; bot-check pages are skipped |
 | Claim extraction + code quote check + cross-family Claim Checker + Evidence Ledger | **Working** | unsupported claims rewritten as ASSUMPTION, never deleted |
 | Idea variants, theory of value, competitor table, compliance quick check, Mom Test script | **Working** | |
@@ -85,7 +85,7 @@ The cost meter (`app/services/cost.py`) records tokens in/out, latency and cache
 
 `reference cost = Σ_calls (tokens_in × price_in + tokens_out × price_out) / 1,000,000`
 
-Reference prices used (ASSUMPTION, typical public prices for hosted open models in late 2026, not quotes): gpt-oss-20b $0.05 in / $0.20 out per million tokens; qwen3-8b $0.035 / $0.138; edit them in `config/models.yaml`. Measured Phase 1 runs used **5k-21k tokens** (19-24 LLM calls), a reference cost under $0.01 per run; see `outputs/cost.json`.
+Reference prices used (ASSUMPTION, typical public prices for hosted open models in late 2026, not quotes): gpt-oss-20b $0.05 in / $0.20 out per million tokens; qwen3-32b $0.10 / $0.30; qwen2.5-7b $0.03 / $0.10; qwen3-8b $0.035 / $0.138; edit them in `config/models.yaml`. Measured Phase 1 runs used **5k-21k tokens** (19-24 LLM calls), a reference cost under $0.01 per run; see `outputs/cost.json`.
 
 ## Demo video
 
