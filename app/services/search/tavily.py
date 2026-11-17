@@ -28,9 +28,11 @@ def _options(purpose: str, n: int) -> dict[str, Any]:
     opts: dict[str, Any] = {"search_depth": "basic", "topic": "general", "max_results": max(1, min(n, 20)),
                             "include_answer": False, "include_raw_content": False}
     if purpose == "demand":
-        # demand signals only count from community sites, so ask Tavily for those directly
+        # demand signals only count from community sites, so ask Tavily for those directly, with the page text:
+        # community sites (Reddit above all) refuse our own fetches, but Tavily's index often has the thread
         domains = load_yaml("gate_definitions.yaml")["desk_gate"]["community_domains"]
         opts["include_domains"] = sorted({d.split("/")[0] for d in domains})
+        opts["include_raw_content"] = True
     return opts
 
 
@@ -51,7 +53,8 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
             r.raise_for_status()
             body = r.json()
             results = filter_results([{"url": x.get("url", ""), "title": x.get("title", ""),
-                                       "snippet": x.get("content", ""), "engines": ["tavily"]}
+                                       "snippet": x.get("content", ""), "engines": ["tavily"],
+                                       "raw_content": (x.get("raw_content") or "")[:20000]}
                                       for x in body.get("results", []) if x.get("url", "").startswith("http")])
             if results:
                 payload = {"query": query, "results": results[:12], "cached_at": now_iso(), "cached_ts": time.time(),
@@ -76,3 +79,40 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
         return _from_cache(query, cached, n)
     return {"query": query, "results": [], "origin": "none", "note": "search unavailable and no cache",
             "engines": [], "unresponsive": []}
+
+
+EXTRACT_URL = "https://api.tavily.com/extract"
+
+
+def extract(urls: list[str]) -> dict[str, str]:
+    """Page text for URLs we could not fetch ourselves (bot walls, 403s), via Tavily's Extract API.
+    One "basic" extract costs 1 credit per 5 successful URLs. Returns {url: raw text}; cached 24h per URL.
+    The text is still untrusted page data: it goes to the isolated reader, and quotes must match it exactly."""
+    from app.services.search import _cache_path  # avoid a circular import
+
+    out: dict[str, str] = {}
+    todo = []
+    for u in urls:
+        p = _cache_path("tavily-extract|" + u)
+        if p.exists():
+            d = json.loads(p.read_text(encoding="utf-8"))
+            if time.time() - d.get("ts", 0) < 24 * 3600:
+                if d.get("text"):
+                    out[u] = d["text"]
+                continue
+        todo.append(u)
+    if not todo or not enabled() or env("SEARCH_MODE", "live") != "live":
+        return out
+    try:
+        r = httpx.post(EXTRACT_URL, json={"urls": todo[:20], "extract_depth": "basic", "include_images": False},
+                       headers={"Authorization": f"Bearer {env('TAVILY_API_KEY')}"}, timeout=40)
+        r.raise_for_status()
+        got = {x.get("url", ""): x.get("raw_content") or "" for x in r.json().get("results", [])}
+    except (httpx.HTTPError, ValueError):
+        return out  # status only matters to the caller as "no text"; never echo the request (it carries the key)
+    for u in todo[:20]:
+        text = got.get(u, "")
+        _cache_path("tavily-extract|" + u).write_text(json.dumps({"url": u, "text": text, "ts": time.time()}), encoding="utf-8")
+        if text:
+            out[u] = text
+    return out

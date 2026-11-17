@@ -70,3 +70,33 @@ def test_tavily_path_returns_same_shape(live, monkeypatch):
     out = s.search("late invoice payments", 5, "demand")
     assert set(out) == {"query", "results", "origin", "note", "engines", "unresponsive"}
     assert out["results"][0]["engines"] == ["tavily"] and "reddit.com" in sent["include_domains"]
+
+
+def test_blocked_community_page_is_read_through_tavily_extract(monkeypatch):
+    from app.agents import market_researcher as mr
+    from app.services.search import tavily
+    monkeypatch.setattr(tavily, "enabled", lambda: True)
+    text = "I keep chasing clients for weeks after sending invoices. " * 20
+    monkeypatch.setattr(tavily, "extract", lambda urls: {u: text for u in urls})
+    fetched = [{"url": "https://www.reddit.com/r/freelance/comments/1/x/", "ok": False, "reason": "http_403", "text": ""},
+               {"url": "https://example.org/a", "ok": True, "reason": None, "text": "ok " * 200}]
+    out = mr._extract_failed("run_test_extract", "demand", fetched, {"max_pages": 1, "page_chars": 6000})
+    assert out[0]["ok"] and out[0]["origin"] == "tavily-extract" and out[0]["text"].startswith("I keep chasing")
+    monkeypatch.setattr(tavily, "enabled", lambda: False)
+    assert mr._extract_failed("run_test_extract", "demand", fetched, {"max_pages": 1, "page_chars": 6000}) == fetched
+
+
+def test_clean_markdown_drops_images_and_link_targets():
+    from app.agents.market_researcher import clean_markdown
+    md = "[r/freelance](https://www.reddit.com/r/freelance/)•8y ago\n\n\n\n![avatar](https://x/y.png)I was  paid late."
+    assert clean_markdown(md).split() == ["r/freelance•8y", "ago", "I", "was", "paid", "late."]
+    assert "https://" not in clean_markdown(md)
+
+
+def test_search_raw_text_is_ignored_without_a_key(monkeypatch):
+    from app.agents import market_researcher as mr
+    from app.services.search import tavily
+    monkeypatch.setattr(tavily, "enabled", lambda: False)
+    fetched = [{"url": "https://www.reddit.com/r/a/comments/1/x/", "ok": False, "reason": "http_403", "text": ""}]
+    raw = {"https://www.reddit.com/r/a/comments/1/x/": "I keep chasing late invoices every month. " * 20}
+    assert mr._extract_failed("run_test_raw", "demand", fetched, {"max_pages": 5, "page_chars": 6000}, raw) == fetched

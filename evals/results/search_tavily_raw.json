@@ -1,0 +1,445 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T195530_4a6e",
+  "status": "awaiting_founder",
+  "seconds": 21.7,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com payment reminder emails",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com payment reminder emails",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment reminder emails \"I wish there was\"",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:reddit.com new freelancers payment reminder emails",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "template pack for new freelancers",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack new freelancers 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to Ultimate Freelance Starter Kit",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "Ultimate Freelance Starter Kit pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 22,
+  "pages_read": 17,
+  "pages_failed": [
+   {
+    "url": "https://winzi.app/blog/best-freelance-proposal-templates-2026-ai-alternative",
+    "reason": "error_ConnectError"
+   },
+   {
+    "url": "https://www.reddit.com/r/aiToolForBusiness/comments/1u41gv2/built_an_ai_that_writes_payment_followup_emails",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/Netsuite/comments/1itzoxs/best_approach_for_automatic_payment_reminder",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/SaaS/comments/1b3cbwx/subscription_renewal_reminder_emails_avoid_them",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/Freelancers/comments/1se6wit/i_made_a_free_overdue_invoice_reminder_template",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/smallbusiness/comments/1qhs9uz/i_built_a_payment_reminder_message_generator_for",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.producthunt.com/p/invoice-payment-reminder/invoice-payment-reminder",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-is-the-best-way-to-write-a-polite-reminder-email-about-overdue-payments-without-causing-offense",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.producthunt.com/products/invoice-payment-reminder/reviews",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.hellodigitalco.com/freelance-templates": 6000,
+   "https://sitesplaced.com/blog/best-freelancer-website-templates": 6000,
+   "https://www.simple.ink/tools/freelancer-client-onboarding-guide-notion-template": 3222,
+   "https://yoframer.com/roundups/best-free-freelance-framer-templates-2026": 6000,
+   "https://www.notion.com/templates/freelance-pack": 203,
+   "https://www.indiehackers.com/post/i-got-tired-of-writing-awkward-payment-reminder-emails-so-i-built-this-qcbTY1O5aojIAy7maxYu": 863,
+   "https://www.indiehackers.com/post/how-to-set-up-automated-invoice-reminders-as-a-freelancer-step-by-step-YYBO3zWs1sPDgrJHr04Q": 3369,
+   "https://www.reddit.com/r/freelance/comments/a0viuu/is_it_wrong_to_send_a_reminder_to_client_for": 6000,
+   "https://www.etsy.com/market/freelance_starter_kit?page=": 6000,
+   "https://www.usefreelance.com/starter-kit": 6000,
+   "https://masterbundles.com/jeremymura/notion-freelance-starter-kit": 1422,
+   "https://www.etsy.com/market/freelance_starter_kit": 1436,
+   "https://awesomeopensource.com/project/ngx-rocket/starter-kit": 2705,
+   "https://www.etsy.com/market/freelance_kit": 4385,
+   "https://freelanceatlas.com/freelance-pricing-packages": 6000,
+   "https://www.creativebloq.com/professional-development/freelance/this-is-the-budget-starter-kit-for-going-freelance-in-2026": 4995,
+   "https://whatshouldicharge.io/guides": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "arabic_tutoring_guide",
+  "run_id": "run_20261117T195552_d295",
+  "status": "awaiting_founder",
+  "seconds": 49.5,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com online Arabic tutoring",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com online Arabic tutoring",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "online Arabic tutoring \"I wish there was\"",
+    "results": 3,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:reddit.com university students online Arabic tutoring",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best lesson plan templates university students 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to Lesson Plan Templates",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "Lesson Plan Templates pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 19,
+  "pages_read": 14,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/1gxek3a/looking_for_an_arabic_teacher",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/howtoworkonlinenow/comments/1eb3aq7/best_platfrom_to_teach_arabic_online",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/153qbgg/arabic_tutor_online_advice",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/hhbhqu/online_arabic_course",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/1pxalgp/arabic_tutors_to_learn",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/1rwbmjj/resources_to_learn_arabic",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/iTalki/comments/1w59428/starting_my_online_arabic_teaching_journey",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/learnArabicSecular/comments/1rjvkch/need_online_arabic_tutor",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://thearabiclanguagealfshy.quora.com/I-have-been-learning-Arabic-with-online-teacher-for-6-months-and-now-I-would-like-to-learn-the-Emiratis-Arabic-Is-it-a",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-are-the-benefits-of-online-tutoring-vs-in-person-tutoring",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/Are-there-any-reputable-platforms-for-online-tutoring-or-teaching",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.toolify.ai/alternative/lesson-plan-generator",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://similarsitesearch.com/sites/planbook",
+    "reason": "http_404"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://lessondraft.com/blog/lesson-plan-templates-frameworks-guide": 6000,
+   "https://agentdock.ai/academy/best-lesson-plan-templates-for-teachers": 6000,
+   "https://www.teacherstrategies.org/lesson-plan-templates-for-teachers": 6000,
+   "https://pumble.com/learn/businesses-teams/lesson-plan-template": 6000,
+   "https://www.class-templates.com/lesson-plan-templates.html": 6000,
+   "https://www.indiehackers.com/post/why-choose-online-tutoring-vs-in-person-tutoring-UT9QfhCQnQE2a4wubHYE": 6000,
+   "https://paneflow.com/templates/lesson-deck-chapter-nav": 5986,
+   "https://axiobench.com/best/lesson-planning-software": 454,
+   "https://ariusai.com/free-ai-tools-for-teachers-lesson-plans": 6000,
+   "https://www.mylesson.ai/pricing": 5359,
+   "https://blog.tcea.org/free-lesson-plan-templates-and-tools": 5446,
+   "https://www.kuraplan.com/lesson-plan-template": 6000,
+   "https://www.storyboardthat.com/create/worksheet-lesson-plan": 6000,
+   "https://blog.planbook.com/free-lesson-plan-templates": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T195641_e94a",
+  "status": "awaiting_founder",
+  "seconds": 39.3,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com grant tracking",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com grant tracking",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "grant tracking \"I wish there was\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:reddit.com small NGOs grant tracking",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "template pack for small NGOs",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack small NGOs 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to NGO Templates Suite",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "NGO Templates Suite pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "NGO Templates Suite price per month",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 25,
+  "pages_read": 19,
+  "pages_failed": [
+   {
+    "url": "https://www.etsy.com/market/ngo_template_kit?page=3",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/1iq6o0u/tools_to_track_grant_spenddowns",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/nonprofittech/comments/1rw9ezb/looking_for_feedback_attendance_tracking_grant",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://stackoverflow.com/questions/75602878/integration-tests-grant-tracking-permission-for-app-in-ios-simulator",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/mtotwh/grant_tracking",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.reddit.com/r/GnuCash/comments/w800o4/tracking_grant_expenditure_for_nonprofit",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.quora.com/What-are-the-biggest-challenges-of-NGOs-nowadays",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://dba.stackexchange.com/questions/233891/tracking-grant-violations",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/Is-there-any-free-software-to-manage-accounts-for-NGOs-in-India",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://pm.stackexchange.com/questions/31514/federal-grant-time-tracking",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://stackoverflow.com/questions/63618373/cannot-grant-change-tracking-permission-at-database-level",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.templatemonster.com/category/free-ngo-html-website-templates",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.behance.net/gallery/87180505/NGO-Templates-Suite": 6000,
+   "https://www.thehillstandem.com/post/nonprofit-strategic-plan-template": 6000,
+   "https://www.etsy.com/market/ngo_template_kit?page=2": 3527,
+   "https://themefisher.com/ngo-website-templates": 6000,
+   "https://prosper-strategies.com/nonprofit-strategic-plan-example": 6000,
+   "https://asana.com/templates/nonprofit-business-plan": 6000,
+   "https://nonprofitresourcehub.org/micro-strategic-plan-template-for-nonprofits": 5111,
+   "https://www.reddit.com/r/nonprofit/comments/1xdlhq/need_help_creating_a_grant_tracking_spreadsheet": 3668,
+   "https://creativethemes.com/blocksy/starter-sites/nonprofit-templates": 3558,
+   "https://www.tooltester.com/en/blog/best-website-builder-for-nonprofit": 6000,
+   "https://www.fiftyandfifty.org/blog/best-nonprofit-website-templates": 6000,
+   "https://www.societ.com/blog/fundraising/free-nonprofit-software-50-must-try-free-tools": 6000,
+   "https://wpastra.com/website-templates/community/ngo": 2581,
+   "https://studiomesa.co/articles/how-much-does-a-nonprofit-website-cost-in-2026": 4673,
+   "https://blog.templatebundle.net/best-ngo-website-templates": 6000,
+   "https://cssauthor.com/best-free-ngo-website-templates": 2808,
+   "https://dev.to/allenarduino/formspree-custom-email-templates-cost-60-per-month-here-is-the-29-alternative-54h9": 6000,
+   "https://www.zdnet.com/article/google-raises-g-suite-prices-basic-from-5-per-user-a-month-to-6-business-from-10-to-12-per-user-a-month": 2856,
+   "https://www.slideteam.net/business-plan-comparison-chart-with-per-month-price.html": 869
+  },
+  "demand_signals_at_gate": 1,
+  "demand_signal_domains": [
+   "reddit.com"
+  ]
+ }
+]

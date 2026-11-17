@@ -111,6 +111,8 @@ The real design (prototype status in brackets):
 
 ## Data flow
 
+**Optional Tavily page text.** With a `TAVILY_API_KEY`, demand searches ask Tavily for page text too, and pages our own fetch cannot read (Reddit 403s, bot walls, JavaScript shells) use that text or Tavily's Extract API instead. The page keeps its own URL and is labelled by origin (`tavily-search-raw`, `tavily-extract`) in the decision log. The text still goes only to the isolated reader, quotes must appear in it word for word, and the community-site, first-person and dated rules for demand signals are unchanged.
+
 **Method library.** `knowledge/*.md` holds short method cards in our own words, each naming the agents it guides and the public work it summarises. `app/agents/base.py` adds the matching cards to an agent's instructions under a "not evidence" heading and logs their ids. Cards never enter the Evidence Ledger or count at a gate; the gate explainer gets none, so it still sees only the locked rule and the numbers.
 
 - **Founder text** enters once (Intake) and is stored as `founder` provenance; later agents receive only the parsed `Brief` and typed artifacts.

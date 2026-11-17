@@ -9,7 +9,10 @@ from app.agents import base
 from app.config import caps
 from app.models import Brief, ClaimList, PageExtract, SearchTerms, now_iso
 from app.services import decision_log, events, reader, search
-from app.services.search import queries
+from app.services.search import queries, tavily
+
+COMMUNITY_EXTRACTS = 4
+EXTRACTABLE = {"http_403", "http_401", "http_429", "bot_check", "js_required", "too_short", "login_wall", "timeout"}
 
 SKIP_HOSTS = re.compile(r"(youtube\.com|facebook\.com|instagram\.com|tiktok\.com|x\.com|twitter\.com|linkedin\.com/in/|\.pdf$)", re.I)
 
@@ -64,7 +67,14 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
                     if len(pool) < POOL_SIZE and u not in pool and u not in skip and not SKIP_HOSTS.search(u):
                         pool.append(u)
         events.check_kill()
-        fetched = reader.fetch_many(pool, c["page_chars"], want=c["max_pages"])
+        raw = {r["url"]: r["raw_content"] for l in lists for r in l if r.get("raw_content")} if tavily.enabled() else {}
+        # page text that came with the search result is used first (community sites refuse our own fetches)
+        pre = [_use_raw(run_id, purpose, {"url": u, "ok": False, "reason": "not_fetched", "structured_prices": [],
+                                          "retrieved_at": now_iso()}, raw[u], c) for u in pool if u in raw]
+        pre = [p for p in pre if p["ok"]]
+        rest = [u for u in pool if u not in {p["url"] for p in pre}]
+        fetched = pre + reader.fetch_many(rest, c["page_chars"], want=max(0, c["max_pages"] - len(pre)))
+        fetched = _extract_failed(run_id, purpose, fetched, c, raw)
         fallback: list[str] = []
         for page in fetched:
             u = page["url"]
@@ -94,6 +104,55 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
             pages.append(snippet_page(u, snippets[u], purpose))
             decision_log.append(run_id, "market_researcher", "snippet_fallback", sources=[u], purpose=purpose)
     return {"searches": searches, "pages": pages}
+
+
+def _extract_failed(run_id: str, purpose: str, fetched: list[dict[str, Any]], c: dict[str, Any],
+                    raw: dict[str, str] | None = None) -> list[dict[str, Any]]:
+    """Pages our own fetch could not read (403s, bot walls, JS shells): first the page text Tavily's search
+    returned for that URL (origin 'tavily-search-raw'), then one Tavily Extract attempt for the rest, only for as
+    many pages as are still missing (+2; community threads for demand always). Either text passes the same
+    quality check and goes to the isolated reader. Without a Tavily key nothing changes."""
+    if not tavily.enabled():
+        return fetched
+    fetched = [_use_raw(run_id, purpose, p, raw.get(p["url"], ""), c) if raw and not p["ok"] else p for p in fetched]
+    from app.config import gate_definitions
+    from app.orchestrator.orchestrator import on_community_site  # lazy: the orchestrator imports this module
+    need = c["max_pages"] - sum(p["ok"] for p in fetched)
+    failed = [p["url"] for p in fetched if not p["ok"] and p.get("reason") in EXTRACTABLE]
+    community = gate_definitions()["desk_gate"]["community_domains"]
+    # demand needs first-hand threads, which are exactly the pages that block us: always try those (up to 4)
+    picked = [u for u in failed if purpose == "demand" and on_community_site(u, community)][:COMMUNITY_EXTRACTS]
+    picked += [u for u in failed if u not in picked][: max(0, need) + 2]
+    if not picked:
+        return fetched
+    failed = picked
+    texts = tavily.extract(failed)
+    out = []
+    for p in fetched:
+        text = texts.get(p["url"], "")
+        text = clean_markdown(text)
+        if not p["ok"] and text and not reader.quality(text):
+            decision_log.append(run_id, "page_reader", "tavily_extract", sources=[p["url"]], purpose=purpose,
+                                replaced_reason=p["reason"], text_chars=len(text))
+            p = {**p, "ok": True, "reason": None, "origin": "tavily-extract", "text": text[: c["page_chars"]]}
+        out.append(p)
+    return out
+
+
+def clean_markdown(text: str) -> str:
+    """Tavily returns pages as markdown: drop images and link targets so the reading window holds the content."""
+    text = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", text or "")
+    text = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    return re.sub(r"[ \t]+", " ", re.sub(r"\n{3,}", "\n\n", text)).strip()
+
+
+def _use_raw(run_id: str, purpose: str, page: dict[str, Any], text: str, c: dict[str, Any]) -> dict[str, Any]:
+    text = clean_markdown(text)
+    if not text or reader.quality(text):
+        return page
+    decision_log.append(run_id, "page_reader", "tavily_search_raw", sources=[page["url"]], purpose=purpose,
+                        replaced_reason=page["reason"], text_chars=len(text))
+    return {**page, "ok": True, "reason": None, "origin": "tavily-search-raw", "text": text[: c["page_chars"]]}
 
 
 def snippet_page(url: str, text: str, purpose: str) -> dict[str, Any]:
