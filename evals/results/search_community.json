@@ -1,0 +1,418 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T203611_b5ce",
+  "status": "awaiting_founder",
+  "seconds": 52.2,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "payment-reminder email templates \"I wish there was\"",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment-reminder email templates frustrated OR annoying OR \"hate\"",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment reminder \"I wish there was\"",
+    "results": 4,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment reminder frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment-reminder email templates template pack",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack for payment-reminder email templates 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to Payment reminder email templates",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "Payment reminder email templates pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "Payment reminder email templates price per month",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 26,
+  "pages_read": 22,
+  "pages_failed": [
+   {
+    "url": "https://www.quora.com/How-do-I-write-a-payment-reminder",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-is-the-best-way-to-write-a-polite-reminder-email-about-overdue-payments-without-causing-offense",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/How-do-you-write-an-unpaid-invoice-reminder-email",
+    "reason": "http_403"
+   },
+   {
+    "url": "https://www.quora.com/What-is-a-way-to-remind-someone-for-payment-of-service",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.softwaresuggest.com/blog/outstanding-payment-reminder-email-samples": 6000,
+   "https://www.zoho.com/cpaas/articles/payment-reminder-email-template-examples.html": 6000,
+   "https://www.scalesuite.com.au/resources/payment-reminder-email-templates": 6000,
+   "https://handl.works/templates/payment-reminder-emails": 6000,
+   "https://workspace369.com/blog/invoice-follow-up-email-templates": 6000,
+   "https://www.paidnice.com/blog/email-templates-for-invoice-payment-reminders": 6000,
+   "https://landolio.com/blog/polite-payment-reminder-emails": 6000,
+   "https://www.getweave.com/payment-reminder-template": 6000,
+   "https://koalendar.com/blog/payment-reminder-email": 6000,
+   "https://blog.peakflo.co/en/uncategorized/payment-reminder-email-templates": 2491,
+   "https://gmelius.com/de/templates/final-payment-reminder": 1014,
+   "https://squareup.com/us/en/the-bottom-line/reaching-customers/payment-reminder-message": 6000,
+   "https://startbuddi.com/blog/payment-reminder-email-template": 6000,
+   "https://nudgepe.com/blog/invoice-reminder-email-template": 4660,
+   "https://www.leanpay.io/en/blog/4-reminder-email-templates-overdue-invoices": 6000,
+   "https://keap.com/email-templates/reminder": 6000,
+   "https://www.chaserhq.com/blog/the-4-most-effective-email-templates-to-get-your-invoices-paid": 6000,
+   "https://invoicemonk.com/en/blog/payment-reminder-email-templates": 6000,
+   "https://invoicebloom.io/blog/how-to-write-payment-reminder-email": 5328,
+   "https://mailrelay.com/en/blog/2026/10/13/payment-reminder-examples": 6000,
+   "https://www.billgrid.com/payment-reminder-email-templates": 6000,
+   "https://www.clientary.com/guides/payment-reminder-email-templates": 3725
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://news.ycombinator.com/item?id=47082761",
+    "reason": "The author describes their own problem, not the brief's specific problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=42609007",
+    "reason": "The quote does not describe a personal problem and does not relate to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=26439591",
+    "reason": "The quote does not describe a problem the author has with payment-reminder emails, and it is unrelated to the brief's problem about email templates and invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=10083238",
+    "reason": "The quote does not describe a problem the author has, nor is it related to payment-reminder email templates or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=46184985",
+    "reason": "The quote is seeking feedback, not describing a problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=7139137",
+    "reason": "The quote does not describe a problem and is not about payment-reminder email templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=2043130",
+    "reason": "The quote does not describe a problem and is unrelated to payment-reminder email templates or invoicing."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=955882",
+    "reason": "The quote does not describe a personal problem and is not about payment-reminder email templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=2558662",
+    "reason": "The quote is about setting up systems, not payment-reminder emails or invoicing."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ },
+ {
+  "brief": "crowded_todo_app",
+  "run_id": "run_20261117T203703_2e98",
+  "status": "awaiting_founder",
+  "seconds": 65.0,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "generic to-do list \"I wish there was\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "generic to-do list frustrated OR annoying OR \"hate\"",
+    "results": 3,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack for generic to-do list 2026",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to To-Do List Templates",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "To-Do List Templates pricing",
+    "results": 5,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 15,
+  "pages_read": 13,
+  "pages_failed": [
+   {
+    "url": "https://www.quora.com/Which-system-to-do-list-vs-done-list-is-more-productive-and-actually-helps-accomplish-goals-and-tasks",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://onplanners.com/templates/to-do-list": 5198,
+   "https://calendarkart.com/to-do-list-template": 6000,
+   "https://www.goskills.com/excel/resources/free-excel-templates": 6000,
+   "https://www.101planners.com/checklist-template-word-excel": 6000,
+   "https://www.todoist.com": 4073,
+   "https://www.meistertask.com/blog/trello-vs-meistertask-task-management-template-workflows": 6000,
+   "https://seatable.com/online-to-do-list": 6000,
+   "https://www.wrike.com/blog/to-do-list-template": 6000,
+   "https://2sync.com/blog/best-notion-to-do-list-templates": 6000,
+   "https://zapier.com/blog/best-todo-list-apps": 6000,
+   "https://freetodolist.com": 5546,
+   "https://excel.cloud.microsoft/create/en/project-planning-to-do-lists": 4415,
+   "https://www.printabletodolist.com": 478
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://news.ycombinator.com/item?id=42436060",
+    "reason": "The quote is about Home Assistant integration and not about a to-do list template pack."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=9084138",
+    "reason": "The quote does not describe a personal problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=22456710",
+    "reason": "The quote does not describe a personal problem and is unrelated to the to-do list template pack."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=14155483",
+    "reason": "The quote does not describe a problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=40589828",
+    "reason": "The quote does not describe a problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=29999436",
+    "reason": "The quote does not describe a personal problem and is not about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=9037774",
+    "reason": "The quote does not describe a personal problem and is not related to the brief's problem about to-do list templates."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=7826978",
+    "reason": "The author is not discussing a to-do list template pack and the problem is personal, not related to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=4615038",
+    "reason": "The author is comparing to-do lists to calendars, not discussing a to-do list template pack."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T203808_d63a",
+  "status": "awaiting_founder",
+  "seconds": 84.0,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "track grants donor reports \"I wish there was\"",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "track grants donor reports frustrated OR annoying OR \"hate\"",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "grant tracking \"I wish there was\"",
+    "results": 2,
+    "origin": "cache",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "grant tracking frustrated OR annoying OR \"hate\"",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "track grants donor reports template pack",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack for track grants donor reports 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 12,
+  "pages_read": 7,
+  "pages_failed": [
+   {
+    "url": "https://www.airtable.com/universe/expbotiKfshqR2HJ5/nonprofit-donor-and-grants-database",
+    "reason": "too_short"
+   },
+   {
+    "url": "https://www.quora.com/What-is-the-nonprofit-accounting-treatment-for-grants-vs-donations",
+    "reason": "http_403"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.mangoapps.com/templates/mini_apps/donations-grants": 6000,
+   "https://humanprose.org/packs/ngo-grants": 6000,
+   "https://monday.com/templates/template/10028953/donors-management": 2021,
+   "https://www.getalignmint.org/blog/grant-tracking-spreadsheet": 6000,
+   "https://monday.com/crm/marketplace/template/non-profit-donor-management-crm": 6000,
+   "https://givebutter.com/freebies": 6000,
+   "https://www.reddit.com/r/nonprofit/comments/1w2gc7m/do_we_really_need_to_track_every_expense_against": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": [],
+  "demand_signal_sources": {},
+  "community_posts": 10,
+  "demand_rejected_by_classifier": [
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/1w2gc7m/do_we_really_need_to_track_every_expense_against",
+    "reason": "The problem is about donors' inconsistent behavior, not about tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=50125529",
+    "reason": "The problem is about maintaining a cash flow spreadsheet, not tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=44511623",
+    "reason": "The quote does not describe a personal problem and is unrelated to tracking grants or donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=42961123",
+    "reason": "The quote does not describe a personal problem and is not related to the brief's problem of tracking grants and donor reports for small NGOs."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=39781760",
+    "reason": "The quote does not describe a problem and is unrelated to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=37630580",
+    "reason": "The quote does not describe a problem and is unrelated to the brief's problem."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=27845536",
+    "reason": "The quote does not describe a problem related to tracking grants or donor reports, nor does it mention spreadsheet templates for NGOs."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=46176036",
+    "reason": "The quote does not describe a problem and is unrelated to the brief's problem of tracking grants and donor reports."
+   },
+   {
+    "url": "https://news.ycombinator.com/item?id=16067744",
+    "reason": "The quote does not describe a personal problem and is unrelated to tracking grants or donor reports."
+   }
+  ],
+  "tavily_budget_fallbacks": 0
+ }
+]

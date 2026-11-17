@@ -159,6 +159,9 @@ def stub_backend(model, messages, schema, temperature):
         about = squash(problem) in squash(quote) or (bool(words) and hits / len(words) >= 2 / 3)
         out = {"first_person_problem": first, "about_brief_problem": about,
                "reason": f"stub: first_person={first} problem_words={hits}/{len(words)}"}
+    elif title == "RoundPlan":
+        out = {"queries": [{"query": "late invoice payments reminder help", "purpose": "demand", "language": "en", "why": "more demand"}],
+               "done": False}
     elif title == "PolicyDecision":
         bad = re.search(r"(review|testimonial|stars?|bewertung|reseña|تقييم|impersonat|pretend|ignore (your|previous) instructions|guarantee.{0,60}(earn|income|profit|revenue|get paid|success))", u, re.I)
         out = {"decision": "REFUSE" if bad else "ALLOW", "reason": "stub policy model"}

@@ -1,0 +1,12 @@
+# Iterative research loop (app/services/research/loop.py). Round 1 is the broad pass built in code from the
+# planner's keywords; later rounds are planned by the research_planner role from a structured summary only.
+budget:
+  demo-fast: { rounds: 4, searches: 12, page_reads: 15, seconds: 90 }
+  quality:   { rounds: 6, searches: 24, page_reads: 40, seconds: 300 }
+  default:   { rounds: 4, searches: 12, page_reads: 15, seconds: 90 }
+queries_per_round: 3
+max_query_words: 12
+near_duplicate_jaccard: 0.8
+stall_rounds: 2          # stop after this many rounds in a row with no new evidence candidate
+max_leads: 40            # leads shown to the planner (short strings only, never page text)
+round1_pages_per_purpose: 3

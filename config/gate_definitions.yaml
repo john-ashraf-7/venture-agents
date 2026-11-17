@@ -12,6 +12,8 @@ desk_gate:
   # quote is a first-person problem statement with a date. Articles, galleries and vendor blogs never count.
   community_domains: [reddit.com, news.ycombinator.com, stackexchange.com, stackoverflow.com, superuser.com,
                       askubuntu.com, indiehackers.com, producthunt.com/discussions, quora.com, techcommunity.microsoft.com]
+  # Below this research coverage, weak demand means "not searchable", not "no demand": the gate says PARK, never STOP.
+  coverage_min: { pages_read: 5, verifiable_sources: 1 }
   counts_only:
     labels: [SUPPORTED]
     checked_by_different_family: true
@@ -37,6 +39,7 @@ definitions:
 
 verdict_mapping:   # applied in code (app/gates.py), first matching row wins
   - { when: compliance_flag, verdict: STOP }
+  - { when: demand_below_half_of_min_and_low_coverage, verdict: PARK }   # coverage_min
   - { when: demand_below_half_of_min, verdict: STOP }
   - { when: demand_below_min, verdict: PARK }
   - { when: no_paying_competitor, verdict: PARK }

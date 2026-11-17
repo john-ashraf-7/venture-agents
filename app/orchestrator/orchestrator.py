@@ -23,6 +23,7 @@ from app.agents import (builder, claim_checker, commercial, competitor, complian
                         market_researcher, planner, test_writer)
 from app.agents import base as agent_base
 from app.agents import demand_classifier
+from app.services.research import loop as research_loop
 from app.commerce import delivery, payments, refunds
 from app.config import EVALS_DIR, caps, data_dir, founder_mode, gate_definitions, profile, profile_name
 from app.models import (PRD, Brief, Claim, ExperimentPlan, FounderInput, GuidePack, IdeaMatrix, Label, LeanCanvas,
@@ -403,26 +404,9 @@ def phase1(run_id: str) -> None:
     ideas = idea_scout.run(run_id, brief, past)
     events.emit(run_id, "step", f"{len(ideas.variants)} idea variants")
 
-    research = market_researcher.gather(run_id, planned)
-    # second pass: the first competitor named on a product page gets an "alternatives" and a "pricing" query
-    top = next((p["extract"].get("product_name") for p in research["pages"] if p.get("purpose") in COMPETITOR_PURPOSES
-                and p["extract"].get("page_kind") == "product" and p["extract"].get("product_name")), None)
-    if top:
-        decision_log.append(run_id, "market_researcher", "second_pass_competitor", competitor=top,
-                            provenance=Provenance.web.value)
-        more = market_researcher.gather(run_id, market_researcher.plan_queries(
-            run_id, plan.search_terms, brief.idea, {"alternatives": top, "pricing": top}),
-            skip={p["url"] for p in research["pages"]})
-        research = {"searches": research["searches"] + more["searches"], "pages": research["pages"] + more["pages"]}
-        priced = any(p.get("purpose") == "pricing" and not market_researcher.is_snippet(p)
-                     and (p["extract"].get("price_text") or p.get("structured_prices")) for p in more["pages"])
-        if not priced:  # one extra query; its snippets stay PARTIAL unless a fetched page confirms the price
-            fb = market_researcher.gather(run_id, market_researcher.plan_queries(
-                run_id, plan.search_terms, brief.idea, {"pricing_fallback": top}),
-                skip={p["url"] for p in research["pages"]})
-            research = {"searches": research["searches"] + fb["searches"], "pages": research["pages"] + fb["pages"]}
-    # community posts from official APIs (HN, Stack Exchange, Reddit with keys): quote and date from the API, no LLM read
-    research["pages"] += market_researcher.community_pages(run_id, plan.search_terms, skip={p["url"] for p in research["pages"]})
+    # iterative research loop: broad pass in code, then planner-led rounds until thresholds, budget or a stall
+    research = research_loop.run(run_id, brief, plan.search_terms, planned, lock["rule"])
+    keep(run_id, "research_coverage", research["coverage"])
     pages = research["pages"]
     src_md = ["# Sources", ""]
     for s in research["searches"]:
@@ -577,7 +561,9 @@ def phase1(run_id: str) -> None:
         demand_signals=len(counting), paying_competitors=len(paying_urls),
         direct_competitors=sum(1 for r in comp.rows if r.is_direct), blocking_flags=sum(1 for f in cq.flags if f.blocking),
         cost_high_usd=plan.cost_high_usd, budget_usd=brief.budget_usd, hours_high=plan.hours_high,
-        hours_available=hours_avail, missing_skills=missing[:3] if len(missing) > len(plan.required_skills) / 2 else [])
+        hours_available=hours_avail, missing_skills=missing[:3] if len(missing) > len(plan.required_skills) / 2 else [],
+        coverage_pages=research["coverage"]["page_reads"] + research["coverage"]["community_posts"],
+        coverage_sources=research["coverage"]["verifiable_sources"])
     result = gates.desk_gate(lock["rule"], ev)
     st = load(run_id)
     st["timings"][f"phase1_to_gate_v{ver}_s"] = round(cost.time.time() - t0, 1)

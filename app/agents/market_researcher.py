@@ -41,11 +41,14 @@ SNIPPETS_PER_PURPOSE = 3
 MIN_SNIPPET = 80
 
 
-def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = None) -> dict[str, Any]:
+def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = None,
+           max_pages: int | None = None) -> dict[str, Any]:
     """Search each planned query, then per purpose: a pool of up to 12 candidate URLs, fetched until max_pages
     pass the quality check; failures are logged with a reason and replaced by the next candidate. Search
     snippets of failed or empty pages are kept as snippet-only pages (their claims are PARTIAL, never counted)."""
-    c = caps()
+    c = dict(caps())
+    if max_pages is not None:  # the research loop's remaining read budget, per purpose
+        c["max_pages"] = max(0, min(c["max_pages"], max_pages))
     skip = set(skip or ())
     searches: list[dict[str, Any]] = []
     for purpose, q in planned:

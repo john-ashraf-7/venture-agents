@@ -86,6 +86,8 @@ class DeskEvidence:
     hours_high: Optional[float]
     hours_available: Optional[float]
     missing_skills: list[str] = field(default_factory=list)
+    coverage_pages: Optional[int] = None     # pages and community posts the research loop could read
+    coverage_sources: Optional[int] = None   # verifiable evidence candidates found
 
 
 def founder_fit(ev: DeskEvidence) -> tuple[Optional[bool], str]:
@@ -107,6 +109,13 @@ def founder_fit(ev: DeskEvidence) -> tuple[Optional[bool], str]:
     return True, "plan fits budget, time and skills (high end of ASSUMPTION ranges)"
 
 
+def low_coverage(rule: dict[str, Any], ev: DeskEvidence) -> bool:
+    cov = rule.get("coverage_min") or {}
+    if not cov or ev.coverage_pages is None:
+        return False
+    return ev.coverage_pages < int(cov.get("pages_read", 5)) or (ev.coverage_sources or 0) < int(cov.get("verifiable_sources", 1))
+
+
 def desk_gate(rule: dict[str, Any], ev: DeskEvidence) -> GateResult:
     dmin = int(rule["demand_signals_min"])
     pmin = int(rule["paying_competitors_min"])
@@ -124,6 +133,12 @@ def desk_gate(rule: dict[str, Any], ev: DeskEvidence) -> GateResult:
     if ev.blocking_flags > fmax:
         verdict = Verdict.STOP
         reasons.append("A blocking compliance flag was raised.")
+    elif ev.demand_signals < math.ceil(dmin / 2) and low_coverage(rule, ev):
+        # absence of evidence where little could be searched is not evidence of absence
+        verdict = Verdict.PARK
+        reasons.append("Not enough searchable evidence for this audience "
+                       f"({ev.coverage_pages} pages/posts read, {ev.coverage_sources} verifiable sources): collect evidence "
+                       "directly (interviews, waitlist) before deciding.")
     elif ev.demand_signals < math.ceil(dmin / 2):
         verdict = Verdict.STOP
         reasons.append(f"Only {ev.demand_signals} verified demand signal(s); the locked minimum is {dmin}.")
