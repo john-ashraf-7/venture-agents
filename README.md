@@ -58,13 +58,13 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 
 | Role | Model (Ollama tag) | Why |
 |---|---|---|
-| intake, planner, idea scout, claim extractor, gate explainer, copywriter, builder, analyst | `gpt-oss:20b` (Apache-2.0) | strongest open model that fits 24 GB beside the checker |
-| page reader, claim checker, policy guard, devil's advocate, test writer, coach, eval judge | `qwen3:8b` (Apache-2.0) | a **different model family** checks what gpt-oss wrote |
+| intake, planner, idea scout, claim extractor, gate explainer, copywriter, builder, analyst | `gpt-oss:120b` (Apache-2.0) | strongest open model we can name; pulled by `docker compose up` (needs a large GPU, e.g. 80 GB) |
+| page reader, claim checker, policy guard, devil's advocate, test writer, coach, eval judge | `qwen3:32b` (Apache-2.0) | a **different model family** checks what gpt-oss writes; the page reader's output is also verified in code |
 | shared memory / lessons relevance filter | `nomic-embed-text` (Apache-2.0) | local embeddings |
 | optional `safeguard` profile | `gpt-oss-safeguard:20b` | Policy Guard alternative, loaded one after another |
 | fallback for the checker roles | `qwen2.5:7b` (Apache-2.0), model key `qwen25-7b` | same family split; use when qwen3:8b is not pulled |
 
-**The committed demo run (`outputs/`) used the fallback:** gpt-oss:20b for the writer roles, `qwen2.5:7b` for every checker role (`ROLE_<ROLE>=qwen25-7b` in `.env`), and no embedding model, so lessons relevance used the built-in keyword-overlap fallback. Ollama ran natively on the host and only SearXNG ran in Docker. The `decision_log.json` `model` field shows the exact tag of every call.
+**Default models changed after the committed demo run.** `docker compose up` now pulls `gpt-oss:120b` + `qwen3:32b` + `nomic-embed-text` (~85 GB) and needs roughly an 80 GB GPU to keep both loaded; smaller GPUs swap models (much slower). Lighter setup for a 24 GB GPU (what our demo used): `PULL_MODELS="gpt-oss:20b qwen3:8b nomic-embed-text"` plus `ROLE_<ROLE>=gpt-oss-20b` for the writer roles and `ROLE_<ROLE>=qwen-8b` for the checker roles in `.env`. **The committed demo run (`outputs/`) used:** gpt-oss:20b for the writer roles, `qwen2.5:7b` for every checker role (`ROLE_<ROLE>=qwen25-7b` in `.env`), and no embedding model, so lessons relevance used the built-in keyword-overlap fallback. Ollama ran natively on the host and only SearXNG ran in Docker. The `decision_log.json` `model` field shows the exact tag of every call.
 
 - Everything is free and local by default: Ollama serves the models, SearXNG is self-hosted search, storage is a SQLite file in `data/`. No API keys, no paid services and no accounts are required.
 - Optional search provider: **Tavily** (hosted search API for agents). `SEARCH_PROVIDER=auto` (default) uses it only when you add your own key (`TAVILY_API_KEY` in `.env`; free tier about 1,000 credits a month, 1 credit per search; 6-8 searches per Phase 1 run in our tests). With no key, or when Tavily errors or runs out of credits, that query falls back to SearXNG and the decision log `note` says why. `SEARCH_PROVIDER=searxng` never calls Tavily. Demand searches are limited to the gate's community sites. Comparison on three briefs: `evals/results/search_tavily.json`.
