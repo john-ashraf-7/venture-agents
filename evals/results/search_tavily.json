@@ -1,0 +1,318 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T193301_b583",
+  "status": "awaiting_founder",
+  "seconds": 117.5,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com payment reminder emails",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com payment reminder emails",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "payment reminder emails \"I wish there was\"",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:reddit.com new freelancers payment reminder emails",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "templates for new freelancers",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best templates new freelancers 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "alternatives to Forge Invoice",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "Forge Invoice pricing",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 25,
+  "pages_read": 10,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/aiToolForBusiness/comments/1u41gv2/built_an_ai_that_writes_payment_followup_emails",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/SaaS/comments/1b3cbwx/subscription_renewal_reminder_emails_avoid_them",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/Netsuite/comments/1itzoxs/best_approach_for_automatic_payment_reminder",
+    "reason": "blocked-bot-check"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.reddit.com/r/aiToolForBusiness/comments/1u41gv2/built_an_ai_that_writes_payment_followup_emails": 1399,
+   "https://www.reddit.com/r/SaaS/comments/1b3cbwx/subscription_renewal_reminder_emails_avoid_them": 2275,
+   "https://www.reddit.com/r/Netsuite/comments/1itzoxs/best_approach_for_automatic_payment_reminder": 203,
+   "https://www.indiehackers.com/post/i-got-tired-of-writing-awkward-payment-reminder-emails-so-i-built-this-qcbTY1O5aojIAy7maxYu": 675,
+   "https://www.craft.do/templates/category/freelancers": 6000,
+   "https://solidinvoice.co/invoice-ninja-alternatives": 6000,
+   "https://developer.atlassian.com/platform/forge/forge-platform-pricing": 6000,
+   "https://www.portant.co/blog/invoice-ninja-alternative": 6000,
+   "https://www.stocktitan.net/news/FRGE/forge-global-announces-forge-price-a-new-standard-for-pricing-pre-7we7qgib2sfv.html": 5973,
+   "https://www.freshbooks.com/compare/top-invoice-home-alternatives-for-contractors": 6000
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "arabic_tutoring_guide",
+  "run_id": "run_20261117T193458_7ab4",
+  "status": "awaiting_founder",
+  "seconds": 84.3,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com tutor arabic online",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com tutor arabic online",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "tutor arabic online \"I wish there was\"",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:reddit.com university students tutor arabic online",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "guide template pack for university students",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best guide template pack university students 2026",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [],
+  "distinct_result_domains": 12,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/153qbgg/arabic_tutor_online_advice",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/learnArabicSecular/comments/1rjvkch/need_online_arabic_tutor",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/learnarabic/comments/1w4nnzk/september_tutoring_monthly_offeringseeking_arabic",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/18wvcx7/online_tutoring_sites",
+    "reason": "blocked-bot-check"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.reddit.com/r/learn_arabic/comments/153qbgg/arabic_tutor_online_advice": 193,
+   "https://www.reddit.com/r/learnArabicSecular/comments/1rjvkch/need_online_arabic_tutor": 200,
+   "https://www.reddit.com/r/learnarabic/comments/1w4nnzk/september_tutoring_monthly_offeringseeking_arabic": 211,
+   "https://www.reddit.com/r/learn_arabic/comments/18wvcx7/online_tutoring_sites": 184,
+   "https://slidesgo.com/theme/study-guide-for-university-students": 1178
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T193622_3f6f",
+  "status": "awaiting_founder",
+  "seconds": 123.6,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "site:reddit.com grant tracking",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:news.ycombinator.com grant tracking",
+    "results": 2,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "grant tracking \"I wish there was\"",
+    "results": 4,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "site:reddit.com small NGOs grant tracking",
+    "results": 3,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "template pack for small NGOs",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "best template pack small NGOs 2026",
+    "results": 0,
+    "origin": "none",
+    "engines": []
+   },
+   {
+    "query": "alternatives to NGO Templates Suite",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   },
+   {
+    "query": "NGO Templates Suite pricing",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "tavily"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "tavily"
+  ],
+  "engines_unresponsive": [
+   "tavily: ReadTimeout"
+  ],
+  "distinct_result_domains": 14,
+  "pages_read": 10,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/1ohqu1v/grants_process_and_record_keeping",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/1iq6o0u/tools_to_track_grant_spenddowns",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/nonprofit/comments/1xdlhq/need_help_creating_a_grant_tracking_spreadsheet",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/grants/comments/1dfqz2v/need_help_finding_grants_for_my_nonprofit",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.behance.net/gallery/87180505/NGO-Templates-Suite",
+    "reason": "error: HTTPStatusError"
+   },
+   {
+    "url": "https://creativethemes.com/blocksy/starter-sites/nonprofit-templates",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://www.reddit.com/r/nonprofit/comments/1ohqu1v/grants_process_and_record_keeping": 200,
+   "https://www.reddit.com/r/nonprofit/comments/1iq6o0u/tools_to_track_grant_spenddowns": 198,
+   "https://www.reddit.com/r/nonprofit/comments/1xdlhq/need_help_creating_a_grant_tracking_spreadsheet": 1370,
+   "https://www.reddit.com/r/grants/comments/1dfqz2v/need_help_finding_grants_for_my_nonprofit": 188,
+   "https://www.behance.net/gallery/87180505/NGO-Templates-Suite": 156,
+   "https://wpastra.com/website-templates/community/ngo": 2581,
+   "https://themefisher.com/ngo-website-templates": 6000,
+   "https://creativethemes.com/blocksy/starter-sites/nonprofit-templates": 1265,
+   "https://www.tooltester.com/en/blog/best-website-builder-for-nonprofit": 6000,
+   "https://studiomesa.co/articles/how-much-does-a-nonprofit-website-cost-in-2026": 4673
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ }
+]
