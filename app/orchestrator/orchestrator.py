@@ -285,6 +285,32 @@ def finish(run_id: str) -> None:
 
 
 # ----------------------------------------------------------------- Phase 1 ----------------
+FIRST_PERSON = re.compile(r"\b(i|i'm|i've|i'd|my|me|we|we're|our|us)\b", re.I)
+
+
+def on_community_site(url: str, domains: list[str]) -> bool:
+    """Suffix match on the host, plus an optional path prefix (e.g. producthunt.com/discussions)."""
+    from urllib.parse import urlparse
+    u = urlparse(url or "")
+    host, path = u.netloc.lower().removeprefix("www."), u.path.lower().lstrip("/")
+    for d in domains:
+        dh, _, dp = d.lower().partition("/")
+        if (host == dh or host.endswith("." + dh)) and path.startswith(dp):
+            return True
+    return False
+
+
+def community_demand(quote: str, page: dict[str, Any], rule: dict[str, Any]) -> bool:
+    """A demand signal: a community site from the locked rule, a first-person quote, and a date on that quote."""
+    if not on_community_site(page["url"], rule.get("community_domains", [])):
+        return False
+    if not FIRST_PERSON.search(quote or ""):
+        return False
+    norm = market_researcher.normalize
+    return any(ps.get("date") and (norm(ps.get("quote", "")) in norm(quote) or norm(quote) in norm(ps.get("quote", "")))
+               for ps in page["extract"].get("problem_statements", []))
+
+
 def desk_rule(brief: Brief) -> dict[str, Any]:
     g = gate_definitions()
     d = dict(g["desk_gate"])
@@ -317,6 +343,7 @@ def phase1(run_id: str) -> None:
     plan = planner.estimate(run_id, brief, past)
     keep(run_id, "plan", plan)
     hours_avail = (brief.hours_per_week * brief.weeks_available) if brief.hours_per_week and brief.weeks_available else None
+    planned = market_researcher.plan_queries(run_id, plan.search_terms, brief.idea)
     tight = (brief.budget_usd is not None and plan.cost_high_usd > brief.budget_usd) or (
         hours_avail is not None and plan.hours_high > hours_avail)
     write(run_id, 1, "step3", "research_plan", "\n".join([
@@ -325,13 +352,27 @@ def phase1(run_id: str) -> None:
         f"- Cost estimate (ASSUMPTION): ${plan.cost_low_usd:,.0f}-${plan.cost_high_usd:,.0f} (budget: {brief.budget_usd or 'unknown'})",
         f"- Required skills (ASSUMPTION): {', '.join(plan.required_skills)}",
         f"- Founder capacity: {'TIGHT - scope reduced and guardrails tightened' if tight else 'fits or unknown'}",
-        f"- Caps ({profile_name()}): {caps()}", "", "## Queries", ""] + [f"- {q}" for q in plan.search_queries[:caps()['max_queries']]]
+        f"- Caps ({profile_name()}): {caps()}", "", "## Search terms (keywords from the planner)", "",
+        f"```json\n{plan.search_terms.model_dump_json(indent=1)}\n```", "",
+        "## Queries (built in code from templates, linted)", ""] + [f"- [{p}] {q}" for p, q in planned]
+        + ["", "Second-pass queries (`alternatives to` / `pricing` for the first competitor found) are added after reading "
+           "and logged in the decision log with the competitor name's web provenance."]
         + (["", "## Lessons from earlier runs (relevance-filtered)", ""] + [f"- {l}" for l in past] if past else [])))
 
     ideas = idea_scout.run(run_id, brief, past)
     events.emit(run_id, "step", f"{len(ideas.variants)} idea variants")
 
-    research = market_researcher.gather(run_id, plan.search_queries)
+    research = market_researcher.gather(run_id, planned)
+    # second pass: the first competitor named on a product page gets an "alternatives" and a "pricing" query
+    top = next((p["extract"].get("product_name") for p in research["pages"]
+                if p["extract"].get("page_kind") == "product" and p["extract"].get("product_name")), None)
+    if top:
+        decision_log.append(run_id, "market_researcher", "second_pass_competitor", competitor=top,
+                            provenance=Provenance.web.value)
+        more = market_researcher.gather(run_id, market_researcher.plan_queries(
+            run_id, plan.search_terms, brief.idea, {"alternatives": top, "pricing": top}),
+            skip={p["url"] for p in research["pages"]})
+        research = {"searches": research["searches"] + more["searches"], "pages": research["pages"] + more["pages"]}
     pages = research["pages"]
     src_md = ["# Sources", ""]
     for s in research["searches"]:
@@ -347,7 +388,7 @@ def phase1(run_id: str) -> None:
     to_check: list[Claim] = []
     for d in drafts.claims:
         page = by_url.get(d.source_url)
-        vendor_copy = d.type == "demand_signal" and page and page["extract"].get("page_kind") != "forum"
+        vendor_copy = d.type == "demand_signal" and page and not community_demand(d.source_quote, page, lock["rule"])
         if vendor_copy:
             d.type = "other"
         c = ledger.new(run_id, text=d.text, type=d.type, label=Label.PARTIAL, source_url=d.source_url if page else None,
@@ -450,10 +491,9 @@ def phase1(run_id: str) -> None:
           + "\n".join(f"- {a}" for a in script.avoid) + "\n", guard_check=True)
 
     # Desk gate: counted by code from the ledger.
-    # a demand signal is a person describing the problem, so vendor and article pages do not count
-    forum_urls = {p["url"] for p in pages if p["extract"].get("page_kind") == "forum"}
+    # demand_signal claims that survived to here passed community_demand() at creation (community site,
+    # first-person, dated); anything else was relabelled "other" and does not count
     counting = {(c.source_url, c.type) for c in all_c if c.type in DEMAND_TYPES and ledger.counts_for_gate(c)
-                and (c.type != "demand_signal" or c.source_url in forum_urls)
                 and (c.type != "trend" or re.search(r"\d", c.source_quote or ""))}
     # a trend says where a market is moving, not that anyone wants this product: at most one counts
     trends = sorted(k for k in counting if k[1] == "trend")

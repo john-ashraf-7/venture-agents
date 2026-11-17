@@ -69,17 +69,17 @@ roles:
 profiles:
   # Live 3-minute demo: tight caps, claim checking only on gate-feeding claims.
   demo-fast:
-    caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000 }
+    caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000, demand_queries: 4, competitor_queries: 2, pricing_queries: 2 }
     check_scope: gate
   # Slower, larger caps, checker escalates to gpt-oss-20b when Qwen fails validation.
   quality:
-    caps: { results_per_query: 8, max_queries: 6, max_pages: 12, page_chars: 12000 }
+    caps: { results_per_query: 8, max_queries: 6, max_pages: 12, page_chars: 12000, demand_queries: 8, competitor_queries: 3, pricing_queries: 3 }
     check_scope: all
     role_overrides:
       claim_checker: { escalate_to: gpt-oss-20b }
   # Optional: Policy Guard on gpt-oss-safeguard:20b (loaded one after another, not beside gpt-oss-20b).
   safeguard:
-    caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000 }
+    caps: { results_per_query: 5, max_queries: 3, max_pages: 5, page_chars: 6000, demand_queries: 4, competitor_queries: 2, pricing_queries: 2 }
     check_scope: gate
     role_overrides:
       policy_guard: { model: gpt-oss-safeguard-20b }

@@ -12,8 +12,9 @@ def estimate(run_id: str, brief: Brief, lessons: list[str]) -> PlanEstimate:
     return base.run(run_id, "planner", "planner", "estimate_plan_and_queries", PlanEstimate,
                     {"brief": brief, "lessons_from_earlier_runs": lessons},
                     instructions="Estimate hours and cost to reach a first sellable version as low-high ranges "
-                                 "(these are ASSUMPTIONS). Write 3-6 specific web search queries that would find: people "
-                                 "describing this problem in forums, existing paid products with pricing pages, and trends.")
+                                 "(these are ASSUMPTIONS). Fill search_terms with short keywords only (no years, no "
+                                 "full sentences, do not copy the idea text): the buyer's problem as they would say it, "
+                                 "the buyer, the product type, and up to 3 synonyms. Code builds the search queries.")
 
 
 def prd(run_id: str, brief: Brief, ideas: IdeaMatrix, canvas: LeanCanvas | None) -> PRD:

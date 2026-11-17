@@ -8,6 +8,10 @@ desk_gate:
   founder_fit:
     compare: high_end_of_estimate     # cost/hours estimates are ASSUMPTION ranges; compare the HIGH end
     require_skills: true
+  # A demand signal counts only from these community sites (suffix match on the host), and only when the
+  # quote is a first-person problem statement with a date. Articles, galleries and vendor blogs never count.
+  community_domains: [reddit.com, news.ycombinator.com, stackexchange.com, stackoverflow.com, superuser.com,
+                      askubuntu.com, indiehackers.com, producthunt.com/discussions, quora.com, techcommunity.microsoft.com]
   counts_only:
     labels: [SUPPORTED]
     checked_by_different_family: true
@@ -18,10 +22,11 @@ desk_gate:
 
 definitions:
   demand_signal: >-
-    A SUPPORTED claim, backed by a fetched source, of one of: a forum/community post describing
-    the problem, on a page the reader classified as a forum (quotes from vendor or article pages
-    do not count); an existing paid product with a public pricing page; a sourced trend whose quote
-    contains a figure or date (at most one trend counts).
+    A SUPPORTED claim, backed by a fetched source, of one of: a first-person problem statement with
+    a date, on a site in community_domains (articles, template galleries and vendor blogs never
+    count); an existing paid product with a public pricing page; a sourced trend whose quote
+    contains a figure or date (at most one trend counts). Search-snippet claims are PARTIAL and
+    never count.
   paying_competitor: >-
     A competitor whose price was read from its own fetched page and verified by the claim checker.
   direct_competitor: >-

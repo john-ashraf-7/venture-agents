@@ -7,8 +7,9 @@ from typing import Any
 from app import llm
 from app.agents import base
 from app.config import caps
-from app.models import Brief, ClaimList, PageExtract
+from app.models import Brief, ClaimList, PageExtract, SearchTerms
 from app.services import decision_log, events, reader, search
+from app.services.search import queries
 
 SKIP_HOSTS = re.compile(r"(youtube\.com|facebook\.com|instagram\.com|tiktok\.com|x\.com|twitter\.com|linkedin\.com/in/|\.pdf$)", re.I)
 PRICING_HINT = re.compile(r"(/(pricing|plans|products?)/?([?#]|$)|gumroad\.com/l/|etsy\.com/listing/|/shop/)", re.I)
@@ -17,15 +18,31 @@ FORUM_HINT = re.compile(r"(reddit\.com/r/|/forums?/|/discussions?/|/community/|c
 FORUM_SLOTS = 2
 
 
-def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
+def plan_queries(run_id: str, terms: SearchTerms, idea: str, purposes: dict[str, str] | None = None) -> list[tuple[str, str]]:
+    """Build queries in code for each purpose ({purpose: competitor name or ''}), lint them, log rejections."""
     c = caps()
-    queries = queries[: c["max_queries"]]
+    limits = {"demand": c["demand_queries"], "competitors": c["competitor_queries"], "pricing": c["pricing_queries"],
+              "pricing_fallback": 1, "alternatives": 1}
+    planned = []
+    for purpose, competitor in (purposes or {"demand": "", "competitors": ""}).items():
+        for q in queries.build(terms, purpose, competitor=competitor, limit=limits[purpose]):
+            why = queries.lint(q, idea)
+            if why:
+                decision_log.append(run_id, "market_researcher", "query_rejected", query=q, purpose=purpose, reason=why)
+                continue
+            planned.append((purpose, q))
+    return planned
+
+
+def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = None) -> dict[str, Any]:
+    c = caps()
     searches, urls = [], []
-    for q in queries:
-        res = search.search(q, c["results_per_query"])
+    skip = skip or set()
+    for purpose, q in planned:
+        res = {**search.search(q, c["results_per_query"]), "purpose": purpose}
         searches.append(res)
         decision_log.append(run_id, "market_researcher", "web_search", sources=[r["url"] for r in res["results"]],
-                            model=None, query=q, origin=res["origin"], note=res["note"],
+                            model=None, query=q, purpose=purpose, origin=res["origin"], note=res["note"],
                             engines=res.get("engines", []), unresponsive=res.get("unresponsive", []))
         events.emit(run_id, "step", f"search '{q}' -> {len(res['results'])} results ({res['note']})")
     # reserve slots for pricing pages and forum threads: the gate needs prices and people describing the problem
@@ -35,7 +52,7 @@ def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
         for r in (r for l in lists for r in l):
             if taken >= slots or len(urls) >= c["max_pages"]:
                 break
-            if hint.search(r["url"]) and r["url"] not in urls and not SKIP_HOSTS.search(r["url"]):
+            if hint.search(r["url"]) and r["url"] not in urls and r["url"] not in skip and not SKIP_HOSTS.search(r["url"]):
                 urls.append(r["url"])
                 taken += 1
     # then round-robin across queries so one query cannot take every slot
@@ -44,7 +61,7 @@ def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
         for l in lists:
             if i < len(l) and len(urls) < c["max_pages"]:
                 u = l[i]["url"]
-                if u not in urls and not SKIP_HOSTS.search(u):
+                if u not in urls and u not in skip and not SKIP_HOSTS.search(u):
                     urls.append(u)
         i += 1
     snippets = {r["url"]: f'{r.get("title", "")}\n{r.get("snippet", "")}'.strip() for l in lists for r in l}

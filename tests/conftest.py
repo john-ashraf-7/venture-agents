@@ -51,7 +51,8 @@ def stub_backend(model, messages, schema, temperature):
                "missing_info": [], "questions_for_founder": []}
     elif title == "PlanEstimate":
         out = {"hours_low": 20, "hours_high": 40, "cost_low_usd": 50, "cost_high_usd": 200, "required_skills": ["copywriting"],
-               "search_queries": ["freelancer late invoice reminder forum", "invoice reminder templates price", "freelance late payment trend"]}
+               "search_terms": {"problem": "late invoice payments", "audience": "freelancers", "product_type": "invoice templates",
+                                "synonyms": ["clients paying late"]}}
     elif title == "IdeaMatrix":
         v = {"name": "Reminder pack", "one_liner": "Templates", "buyer": "freelancers", "problem": "late invoices",
              "scores": {"demand": 4, "founder_fit": 4, "regulatory_burden": 1, "effort": 2}}
@@ -161,6 +162,14 @@ def isolated_env(tmp_path, monkeypatch):
     monkeypatch.setenv("DECISION_LOG_PATH", str(tmp_path / "decision_log.json"))
     monkeypatch.setenv("SEARCH_MODE", "fixtures")
     monkeypatch.setenv("PROFILE", "demo-fast")
+    # fixture pages live on fixture.local; treat its /forum/ path as a community site in tests only
+    from app.orchestrator import orchestrator as orch
+    real = orch.gate_definitions
+    def with_fixture_forum():
+        g = real()
+        g["desk_gate"] = {**g["desk_gate"], "community_domains": g["desk_gate"]["community_domains"] + ["fixture.local/forum"]}
+        return g
+    monkeypatch.setattr(orch, "gate_definitions", with_fixture_forum)
     from app import llm
     from app.services import events
     llm.set_backend(stub_backend)

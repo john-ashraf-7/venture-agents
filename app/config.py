@@ -53,7 +53,8 @@ def profile() -> dict[str, Any]:
 
 
 def caps() -> dict[str, int]:
-    default = {"results_per_query": 5, "max_queries": 3, "max_pages": 5, "page_chars": 6000}
+    default = {"results_per_query": 5, "max_queries": 3, "max_pages": 5, "page_chars": 6000,
+               "demand_queries": 4, "competitor_queries": 2, "pricing_queries": 2}
     default.update(profile().get("caps", {}))
     return default
 
