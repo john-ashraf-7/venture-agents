@@ -26,6 +26,14 @@ models:
     vram_gb_est: 6
     think: false
     ref_usd_per_mtok: { in: 0.035, out: 0.138 }
+  # Fallback for machines that already have qwen2.5 pulled (select with ROLE_<NAME>=qwen25-7b).
+  qwen25-7b:
+    provider: ollama
+    name: "qwen2.5:7b"
+    family: qwen
+    num_ctx: 8192
+    vram_gb_est: 5
+    ref_usd_per_mtok: { in: 0.03, out: 0.10 }
   gpt-oss-safeguard-20b:
     provider: ollama
     name: "gpt-oss-safeguard:20b"

@@ -59,11 +59,14 @@ A plain-code orchestrator (`app/orchestrator/orchestrator.py`) owns the phases, 
 | page reader, claim checker, policy guard, devil's advocate, test writer, coach, eval judge | `qwen3:8b` (Apache-2.0) | a **different model family** checks what gpt-oss wrote |
 | shared memory / lessons relevance filter | `nomic-embed-text` (Apache-2.0) | local embeddings |
 | optional `safeguard` profile | `gpt-oss-safeguard:20b` | Policy Guard alternative, loaded one after another |
+| fallback for the checker roles | `qwen2.5:7b` (Apache-2.0), model key `qwen25-7b` | same family split; use when qwen3:8b is not pulled |
+
+**The committed demo run (`outputs/`) used the fallback:** gpt-oss:20b for the writer roles, `qwen2.5:7b` for every checker role (`ROLE_<ROLE>=qwen25-7b` in `.env`), and no embedding model, so lessons relevance used the built-in keyword-overlap fallback. Ollama ran natively on the host and only SearXNG ran in Docker. The `decision_log.json` `model` field shows the exact tag of every call.
 
 - Everything is free and local: Ollama serves the models, SearXNG is self-hosted search, storage is a SQLite file in `data/`. No API keys, no paid services, no accounts.
 - Profiles: `PROFILE=demo-fast` (default: 5 results/query, 3 queries, 5 pages, checks only gate claims), `PROFILE=quality` (larger caps, claim checker escalates to gpt-oss:20b on failure), `PROFILE=safeguard`. Per-role override: `ROLE_<ROLE>=<model-key>` (e.g. `ROLE_CLAIM_CHECKER=gpt-oss-20b`; the app warns when a checker shares the writer's family).
-- VRAM: estimated ~20 GB for gpt-oss:20b + qwen3:8b + embeddings with q8_0 KV cache. Measured peak VRAM during a Phase 1 run: **not measured yet** (recorded by `python -m app.cli run`, written to `outputs/runs/<run>/timing.json`).
-- Timing target: intake to desk-gate verdict in about 2 minutes in `demo-fast` on the RTX 3090. Measured: **not measured yet** (same command).
+- VRAM: estimated ~20 GB for gpt-oss:20b + qwen3:8b + embeddings with q8_0 KV cache. Measured peak VRAM during Phase 1 runs on an RTX 3090 (gpt-oss:20b + qwen2.5:7b): **19.6-20.1 GB** (whole-GPU `nvidia-smi`, including ~1.5 GB used by the desktop; recorded in `outputs/runs/<run>/timing.json`).
+- Timing target: intake to desk-gate verdict in about 2 minutes in `demo-fast` on the RTX 3090. Measured with live search: **12-66 s** across five runs (cached LLM replies make repeat runs faster).
 
 ## Cost per run
 
@@ -73,7 +76,7 @@ The cost meter (`app/services/cost.py`) records tokens in/out, latency and cache
 
 `reference cost = Σ_calls (tokens_in × price_in + tokens_out × price_out) / 1,000,000`
 
-Reference prices used (ASSUMPTION, typical public prices for hosted open models in late 2026, not quotes): gpt-oss-20b $0.05 in / $0.20 out per million tokens; qwen3-8b $0.035 / $0.138; edit them in `config/models.yaml`. At an estimated 40-80k tokens for Phase 1 that is under $0.01 per run.
+Reference prices used (ASSUMPTION, typical public prices for hosted open models in late 2026, not quotes): gpt-oss-20b $0.05 in / $0.20 out per million tokens; qwen3-8b $0.035 / $0.138; edit them in `config/models.yaml`. Measured Phase 1 runs used **5k-21k tokens** (19-24 LLM calls), a reference cost under $0.01 per run; see `outputs/cost.json`.
 
 ## Demo video
 

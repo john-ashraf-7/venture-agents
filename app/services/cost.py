@@ -9,8 +9,11 @@ import json
 import threading
 import time
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Optional
 
+from app.config import outputs_dir
 from app.models import now_iso
 
 _LOCK = threading.Lock()
@@ -27,7 +30,24 @@ def record_call(run_id: Optional[str], role: str, model: Any, tokens_in: int, to
     with _LOCK:
         _RUNS[run_id or "_global"]["calls"].append(row)
         _LAST_CALL[run_id or "_global"] = row
+        if run_id:
+            with _calls_path(run_id).open("a", encoding="utf-8") as f:
+                f.write(json.dumps(row) + "\n")
     return row
+
+
+def _calls_path(run_id: str) -> Path:
+    """Calls are also kept on disk so a later process (e.g. a founder decision via the CLI) sees the whole run."""
+    p = outputs_dir() / "runs" / run_id
+    p.mkdir(parents=True, exist_ok=True)
+    return p / "llm_calls.jsonl"
+
+
+def _load_calls(run_id: str) -> list[dict[str, Any]]:
+    p = _calls_path(run_id)
+    if p.exists():
+        return [json.loads(line) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return list(_RUNS[run_id]["calls"])
 
 
 def last_call(run_id: Optional[str]) -> dict[str, Any]:
@@ -41,9 +61,8 @@ def start(run_id: str) -> None:
 
 def summary(run_id: str) -> dict[str, Any]:
     with _LOCK:
-        run = _RUNS[run_id]
-        calls = list(run["calls"])
-        started = run["started"]
+        calls = _load_calls(run_id)
+        started = _RUNS[run_id]["started"]
     by_model: dict[str, dict[str, float]] = defaultdict(lambda: {"calls": 0, "tokens_in": 0, "tokens_out": 0, "ref_cost_usd": 0.0})
     for c in calls:
         m = by_model[c["model"]]
@@ -64,9 +83,22 @@ def summary(run_id: str) -> dict[str, Any]:
         "tokens_in": tin,
         "tokens_out": tout,
         "llm_seconds": round(sum(c["latency_s"] for c in calls), 1),
-        "wall_clock_s": round(time.time() - started, 1),
+        # a later process (founder decision) did not see the run start, so it reports the span of the calls
+        "wall_clock_s": round(_span_s(calls) if calls and started > _first_ts(calls) else time.time() - started, 1),
         "by_model": by_model,
     }
+
+
+def _first_ts(calls: list[dict[str, Any]]) -> float:
+    return datetime.fromisoformat(calls[0]["ts"].replace("Z", "+00:00")).timestamp() - calls[0]["latency_s"]
+
+
+def _span_s(calls: list[dict[str, Any]]) -> float:
+    """First call start to last call end (excludes time spent waiting for the founder)."""
+    if not calls:
+        return 0.0
+    last = datetime.fromisoformat(calls[-1]["ts"].replace("Z", "+00:00")).timestamp()
+    return last - _first_ts(calls)
 
 
 def write(run_id: str, path: Any) -> dict[str, Any]:

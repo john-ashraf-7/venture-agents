@@ -444,7 +444,10 @@ def phase1(run_id: str) -> None:
           + "\n".join(f"- {a}" for a in script.avoid) + "\n", guard_check=True)
 
     # Desk gate: counted by code from the ledger.
-    counting = {(c.source_url, c.type) for c in all_c if c.type in DEMAND_TYPES and ledger.counts_for_gate(c)}
+    # a demand signal is a person describing the problem, so vendor and article pages do not count
+    forum_urls = {p["url"] for p in pages if p["extract"].get("page_kind") == "forum"}
+    counting = {(c.source_url, c.type) for c in all_c if c.type in DEMAND_TYPES and ledger.counts_for_gate(c)
+                and (c.type != "demand_signal" or c.source_url in forum_urls)}
     missing = [s for s in plan.required_skills if not any(s.lower() in k.lower() or k.lower() in s.lower() for k in brief.skills)]
     ev = gates.DeskEvidence(
         demand_signals=len(counting), paying_competitors=len(paying_urls),

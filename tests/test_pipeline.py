@@ -106,3 +106,27 @@ def test_kill_switch_stops_and_cancels():
     assert orch.load(rid)["status"] == "killed"
     assert all(i["status"] != "pending_approval" for i in outbox.items(rid))
     orch.unkill()
+
+
+def test_demand_signals_count_only_from_forum_pages():
+    rid = run_phase1()
+    from app.services import ledger
+    counted = orch.load(rid)["gates"]["desk_evidence"]["result"]["checks"][0]
+    expected = {(c.source_url, c.type) for c in ledger.all_claims(rid) if ledger.counts_for_gate(c)
+                and (c.type in ("paying_competitor", "trend") or (c.type == "demand_signal" and "/forum/" in c.source_url))}
+    assert counted["name"] == "demand_signals" and counted["value"] == len(expected)
+
+
+def test_cost_survives_a_new_process():
+    rid = run_phase1()
+    from app.services import cost
+    before = cost.summary(rid)["llm_calls"]
+    cost._RUNS.clear()  # what a later CLI process (founder decision) sees
+    assert before > 0 and cost.summary(rid)["llm_calls"] == before
+
+
+def test_pricing_pages_get_reserved_slots():
+    from app.agents.market_researcher import PRICING_HINT
+    assert PRICING_HINT.search("https://www.todoist.com/pricing")
+    assert PRICING_HINT.search("https://x.gumroad.com/l/kit")
+    assert not PRICING_HINT.search("https://nicepage.com/c/pricing-templates")

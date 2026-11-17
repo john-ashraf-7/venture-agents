@@ -11,6 +11,8 @@ from app.models import Brief, ClaimList, PageExtract
 from app.services import decision_log, events, reader, search
 
 SKIP_HOSTS = re.compile(r"(youtube\.com|facebook\.com|instagram\.com|tiktok\.com|x\.com|twitter\.com|linkedin\.com/in/|\.pdf$)", re.I)
+PRICING_HINT = re.compile(r"(/(pricing|plans|products?)/?([?#]|$)|gumroad\.com/l/|etsy\.com/listing/|/shop/)", re.I)
+PRICING_SLOTS = 2
 
 
 def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
@@ -23,8 +25,14 @@ def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
         decision_log.append(run_id, "market_researcher", "web_search", sources=[r["url"] for r in res["results"]],
                             model=None, query=q, origin=res["origin"], note=res["note"])
         events.emit(run_id, "step", f"search '{q}' -> {len(res['results'])} results ({res['note']})")
-    # round-robin across queries so one query cannot take every slot
+    # reserve slots for pricing/product pages: without them the gate never sees a verified price
     lists = [r["results"] for r in searches]
+    for r in (r for l in lists for r in l):
+        if len(urls) >= PRICING_SLOTS:
+            break
+        if PRICING_HINT.search(r["url"]) and r["url"] not in urls and not SKIP_HOSTS.search(r["url"]):
+            urls.append(r["url"])
+    # then round-robin across queries so one query cannot take every slot
     i = 0
     while len(urls) < c["max_pages"] and any(i < len(l) for l in lists):
         for l in lists:
