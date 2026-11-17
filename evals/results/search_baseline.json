@@ -1,0 +1,203 @@
+[
+ {
+  "brief": "invoice_templates",
+  "run_id": "run_20261117T191248_a7e1",
+  "status": "awaiting_founder",
+  "seconds": 45.3,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "new freelancers asking for payment reminder email templates reddit",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "google cse"
+    ]
+   },
+   {
+    "query": "payment reminder email template pack pricing Etsy",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "google cse"
+    ]
+   },
+   {
+    "query": "freelance invoicing checklist template price Gumroad",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "google cse"
+  ],
+  "engines_unresponsive": [
+   "brave: Suspended: too many requests",
+   "brave: too many requests",
+   "duckduckgo: Suspended: timeout",
+   "duckduckgo: timeout"
+  ],
+  "distinct_result_domains": 7,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/Freelancers/comments/1se6wit/i_made_a_free_overdue_invoice_reminder_template/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/smallbusiness/comments/1u5m6v1/a_simple_latepayment_reminder_template_that/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.etsy.com/market/overdue_payment_reminder_template",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://byhuy.gumroad.com/l/freelancedashboard": 5715,
+   "https://easlo.gumroad.com/l/ugsux": 275,
+   "https://www.reddit.com/r/Freelancers/comments/1se6wit/i_made_a_free_overdue_invoice_reminder_template/": 218,
+   "https://www.reddit.com/r/smallbusiness/comments/1u5m6v1/a_simple_latepayment_reminder_template_that/": 233,
+   "https://www.etsy.com/market/overdue_payment_reminder_template": 201
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ },
+ {
+  "brief": "arabic_tutoring_guide",
+  "run_id": "run_20261117T191333_4309",
+  "status": "awaiting_founder",
+  "seconds": 38.5,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "Egyptian university students tutoring Arabic online forum discussion",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "Arabic tutor lesson plan template pricing page Etsy",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "Arabic teaching online tutor template pack Gumroad",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "duckduckgo",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "duckduckgo",
+   "google cse"
+  ],
+  "engines_unresponsive": [
+   "brave: Suspended: too many requests"
+  ],
+  "distinct_result_domains": 7,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://www.reddit.com/r/learn_arabic/comments/1q1ff5t/my_experience_with_preply_arabic_tutors_mostly/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.reddit.com/r/Egypt/comments/18rno43/arabic_tutor_egyptian_dialect/",
+    "reason": "blocked-bot-check"
+   },
+   {
+    "url": "https://www.etsy.com/market/arabic_language_worksheets",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://arabiconline.gumroad.com/l/nmxyg": 1310,
+   "https://www.reddit.com/r/learn_arabic/comments/1q1ff5t/my_experience_with_preply_arabic_tutors_mostly/": 229,
+   "https://www.reddit.com/r/Egypt/comments/18rno43/arabic_tutor_egyptian_dialect/": 219,
+   "https://www.etsy.com/market/arabic_language_worksheets": 193,
+   "https://fikrplanner.com/": 415
+  },
+  "demand_signals_at_gate": 1,
+  "demand_signal_domains": [
+   "reddit.com"
+  ]
+ },
+ {
+  "brief": "excel_budget_small_ngo",
+  "run_id": "run_20261117T191412_0dda",
+  "status": "awaiting_founder",
+  "seconds": 26.2,
+  "verdict": "STOP",
+  "queries": [
+   {
+    "query": "small NGOs Egypt grant tracking spreadsheet template forum",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "NGO grant reporting spreadsheet template pricing",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "duckduckgo",
+     "google cse"
+    ]
+   },
+   {
+    "query": "NGO donor report template for small NGOs Egypt",
+    "results": 5,
+    "origin": "live",
+    "engines": [
+     "duckduckgo",
+     "google cse"
+    ]
+   }
+  ],
+  "engines_responded": [
+   "duckduckgo",
+   "google cse"
+  ],
+  "engines_unresponsive": [
+   "brave: Suspended: too many requests"
+  ],
+  "distinct_result_domains": 12,
+  "pages_read": 5,
+  "pages_failed": [
+   {
+    "url": "https://www.fundsforngos.org/how-to-write-a-proposal/15-must-have-elements-in-a-donor-report-for-ngos/",
+    "reason": "error: HTTPStatusError"
+   },
+   {
+    "url": "https://www.fundsforngos.org/how-to-write-a-proposal/25-budget-templates-for-grant-applications/",
+    "reason": "error: HTTPStatusError"
+   }
+  ],
+  "text_chars_per_page": {
+   "https://africanngos.org/2026/05/06/african-ngo-funding-opportunities-may-june-2026/": 6000,
+   "https://www.smartsheet.com/content/grant-tracking-templates": 5342,
+   "https://www.fundsforngos.org/how-to-write-a-proposal/15-must-have-elements-in-a-donor-report-for-ngos/": 221,
+   "https://www.fundsforngos.org/how-to-write-a-proposal/25-budget-templates-for-grant-applications/": 215,
+   "https://paylisthr.com/calculators/ngo-grant-budget": 4432
+  },
+  "demand_signals_at_gate": 0,
+  "demand_signal_domains": []
+ }
+]

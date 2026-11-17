@@ -25,7 +25,8 @@ def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
         res = search.search(q, c["results_per_query"])
         searches.append(res)
         decision_log.append(run_id, "market_researcher", "web_search", sources=[r["url"] for r in res["results"]],
-                            model=None, query=q, origin=res["origin"], note=res["note"])
+                            model=None, query=q, origin=res["origin"], note=res["note"],
+                            engines=res.get("engines", []), unresponsive=res.get("unresponsive", []))
         events.emit(run_id, "step", f"search '{q}' -> {len(res['results'])} results ({res['note']})")
     # reserve slots for pricing pages and forum threads: the gate needs prices and people describing the problem
     lists = [r["results"] for r in searches]
@@ -64,7 +65,8 @@ def gather(run_id: str, queries: list[str]) -> dict[str, Any]:
             continue
         last = __import__("app.services.cost", fromlist=["last_call"]).last_call(run_id)
         decision_log.append(run_id, "page_reader", "read_page_isolated", sources=[u], model=llm.model_name("page_reader"),
-                            tokens_in=last.get("tokens_in"), tokens_out=last.get("tokens_out"))
+                            tokens_in=last.get("tokens_in"), tokens_out=last.get("tokens_out"),
+                            text_chars=len(page["text"]), origin=page["origin"])
         events.emit(run_id, "step", f"read {u} -> {extract.page_kind}" + (f", price {extract.price_text}" if extract.price_text else ""))
         pages.append({**page, "extract": extract.model_dump()})
     return {"searches": searches, "pages": pages}

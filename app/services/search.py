@@ -53,12 +53,16 @@ def search(query: str, n: int) -> dict[str, Any]:
             r = httpx.get(f"{env('SEARXNG_URL', 'http://searxng:8080')}/search",
                           params={"q": query, "format": "json", "language": "en"}, timeout=20)
             r.raise_for_status()
-            results = [{"url": x.get("url", ""), "title": x.get("title", ""), "snippet": x.get("content", "")}
-                       for x in r.json().get("results", []) if re.match(r"^https?://", x.get("url", ""))]
+            body = r.json()
+            results = [{"url": x.get("url", ""), "title": x.get("title", ""), "snippet": x.get("content", ""),
+                        "engines": x.get("engines", [])}
+                       for x in body.get("results", []) if re.match(r"^https?://", x.get("url", ""))]
+            meta = {"engines": sorted({e for x in results for e in x["engines"]}),
+                    "unresponsive": [list(u) for u in body.get("unresponsive_engines", [])]}
             if results:
-                payload = {"query": query, "results": results[:10], "cached_at": now_iso()}
+                payload = {"query": query, "results": results[:10], "cached_at": now_iso(), **meta}
                 cache.write_text(json.dumps(payload), encoding="utf-8")
-                return {"query": query, "results": results[:n], "origin": "live", "note": "live search (SearXNG)"}
+                return {"query": query, "results": results[:n], "origin": "live", "note": "live search (SearXNG)", **meta}
         except (httpx.HTTPError, ValueError):
             pass
     if cache.exists():
