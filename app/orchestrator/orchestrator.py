@@ -22,6 +22,7 @@ from app.agents import (builder, claim_checker, commercial, competitor, complian
                         gate_explainer, idea_scout, intake, interview_designer, landing_page, lean_canvas,
                         market_researcher, planner, test_writer)
 from app.agents import base as agent_base
+from app.agents import demand_classifier
 from app.commerce import delivery, payments, refunds
 from app.config import EVALS_DIR, caps, data_dir, founder_mode, gate_definitions, profile, profile_name
 from app.models import (PRD, Brief, Claim, ExperimentPlan, FounderInput, GuidePack, IdeaMatrix, Label, LeanCanvas,
@@ -307,8 +308,28 @@ def community_demand(quote: str, page: dict[str, Any], rule: dict[str, Any]) -> 
     if not FIRST_PERSON.search(quote or ""):
         return False
     norm = market_researcher.normalize
-    return any(ps.get("date") and (norm(ps.get("quote", "")) in norm(quote) or norm(quote) in norm(ps.get("quote", "")))
+    return any(ps.get("date") and _date_on_source(ps["date"], page)
+               and (norm(ps.get("quote", "")) in norm(quote) or norm(quote) in norm(ps.get("quote", "")))
                for ps in page["extract"].get("problem_statements", []))
+
+
+def _date_on_source(date: str, page: dict[str, Any]) -> bool:
+    """A date from a community API is API data; any other date (a model read the page, e.g. Tavily raw content,
+    which carries no dates in practice) must appear in the page text itself."""
+    return bool(page.get("provider")) or market_researcher.normalize(str(date)) in market_researcher.normalize(page.get("text", ""))
+
+
+def _off_topic_demand(run_id: str, d: Any, page: dict[str, Any], problem: str, idea: str) -> Optional[str]:
+    """Why a community demand quote does not count for THIS brief (None when it counts). The demand_classifier
+    role must say the quote is a first-person problem AND the brief's problem; a failed call does not count."""
+    try:
+        c = demand_classifier.classify(d.source_quote, problem=problem, idea=idea, thread_title=page.get("thread_title", ""),
+                                       run_id=run_id, url=page["url"])
+    except llm.LLMError as e:
+        decision_log.append(run_id, "demand_classifier", "demand_rejected", sources=[page["url"]], model=e.model,
+                            reason=f"classifier failed: {e.detail[:150]}")
+        return f"classifier failed ({e.detail[:80]})"
+    return None if demand_classifier.counts(c) else (c.reason or "not a first-person statement of the brief's problem")
 
 
 COMPETITOR_PURPOSES = ("competitors", "alternatives", "pricing", "pricing_fallback")
@@ -400,6 +421,8 @@ def phase1(run_id: str) -> None:
                 run_id, plan.search_terms, brief.idea, {"pricing_fallback": top}),
                 skip={p["url"] for p in research["pages"]})
             research = {"searches": research["searches"] + fb["searches"], "pages": research["pages"] + fb["pages"]}
+    # community posts from official APIs (HN, Stack Exchange, Reddit with keys): quote and date from the API, no LLM read
+    research["pages"] += market_researcher.community_pages(run_id, plan.search_terms, skip={p["url"] for p in research["pages"]})
     pages = research["pages"]
     src_md = ["# Sources", ""]
     for s in research["searches"]:
@@ -422,7 +445,10 @@ def phase1(run_id: str) -> None:
         page = by_url.get(d.source_url)
         vendor_copy = d.type == "demand_signal" and page and not community_demand(d.source_quote, page, lock["rule"])
         not_a_price = d.type == "paying_competitor" and page and not priced_competitor(d.source_quote, page)
-        if vendor_copy or not_a_price:
+        off_topic = None
+        if d.type == "demand_signal" and page and not vendor_copy:
+            off_topic = _off_topic_demand(run_id, d, page, plan.search_terms.problem, brief.idea)
+        if vendor_copy or not_a_price or off_topic:
             d.type = "other"
         c = ledger.new(run_id, text=d.text, type=d.type, label=Label.PARTIAL, source_url=d.source_url if page else None,
                        source_quote=d.source_quote, retrieved_at=page["retrieved_at"] if page else None,
@@ -431,17 +457,23 @@ def phase1(run_id: str) -> None:
             c.note = "Vendor or article copy, not a person describing the problem: not a demand signal."
         if not_a_price:
             c.note = "Not a paying competitor: no non-zero price, or the page was not found by a competitor/pricing search."
+        if off_topic:
+            c.note = f"Not a demand signal for this brief (demand classifier): {off_topic}"
+        via = ""
+        if page and (page.get("provider") or page.get("via")):
+            via = " " + (f"via {page['provider']} API" if page.get("provider") else f"via {page['via']}")
+            c.note = ((c.note or "") + via).strip()
         if not page:
             ledger.rewrite_unsupported(c)
         elif market_researcher.is_snippet(page):
-            c.note = "snippet only"
+            c.note = "snippet only" + via
             c.label = Label.UNSUPPORTED if not market_researcher.quote_in_source(d.source_quote, page["text"]) else Label.PARTIAL
             if c.label == Label.UNSUPPORTED:
                 ledger.rewrite_unsupported(c)
             else:
                 ledger.update(c)
         elif not market_researcher.quote_in_source(d.source_quote, page["text"]):
-            c.note = "Quote not found in fetched source text."
+            c.note = "Quote not found in fetched source text." + via
             c.label = Label.UNSUPPORTED
             ledger.rewrite_unsupported(c)
         elif check_scope == "all" or d.type in DEMAND_TYPES:

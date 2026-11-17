@@ -71,7 +71,7 @@ def filter_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
 _LAST_LIVE = [0.0]
 
 
-def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
+def search(query: str, n: int, purpose: str = "competitors", run_id: str | None = None) -> dict[str, Any]:
     """Return {"query", "results": [{url,title,snippet,engines}], "origin": live|cache|fixture|none, "note",
     "engines", "unresponsive"}. Engines come from config/search.yaml by purpose; fresh cache is used first."""
     mode = env("SEARCH_MODE", "live")
@@ -83,7 +83,7 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
         return {"query": query, "results": [], "origin": "none", "note": "no fixture", "engines": [], "unresponsive": []}
     from app.services.search import tavily  # OPTIONAL provider, used only when the founder's own key is set
     if tavily.enabled():
-        tv = tavily.search(query, n, purpose)
+        tv = tavily.search(query, n, purpose, run_id=run_id)
         if tv["results"]:
             return tv
         out = _searxng(query, n, purpose, mode)

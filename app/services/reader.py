@@ -55,7 +55,9 @@ def html_to_text(html: str) -> str:
 CACHE_TTL_S = 24 * 3600
 MIN_CHARS = 300
 # real challenge markers only: document.addEventListener alone is in most normal pages' HTML
-CHALLENGE = re.compile(r"(captcha|cf-chl|challenge-platform|verify you are (a )?human|are you a robot|unusual traffic)", re.I)
+# requestSubmit(): Reddit's challenge page is a script that submits a hidden form after document.addEventListener
+CHALLENGE = re.compile(r"(captcha|cf-chl|challenge-platform|verify you are (a )?human|are you a robot|unusual traffic|"
+                       r"requestSubmit\(\)|please wait for verification|js_challenge)", re.I)
 LOGIN_WALL = re.compile(r"(log ?in to (continue|view|see)|sign ?in to (continue|view|see)|create an account to (continue|view))", re.I)
 JS_SHELL = re.compile(r"(<noscript[^>]*>[^<]*(javascript|enable js)|id=\"(__next|root|app)\"\s*>\s*</div>)", re.I)
 
@@ -148,8 +150,10 @@ def fetch_many(urls: list[str], max_chars: int, want: int, concurrency: int = 4,
     remote = []
     for u in urls:
         html = _fixture_page(u)
-        if html is not None:
-            out.append(_page(u, html_to_text(html), "fixture", ok=True, max_chars=max_chars))
+        if html is not None:  # saved pages pass the same bot-check test: a challenge page never reaches the reader
+            text = html_to_text(html)
+            blocked = quality(text, html) == "bot_check"
+            out.append(_page(u, text, "fixture", ok=not blocked, reason="bot_check" if blocked else None, max_chars=max_chars))
         elif env("SEARCH_MODE", "live") == "fixtures":
             out.append(_page(u, "", "none", ok=False, reason="no_fixture"))
         else:
@@ -184,7 +188,7 @@ def fetch(url: str, max_chars: int) -> dict[str, Any]:
     return fetch_many([url], max_chars, want=1)[0]
 
 
-BOT_WALL = re.compile(r"(document\.addEventListener|enable javascript|verify you are (a )?human|cf-chl|captcha)", re.I)
+BOT_WALL = re.compile(r"(document\.addEventListener|requestSubmit\(\)|enable javascript|verify you are (a )?human|cf-chl|captcha)", re.I)
 
 
 def looks_blocked(text: str) -> bool:

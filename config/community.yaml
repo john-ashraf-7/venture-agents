@@ -1,0 +1,45 @@
+# Community APIs for demand evidence (Phase 1). Posts come from official, documented APIs; reddit.com HTML is
+# never fetched for demand. Every provider is optional and free; the system runs with no keys set.
+# A post's text and date come straight from the API (no LLM read), so its quote is always on the source.
+enabled: true
+cache_hours: 24          # disk cache under DATA_DIR/community_cache
+timeout_s: 10
+max_text_chars: 3000     # post text kept as the page text (the quote is always a substring of it)
+max_queries: 3           # problem phrases searched per run (the planner's problem + synonyms)
+per_query_limit: 8       # posts asked for per provider call
+max_posts: 10            # community pages added to Phase 1 per run
+
+providers:
+  hackernews:            # Hacker News via Algolia, no key
+    enabled: true
+    budget: 6            # API calls per run
+    audience_query: true   # also "<audience> <problem>" when the audience is specific (better recall on HN)
+    endpoints: [search]  # search_by_date also works but returned off-topic recent comments in the live check
+    tags: "(comment,ask_hn)"   # comments and Ask HN posts carry text; plain stories are only titles
+  stackexchange:         # Stack Exchange API; STACKEXCHANGE_KEY optional (raises the daily quota)
+    enabled: true
+    budget: 8            # one call per (site, query); the anonymous per-IP quota is small
+    always: [softwarerecs]
+    # queries are the BARE problem keywords (every word must match; first-person phrasing returns 0)
+    # other sites are searched only when one of their words is in the brief's problem, audience or product type
+    sites:
+      # ordered by yield in the search trial; `startups` is not a valid API site
+      freelancing: [freelanc, invoice, client, contractor, consultant]
+      academia: [student, tutor, teach, university, academic, research, lesson, course]
+      webapps: [app, web, online, tool, todo, to-do, task, list, productiv, calendar]
+      money: [budget, money, invoice, payment, expense, bookkeep, accounting, ngo, nonprofit]
+      superuser: [excel, spreadsheet, template, windows, software, computer, word]
+      workplace: [team, employee, manager, office, ngo, nonprofit, staff]
+    fallback_sites: [webapps, superuser]   # when no site matches the brief
+  reddit:                # official OAuth API, only when REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET are set
+    enabled: true
+    budget: 4
+    user_agent: "venture-builder-research/0.1 (open-source research agent)"
+
+# Tavily (OPTIONAL hosted web search, the founder's own TAVILY_API_KEY; app/services/search/tavily.py)
+tavily:
+  max_searches_per_run: 12      # credits; past this the run's searches fall back to SearXNG (logged)
+  # demand searches ask Tavily for these community sites only (with page text); add audience-specific forums here
+  demand_include_domains: [reddit.com, news.ycombinator.com, stackexchange.com, quora.com, indiehackers.com, producthunt.com]
+  extra_community_domains: []   # e.g. [community.freelancersunion.org]
+  # competitor and pricing searches exclude config/search_filters.yaml low_priority_domains

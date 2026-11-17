@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import time
-from typing import Any
+from typing import Any, Optional
 
 import httpx
 
@@ -24,19 +24,42 @@ def enabled() -> bool:
     return env("SEARCH_PROVIDER", "auto").lower() in ("auto", "tavily") and bool(env("TAVILY_API_KEY"))
 
 
+def settings() -> dict[str, Any]:
+    return load_yaml("community.yaml").get("tavily", {}) or {}
+
+
+_SPENT: dict[str, int] = {}
+
+
+def over_budget(run_id: Optional[str]) -> bool:
+    """Per-run credit budget (config/community.yaml tavily.max_searches_per_run); past it, SearXNG is used."""
+    return bool(run_id) and _SPENT.get(run_id, 0) >= int(settings().get("max_searches_per_run", 12))
+
+
+def _spend(run_id: Optional[str]) -> None:
+    if run_id:
+        _SPENT[run_id] = _SPENT.get(run_id, 0) + 1
+
+
 def _options(purpose: str, n: int) -> dict[str, Any]:
     opts: dict[str, Any] = {"search_depth": "basic", "topic": "general", "max_results": max(1, min(n, 20)),
                             "include_answer": False, "include_raw_content": False}
     if purpose == "demand":
         # demand signals only count from community sites, so ask Tavily for those directly, with the page text:
-        # community sites (Reddit above all) refuse our own fetches, but Tavily's index often has the thread
-        domains = load_yaml("gate_definitions.yaml")["desk_gate"]["community_domains"]
-        opts["include_domains"] = sorted({d.split("/")[0] for d in domains})
+        # community sites (Reddit above all) refuse our own fetches, but Tavily's index often has the thread.
+        # Quotes must then be exact substrings of that raw content (checked in code).
+        t = settings()
+        opts["include_domains"] = sorted({d.split("/")[0] for d in t.get("demand_include_domains", [])
+                                          + t.get("extra_community_domains", [])})
         opts["include_raw_content"] = True
+    else:  # competitors and pricing: no domain filter, but no SEO template galleries / content farms
+        low = load_yaml("search_filters.yaml").get("low_priority_domains", [])
+        if low:
+            opts["exclude_domains"] = list(low)
     return opts
 
 
-def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
+def search(query: str, n: int, purpose: str = "competitors", run_id: Optional[str] = None) -> dict[str, Any]:
     from app.services.search import _cache_path, _from_cache, filter_results  # avoid a circular import
 
     mode = env("SEARCH_MODE", "live")
@@ -46,7 +69,12 @@ def search(query: str, n: int, purpose: str = "competitors") -> dict[str, Any]:
     fresh = cached and time.time() - cached.get("cached_ts", 0) < float(cfg.get("cache_ttl_hours", 24)) * 3600
     if cached and (fresh or mode == "cache_only"):
         return _from_cache(query, cached, n)
+    if mode == "live" and over_budget(run_id):
+        cap = settings().get("max_searches_per_run", 12)
+        return {"query": query, "results": [], "origin": "none", "note": f"Tavily per-run budget of {cap} searches used up",
+                "engines": [], "unresponsive": [["tavily", f"per-run budget of {cap} searches used up"]]}
     if mode == "live":
+        _spend(run_id)
         try:
             r = httpx.post(API_URL, json={"query": query, **_options(purpose, max(n, 12))},
                            headers={"Authorization": f"Bearer {env('TAVILY_API_KEY')}"}, timeout=30)

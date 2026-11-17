@@ -146,6 +146,19 @@ def stub_backend(model, messages, schema, temperature):
         out = {"reply": "Last month I chased two invoices."}
     elif title == "InterviewInsights":
         out = {"patterns": ["late invoices"], "quotes": [], "open_questions": []}
+    elif title == "DemandClassification":
+        # STUBBED heuristic: first person and not advice; about the problem when the problem phrase (hyphens
+        # dropped) is in the quote or at least 2/3 of its content words are (5-letter stems)
+        problem = re.search(r"BRIEF PROBLEM: (.*)", u).group(1).lower()
+        quote = u.split("<<<UNTRUSTED_PAGE", 1)[-1].rsplit("UNTRUSTED_PAGE>>>", 1)[0].strip().lower()
+        advice = re.match(r"\W*(you should|you could|try |just use|i (would|'d) (suggest|recommend)|i recommend|use )", quote)
+        first = bool(re.search(r"\b(i|i'm|i've|my|me|we|our)\b", quote)) and not advice
+        squash = lambda t: re.sub(r"[^a-z0-9]", "", t)
+        words = [w.replace("-", "") for w in re.findall(r"[a-z-]{3,}", problem)]
+        hits = sum(1 for w in words if w[:5] in squash(quote))
+        about = squash(problem) in squash(quote) or (bool(words) and hits / len(words) >= 2 / 3)
+        out = {"first_person_problem": first, "about_brief_problem": about,
+               "reason": f"stub: first_person={first} problem_words={hits}/{len(words)}"}
     elif title == "PolicyDecision":
         bad = re.search(r"(review|testimonial|stars?|bewertung|reseña|تقييم|impersonat|pretend|ignore (your|previous) instructions|guarantee.{0,60}(earn|income|profit|revenue|get paid|success))", u, re.I)
         out = {"decision": "REFUSE" if bad else "ALLOW", "reason": "stub policy model"}

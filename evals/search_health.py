@@ -51,7 +51,23 @@ def health(brief_path: str) -> dict:
         "text_chars_per_page": {e["sources"][0]: e.get("text_chars") for e in reads if e["sources"]},
         "demand_signals_at_gate": demand,
         "demand_signal_domains": sorted({domain(c.source_url) for c in counted}),
+        "demand_signal_sources": _by_source(counted),
+        "community_posts": sum(1 for e in log if e["action"] == "community_post_added"),
+        "demand_rejected_by_classifier": [{"url": (e["sources"] or [None])[0], "reason": e.get("reason")}
+                                          for e in log if e["action"] == "demand_rejected"],
+        "tavily_budget_fallbacks": sum(1 for e in log if e["action"] == "tavily_budget_fallback"),
     }
+
+
+def _by_source(claims) -> dict:
+    """Counted demand signals per source: the provider named in the claim note ('via ...'), else the domain."""
+    import re
+    out: dict = {}
+    for c in claims:
+        m = re.search(r"via ([\w ]+?)(?: API)?(?:$|[.;])", c.note or "")
+        key = f"{m.group(1)} ({domain(c.source_url)})" if m else domain(c.source_url)
+        out[key] = out.get(key, 0) + 1
+    return out
 
 
 def main() -> None:
@@ -66,7 +82,8 @@ def main() -> None:
         print(f"{r['brief']}: {r['seconds']}s verdict={r['verdict']} queries={len(r['queries'])} "
               f"engines={len(r['engines_responded'])} unresponsive={len(r['engines_unresponsive'])} "
               f"domains={r['distinct_result_domains']} read={r['pages_read']} failed={len(r['pages_failed'])} "
-              f"demand={r['demand_signals_at_gate']} from={r['demand_signal_domains']}")
+              f"demand={r['demand_signals_at_gate']} from={r['demand_signal_sources']} community_posts={r['community_posts']} "
+              f"classifier_rejects={len(r['demand_rejected_by_classifier'])}")
 
 
 if __name__ == "__main__":

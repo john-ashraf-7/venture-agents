@@ -133,6 +133,13 @@ class PageExtract(BaseModel):
     audience: Optional[str] = None
 
 
+class DemandClassification(BaseModel):
+    """Is a community post a person describing the brief's problem? Both must be true for a demand signal."""
+    first_person_problem: bool = Field(description="the author describes a problem they themselves have (not advice, an opinion about others, a product pitch or a how-to question about an unrelated task)")
+    about_brief_problem: bool = Field(description="the problem described is the brief's problem, not merely a shared word")
+    reason: str = Field(description="one short sentence")
+
+
 class ClaimDraft(BaseModel):
     text: str
     type: ClaimType

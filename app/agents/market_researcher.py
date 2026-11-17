@@ -14,6 +14,9 @@ from app.services.search import queries, tavily
 COMMUNITY_EXTRACTS = 4
 EXTRACTABLE = {"http_403", "http_401", "http_429", "bot_check", "js_required", "too_short", "login_wall", "timeout"}
 
+# reddit.com HTML is never fetched by us (bot checks; a reader once invented quotes from one): Reddit text comes
+# only from the official API (app/services/community) or from the page text Tavily's search returned
+NO_FETCH = re.compile(r"(^|[/.])(reddit\.com|redd\.it)(/|$)", re.I)
 SKIP_HOSTS = re.compile(r"(youtube\.com|facebook\.com|instagram\.com|tiktok\.com|x\.com|twitter\.com|linkedin\.com/in/|\.pdf$)", re.I)
 
 
@@ -25,7 +28,7 @@ def plan_queries(run_id: str, terms: SearchTerms, idea: str, purposes: dict[str,
     planned = []
     for purpose, competitor in (purposes or {"demand": "", "competitors": ""}).items():
         for q in queries.build(terms, purpose, competitor=competitor, limit=limits[purpose]):
-            why = queries.lint(q, idea)
+            why = queries.lint(q, idea, purpose=purpose, terms=terms)
             if why:
                 decision_log.append(run_id, "market_researcher", "query_rejected", query=q, purpose=purpose, reason=why)
                 continue
@@ -46,8 +49,11 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
     skip = set(skip or ())
     searches: list[dict[str, Any]] = []
     for purpose, q in planned:
-        res = {**search.search(q, c["results_per_query"], purpose), "purpose": purpose}
+        res = {**search.search(q, c["results_per_query"], purpose, run_id=run_id), "purpose": purpose}
         searches.append(res)
+        if "budget" in res.get("note", "") and run_id:
+            decision_log.append(run_id, "market_researcher", "tavily_budget_fallback", query=q, purpose=purpose,
+                                reason=res["note"])
         decision_log.append(run_id, "market_researcher", "web_search", sources=[r["url"] for r in res["results"]],
                             model=None, query=q, purpose=purpose, origin=res["origin"], note=res["note"],
                             engines=res.get("engines", []), unresponsive=res.get("unresponsive", []))
@@ -57,6 +63,8 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
     # paying competitor, while demand signals depend on the site and the quote, not on the purpose
     for purpose in sorted(dict.fromkeys(s["purpose"] for s in searches), key=lambda x: x == "demand"):
         lists = [s["results"] for s in searches if s["purpose"] == purpose]
+        raw = {r["url"]: r["raw_content"] for l in lists for r in l if r.get("raw_content")} if tavily.enabled() else {}
+        via_tavily = {r["url"] for l in lists for r in l if "tavily" in (r.get("engines") or [])}
         pool: list[str] = []
         snippets: dict[str, str] = {}
         for i in range(max((len(l) for l in lists), default=0)):  # round-robin so one query cannot fill the pool
@@ -64,16 +72,19 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
                 if i < len(l):
                     u = l[i]["url"]
                     snippets.setdefault(u, f'{l[i].get("title", "")}\n{l[i].get("snippet", "")}'.strip())
-                    if len(pool) < POOL_SIZE and u not in pool and u not in skip and not SKIP_HOSTS.search(u):
+                    if (len(pool) < POOL_SIZE and u not in pool and u not in skip and not SKIP_HOSTS.search(u)
+                            and not (NO_FETCH.search(u) and u not in raw)):
                         pool.append(u)
         events.check_kill()
-        raw = {r["url"]: r["raw_content"] for l in lists for r in l if r.get("raw_content")} if tavily.enabled() else {}
         # page text that came with the search result is used first (community sites refuse our own fetches)
         pre = [_use_raw(run_id, purpose, {"url": u, "ok": False, "reason": "not_fetched", "structured_prices": [],
                                           "retrieved_at": now_iso()}, raw[u], c) for u in pool if u in raw]
         pre = [p for p in pre if p["ok"]]
         rest = [u for u in pool if u not in {p["url"] for p in pre}]
-        fetched = pre + reader.fetch_many(rest, c["page_chars"], want=max(0, c["max_pages"] - len(pre)))
+        no_fetch = [{"url": u, "ok": False, "reason": "no_fetch_reddit", "structured_prices": [], "retrieved_at": now_iso(),
+                     "text": "", "origin": "none"} for u in rest if NO_FETCH.search(u)]
+        rest = [u for u in rest if not NO_FETCH.search(u)]
+        fetched = pre + no_fetch + reader.fetch_many(rest, c["page_chars"], want=max(0, c["max_pages"] - len(pre)))
         fetched = _extract_failed(run_id, purpose, fetched, c, raw)
         fallback: list[str] = []
         for page in fetched:
@@ -98,10 +109,10 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
             ex = extract.model_dump()
             if not (ex["problem_statements"] or ex["price_text"] or ex["product_name"] or ex["features"]):
                 fallback.append(u)
-            pages.append({**page, "purpose": purpose, "extract": ex})
+            pages.append({**page, "purpose": purpose, "extract": ex, **({"via": "Tavily"} if u in via_tavily else {})})
         # snippet fallback: the search engine's own text for pages that failed or gave no target fields
         for u in [u for u in fallback if len(snippets.get(u, "")) >= MIN_SNIPPET][:SNIPPETS_PER_PURPOSE]:
-            pages.append(snippet_page(u, snippets[u], purpose))
+            pages.append({**snippet_page(u, snippets[u], purpose), **({"via": "Tavily"} if u in via_tavily else {})})
             decision_log.append(run_id, "market_researcher", "snippet_fallback", sources=[u], purpose=purpose)
     return {"searches": searches, "pages": pages}
 
@@ -153,6 +164,45 @@ def _use_raw(run_id: str, purpose: str, page: dict[str, Any], text: str, c: dict
     decision_log.append(run_id, "page_reader", "tavily_search_raw", sources=[page["url"]], purpose=purpose,
                         replaced_reason=page["reason"], text_chars=len(text))
     return {**page, "ok": True, "reason": None, "origin": "tavily-search-raw", "text": text[: c["page_chars"]]}
+
+
+FIRST_PERSON = re.compile(r"\b(i|i'm|i've|i'd|my|me|we|we're|our|us)\b", re.I)
+SENTENCE = re.compile(r"[^.!?\n]+[.!?]?")
+
+
+def first_person_sentence(text: str, terms: list[str]) -> str:
+    """The first sentence in first person, preferring one that names a problem word; a substring of `text`."""
+    words = {w for t in terms for w in re.findall(r"[a-z]{4,}", t.lower())}
+    sents = [m.group(0).strip() for m in SENTENCE.finditer(text) if len(m.group(0).strip()) >= 20]
+    fp = [s for s in sents if FIRST_PERSON.search(s)]
+    on_topic = [s for s in fp if any(w[:5] in s.lower() for w in words)]
+    return (on_topic or fp or sents or [text.strip()])[0][:400]
+
+
+def community_pages(run_id: str, terms: SearchTerms, skip: set[str] | None = None) -> list[dict[str, Any]]:
+    """Community posts from official APIs as pages, WITHOUT an LLM read: the quote and its date come straight
+    from the API (the quote is a substring of the post text), so they can always be checked against the source."""
+    from app.services import community
+    cfg = community.config()
+    phrases = [terms.problem] + list(terms.synonyms)
+    posts = community.search_community(phrases, terms.audience, cfg.get("max_posts", 10), run_id=run_id,
+                                       context=terms.product_type)
+    pages = []
+    for p in posts:
+        if p.url in (skip or set()):
+            continue
+        text = p.text[: cfg.get("max_text_chars", 3000)]
+        quote = first_person_sentence(text, phrases)
+        pages.append({"url": p.url, "text": text, "retrieved_at": now_iso(), "origin": f"community-api ({p.source})",
+                      "ok": True, "reason": None, "purpose": "demand", "structured_prices": [], "provider": p.source,
+                      "thread_title": p.thread_title, "score": p.score, "author_handle_hash": p.author_handle_hash,
+                      "extract": {"page_kind": "forum", "product_name": None, "price_text": None, "has_public_price": False,
+                                  "features": [], "audience": None,
+                                  "problem_statements": [{"quote": quote, "date": p.created_at or None}]}})
+        decision_log.append(run_id, "market_researcher", "community_post_added", sources=[p.url], model=None,
+                            provider=p.source, created_at=p.created_at, text_chars=len(text))
+    events.emit(run_id, "step", f"{len(pages)} community posts from APIs ({', '.join(sorted({p.source for p in posts})) or 'none'})")
+    return pages
 
 
 def snippet_page(url: str, text: str, purpose: str) -> dict[str, Any]:

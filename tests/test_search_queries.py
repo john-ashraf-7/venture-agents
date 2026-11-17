@@ -24,7 +24,7 @@ def test_lint_rejects_bad_queries():
 def test_built_queries_pass_lint_and_use_current_year():
     built = queries.build(TERMS, "demand", limit=10) + queries.build(TERMS, "competitors", limit=10)
     assert built and all(queries.lint(q, idea="Invoice reminder templates for freelancers") is None for q in built)
-    assert any(q.startswith("site:reddit.com") for q in built)
+    assert not any("site:reddit.com" in q for q in built)  # Reddit only via its official API
     assert any(str(YEAR) in q for q in built)
 
 
@@ -37,8 +37,11 @@ def test_second_pass_needs_a_short_competitor_name():
 def test_demand_counts_only_first_person_dated_quotes_on_community_sites():
     rule = {"community_domains": ["reddit.com", "producthunt.com/discussions"]}
     page = {"url": "https://www.reddit.com/r/freelance/comments/1/x/",
+            "text": "Posted 2026-09-14. I lose hours chasing late invoices",
             "extract": {"problem_statements": [{"quote": "I lose hours chasing late invoices", "date": "2026-09-14"}]}}
     assert community_demand("I lose hours chasing late invoices", page, rule)
+    # a model-read date that is not on the page (Tavily raw content has none) does not count
+    assert not community_demand("I lose hours chasing late invoices", {**page, "text": "I lose hours chasing late invoices"}, rule)
     undated = {**page, "extract": {"problem_statements": [{"quote": "I lose hours chasing late invoices", "date": None}]}}
     assert not community_demand("I lose hours chasing late invoices", undated, rule)
     vendor = {**page, "url": "https://clickup.com/blog/invoice-templates"}
