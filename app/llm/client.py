@@ -157,6 +157,23 @@ def _cache_put(key: str, value: dict[str, Any]) -> None:
         (d / f"{key}.json").write_text(json.dumps(value), encoding="utf-8")
 
 
+def inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
+    """Resolve local $ref/$defs so any JSON-schema-to-grammar backend can use the schema."""
+    defs = schema.get("$defs", {})
+
+    def walk(node: Any) -> Any:
+        if isinstance(node, dict):
+            if "$ref" in node and node["$ref"].startswith("#/$defs/"):
+                target = dict(defs[node["$ref"].split("/")[-1]])
+                extra = {k: v for k, v in node.items() if k != "$ref"}
+                return walk({**target, **extra})
+            return {k: walk(v) for k, v in node.items() if k != "$defs"}
+        if isinstance(node, list):
+            return [walk(x) for x in node]
+        return node
+    return walk(schema)
+
+
 def _extract_json(text: str) -> str:
     text = text.strip()
     if text.startswith("```"):
@@ -171,7 +188,7 @@ def call(role: str, messages: list[dict[str, str]], schema: type[T], *, run_id: 
     """Resolve the role's model, request JSON matching `schema`, validate, retry, escalate, log."""
     events.check_kill()
     spec = resolve(role)
-    json_schema = schema.model_json_schema()
+    json_schema = inline_refs(schema.model_json_schema())
     sys_note = {"role": "system", "content": "Reply with one JSON object that matches this JSON schema. No prose.\n"
                 + json.dumps(json_schema)}
     candidates = [spec.model] + ([spec.escalate_to] if spec.escalate_to else [])

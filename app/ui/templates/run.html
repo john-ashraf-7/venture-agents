@@ -19,8 +19,9 @@
 {% if awaiting %}{% set g = st.gates[awaiting.gate] %}
 <div class="card" style="border:2px solid #111">
   <h2>Gate: {{ awaiting.gate }} - your decision</h2>
-  <p class="first v-{{ g.result.verdict }}">{{ g.explanation.split('. ')[0] }}.</p>
-  <p>{{ g.explanation }}</p>
+  {% set first = g.explanation.split('. ')[0] ~ '.' %}
+  <p class="first v-{{ g.result.verdict }}">{{ first }}</p>
+  <p>{{ g.explanation[first|length:]|trim }}</p>
   <table><tr><th>check (code)</th><th>value</th><th>locked threshold</th><th>pass</th></tr>
   {% for c in g.result.checks %}<tr><td>{{ c.name }}</td><td>{{ c.value }}</td><td>{{ c.threshold }}</td><td>{{ c.passed }}</td></tr>{% endfor %}</table>
   <p class="small mute">Rule locked: {{ g.locked_rule.get('change_our_mind', '') }}</p>
