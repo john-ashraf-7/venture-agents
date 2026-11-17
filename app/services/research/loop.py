@@ -118,12 +118,40 @@ def update_leads(leads: dict[str, list[str]], pages: list[dict[str, Any]], rule:
         del leads[k][cap:]
 
 
-def tally(pages: list[dict[str, Any]], rule: dict[str, Any]) -> dict[str, int]:
-    """Evidence CANDIDATES for the stop rule (not counted at the gate; Phase 1 verifies them)."""
+_JUDGED: dict[tuple[str, str], bool] = {}
+
+
+def _accepted(run_id: Optional[str], quote: str, page: dict[str, Any], terms: SearchTerms, idea: str) -> bool:
+    """Ask the demand classifier once per (url, quote); Phase 1 asks the same question again (LLM cache hit)."""
+    from app import llm
+    from app.agents import demand_classifier
+    key = (page["url"], quote)
+    if key not in _JUDGED:
+        try:
+            c = demand_classifier.classify(quote, problem=terms.problem, idea=idea, thread_title=page.get("thread_title", ""),
+                                           run_id=run_id, url=page["url"])
+            _JUDGED[key] = demand_classifier.counts(c)
+        except llm.LLMError:
+            _JUDGED[key] = False
+    return _JUDGED[key]
+
+
+def tally(pages: list[dict[str, Any]], rule: dict[str, Any], *, run_id: Optional[str] = None,
+          terms: Optional[SearchTerms] = None, idea: str = "") -> dict[str, int]:
+    """Evidence CANDIDATES for the stop rule (not counted at the gate; Phase 1 verifies them). With terms given,
+    a demand candidate is a quote the demand classifier accepts; without, any dated community quote."""
     from app.orchestrator.orchestrator import COMPETITOR_PURPOSES, on_community_site
-    demand = {p["url"] for p in pages
-              if (p.get("origin", "").startswith("community-api") or on_community_site(p["url"], rule.get("community_domains", [])))
-              and any(ps.get("date") for ps in (p.get("extract") or {}).get("problem_statements", []))}
+    demand = set()
+    for p in pages:
+        quotes = [ps.get("quote", "") for ps in (p.get("extract") or {}).get("problem_statements", []) if ps.get("quote")]
+        if not quotes and market_researcher.is_snippet(p):
+            quotes = [(p.get("text") or "").split("\n")[0]]
+        if terms is not None:
+            if any(_accepted(run_id, q, p, terms, idea) for q in quotes[:2]):
+                demand.add(p["url"])
+        elif (p.get("origin", "").startswith("community-api") or on_community_site(p["url"], rule.get("community_domains", []))) \
+                and any(ps.get("date") for ps in (p.get("extract") or {}).get("problem_statements", [])):
+            demand.add(p["url"])
     priced = {p["url"] for p in pages if p.get("purpose") in COMPETITOR_PURPOSES and not market_researcher.is_snippet(p)
               and ((p.get("extract") or {}).get("price_text") or p.get("structured_prices"))}
     reads = sum(1 for p in pages if not market_researcher.is_snippet(p) and not p.get("origin", "").startswith("community-api"))
@@ -176,7 +204,7 @@ def run(run_id: str, brief: Brief, terms: SearchTerms, round1: list[tuple[str, s
             per_purpose = int(c.get("round1_pages_per_purpose", 3))
             dropped: list[dict[str, str]] = []
         else:
-            t = tally(research["pages"], rule)
+            t = tally(research["pages"], rule, run_id=run_id, terms=terms, idea=brief.idea)
             left = {"searches": b["searches"] - used["searches"], "page_reads": b["page_reads"] - t["page_reads"],
                     "rounds": b["rounds"] - n + 1}
             plan = base.run(run_id, "research_planner", "planner", f"plan_research_round_{n}", RoundPlan,
@@ -217,7 +245,7 @@ def run(run_id: str, brief: Brief, terms: SearchTerms, round1: list[tuple[str, s
                                     synonyms=[queries.competitor_name(q) or q[:40] for q in demand_terms][:3])
                 research["pages"] += market_researcher.community_pages(run_id, extra, skip={p["url"] for p in research["pages"]})
         update_leads(leads, research["pages"], rule)
-        t = tally(research["pages"], rule)
+        t = tally(research["pages"], rule, run_id=run_id, terms=terms, idea=brief.idea)
         new = t["demand_candidates"] + t["priced_candidates"]
         stalled = stalled + 1 if new <= prev else 0
         prev = new

@@ -342,9 +342,9 @@ PRICE = re.compile(r"(?:[$€£]|\b(?:usd|eur|gbp|egp)\b)\s*(\d+(?:[.,]\d+)?)|(\
 
 
 def priced_competitor(quote: str, page: dict[str, Any]) -> bool:
-    """A paying competitor needs a non-zero price in the quote, on a page found by a competitor or pricing search
-    (a page fetched for demand research may sell anything)."""
-    if page.get("purpose") not in COMPETITOR_PURPOSES:
+    """A paying competitor needs a non-zero price in the quote, read from a fetched page (not a search snippet),
+    found by any search purpose (a maker's own launch post states its price too); the claim checker verifies it."""
+    if market_researcher.is_snippet(page):
         return False
     amounts = [float((a or b).replace(",", ".")) for a, b in PRICE.findall(quote or "")]
     return any(x > 0 for x in amounts)
@@ -401,8 +401,8 @@ def phase1(run_id: str) -> None:
         f"- Caps ({profile_name()}): {caps()}", "", "## Search terms (keywords from the planner)", "",
         f"```json\n{plan.search_terms.model_dump_json(indent=1)}\n```", "",
         "## Queries (built in code from templates, linted)", ""] + [f"- [{p}] {q}" for p, q in planned]
-        + ["", "Second-pass queries (`alternatives to` / `pricing` for the first competitor found) are added after reading "
-           "and logged in the decision log with the competitor name's web provenance."]
+        + ["", "These are round 1 of the iterative research loop. Later rounds are planned from a summary of what was found "
+           "(competitor names, communities, gaps vs the locked thresholds) and listed under \"Research rounds\" in step 4."]
         + (["", "## Lessons from earlier runs (relevance-filtered)", ""] + [f"- {l}" for l in past] if past else [])))
 
     ideas = idea_scout.run(run_id, brief, past)
@@ -419,8 +419,17 @@ def phase1(run_id: str) -> None:
                                                           for p in pages if not market_researcher.is_snippet(p)]
     snips = [p for p in pages if market_researcher.is_snippet(p)]
     if snips:
-        src_md += ["", "## Search snippets used (page failed or had no target fields; claims are PARTIAL, never counted)", ""] + [
+        src_md += ["", "## Search snippets used (page failed or had no target fields; a demand quote from a snippet counts only "
+                   "if the demand classifier accepts it and it appears word for word in the snippet; anything else is PARTIAL)", ""] + [
             f"- {p['url']} ({p['purpose']})" for p in snips]
+    src_md += ["", "## Research rounds (iterative loop; planner sees a summary only, code lints every query)", "",
+               "| round | queries | dropped by lint | demand candidates | priced candidates | pages read | community posts |",
+               "|---|---|---|---|---|---|---|"] + [
+        f"| {r['round']} | {'; '.join(r['queries']) or '-'} | {'; '.join(d['query'] + ' (' + d['reason'] + ')' for d in r['dropped']) or '-'} "
+        f"| {r['demand_candidates']} | {r['priced_candidates']} | {r['page_reads']} | {r['community_posts']} |" for r in research.get("rounds", [])]
+    cov = research.get("coverage", {})
+    src_md += ["", f"Stopped: {cov.get('stop_reason')} after {cov.get('rounds')} round(s), {cov.get('searches')} searches, "
+               f"{cov.get('seconds')} s. Candidates are a stop signal only; the gate counts verified claims (step 5)."]
     write(run_id, 1, "step4", "sources", "\n".join(src_md))
 
     # Claims -> code quote check -> cross-family checker -> ledger
@@ -544,7 +553,7 @@ def phase1(run_id: str) -> None:
     write(run_id, 1, "step5", "evidence_ledger", "# Evidence ledger\n\n" + json.dumps(ledger.metrics(all_c), indent=1)
           + "\n\n" + ledger.to_markdown(all_c) + "\n")
     write(run_id, 1, "step7", "market_brief", "\n".join([
-        "# Market brief", "", summary.summary, "", "## Segments (ASSUMPTION unless cited)", ""] + [f"- {s}" for s in summary.segments]
+        "# Market brief", "", summary.summary, "", "## Segments (ASSUMPTION unless cited)", ""] + ([f"- {s}" for s in summary.segments] or ["- ASSUMPTION: no segment could be named from the evidence; the interviews (step 10) should find them."])
         + ["", "## Quality", "", "```json", json.dumps(q, indent=1), "```", "",
            "Claims without a SUPPORTED source are labeled ASSUMPTION in the ledger (step 5)."]) + "\n", guard_check=True)
     comp_md = ["# Competitors", "", "| name | url | price (from page) | verified price | direct | why |", "|---|---|---|---|---|---|"]
@@ -559,7 +568,10 @@ def phase1(run_id: str) -> None:
     keep(run_id, "interview_script", script)
     write(run_id, 1, "step10", "interview_script", "# Mom Test interview script\n\nGoal: " + script.goal + "\n\n"
           + "\n".join(f"{i + 1}. {q}" for i, q in enumerate(script.questions)) + "\n\n## Avoid\n\n"
-          + "\n".join(f"- {a}" for a in script.avoid) + "\n", guard_check=True)
+          + "\n".join(f"- {a}" for a in (script.avoid or [
+              "Asking whether they would buy the pack (hypothetical; ask what they did last time instead)",
+              "Pitching the idea or describing the product before asking about their past behaviour",
+              "Leading questions that suggest the answer (\"Isn't chasing payments stressful?\")"])) + "\n", guard_check=True)
 
     # Desk gate: counted by code from the ledger.
     # demand_signal claims that survived to here passed community_demand() at creation (community site,

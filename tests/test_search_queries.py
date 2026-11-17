@@ -75,11 +75,12 @@ def test_fresh_cache_is_used_and_labelled(monkeypatch, tmp_path):
     assert res["origin"] == "cache" and res["note"].startswith("cached search from") and res["results"]
 
 
-def test_paying_competitor_needs_nonzero_price_from_a_competitor_search():
+def test_paying_competitor_needs_nonzero_price_on_a_fetched_page():
     from app.orchestrator.orchestrator import priced_competitor
     comp = {"purpose": "competitors"}
     assert priced_competitor("Pro pack $29 one-time", comp)
     assert priced_competitor("EGP 150 per month", {"purpose": "pricing"})
+    assert priced_competitor("Payment Hunter is $19/mo", {"purpose": "demand"})  # a maker's launch post states its price
     assert not priced_competitor("Freelancer Starter Pack: 0 USD", comp)
-    assert not priced_competitor("Standard evaluation $250", {"purpose": "demand"})
+    assert not priced_competitor("Pro pack $29", {"purpose": "competitors", "snippet_only": True})  # snippets never price
     assert not priced_competitor("Free forever", comp)
