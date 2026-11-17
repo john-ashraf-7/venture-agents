@@ -2,7 +2,7 @@
 
 ## Overview
 
-Venture Builder is a plain-code state machine (the orchestrator) that runs six phases, each ending in a gate. LLM agents never act on the world: they return typed drafts, claims and options (Pydantic models). Code owns the plan, the gates and every side effect. Each gate rule is locked (sha256 + timestamp) **before** its evidence is gathered; code computes the verdict (GO, REPEAT, PIVOT_BACK, PARK, STOP) from the Evidence Ledger; an LLM explains it with the recommendation as its first sentence; a different-family model plays devil's advocate; the founder decides and must type a reason to override. The Outbox is the only path to the outside world, and its outward connectors are mocked in this prototype. Everything runs on local open-weight models (gpt-oss:20b writes, qwen3:8b checks).
+Venture Builder is a plain-code state machine (the orchestrator) that runs six phases, each ending in a gate. LLM agents never act on the world: they return typed drafts, claims and options (Pydantic models). Code owns the plan, the gates and every side effect. Each gate rule is locked (sha256 + timestamp) **before** its evidence is gathered; code computes the verdict (GO, REPEAT, PIVOT_BACK, PARK, STOP) from the Evidence Ledger; an LLM explains it with the recommendation as its first sentence; a different-family model plays devil's advocate; the founder decides and must type a reason to override. The Outbox is the only path to the outside world, and its outward connectors are mocked in this prototype. Everything runs on local open-weight models (gpt-oss:20b writes, qwen2.5:7b checks; `PROFILE=quality` uses gpt-oss:120b and qwen3:32b).
 
 ```mermaid
 flowchart TD

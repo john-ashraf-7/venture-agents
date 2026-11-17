@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import re
+import secrets
 from pathlib import Path
 from typing import Any, Optional
 
@@ -17,7 +18,7 @@ from app import approval, gates, llm
 from app.agents import base as agent_base
 from app.agents import interview_analyst, rehearsal
 from app.commerce import delivery, payments, refunds
-from app.config import ROOT, data_dir, founder_mode, mocks, profile_name
+from app.config import ROOT, data_dir, env, founder_mode, load_yaml, mocks, profile_name
 from app.models import Brief, FounderInput, GuidePack, MemoBody, PricingSheet, Provenance, now_iso
 from app.orchestrator import orchestrator as orch
 from app.services import decision_log, events, guard, ledger, outbox
@@ -35,14 +36,35 @@ def _startup() -> None:
         log.warning("CONFIG WARNING: %s", w)
 
 
+# Local approval token: Outbox approvals must carry it, so a page on another site cannot approve anything.
+# Set APPROVE_TOKEN to fix it; otherwise a new one is generated at startup and printed to the console.
+APPROVE_TOKEN = env("APPROVE_TOKEN") or secrets.token_urlsafe(16)
+logging.getLogger("uvicorn.error").warning("Outbox approval token for this session: %s", APPROVE_TOKEN)
+
+
+def models_status() -> dict[str, Any]:
+    """Which configured Ollama models are present yet (the UI starts while ollama-pull is still downloading)."""
+    wanted = sorted({llm.model_name(r) for r in load_yaml("models.yaml")["roles"]
+                     if llm.resolve(r).model.provider_kind == "ollama"})
+    try:
+        import httpx
+        have = {m["name"] for m in httpx.get(f"{env('OLLAMA_URL', 'http://ollama:11434')}/api/tags", timeout=3).json().get("models", [])}
+    except Exception:
+        return {"ready": False, "missing": wanted, "note": "Ollama not reachable yet"}
+    missing = [w for w in wanted if w not in have and f"{w}:latest" not in have]
+    return {"ready": not missing, "missing": missing, "note": "models loading" if missing else "models ready"}
+
+
 def _ctx(request: Request, **kw: Any) -> dict[str, Any]:
     return {"request": request, "profile": profile_name(), "mode": founder_mode(), "killed": events.KILL.is_set(),
-            "mocks": mocks(), "warnings": llm.config_warnings(), **kw}
+            "mocks": mocks(), "warnings": llm.config_warnings(), "models": models_status(),
+            "approve_token": APPROVE_TOKEN, **kw}
 
 
 @app.get("/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "profile": profile_name(), "killed": events.KILL.is_set(), "time": now_iso()}
+    return {"status": "ok", "profile": profile_name(), "killed": events.KILL.is_set(), "time": now_iso(),
+            "models": models_status()}
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -160,7 +182,9 @@ def ask(run_id: str, request_text: str = Form(...)) -> Any:
 
 
 @app.post("/outbox/{item_id}/approve")
-def approve(item_id: str, note: str = Form("")) -> Any:
+def approve(item_id: str, note: str = Form(""), token: str = Form("")) -> Any:
+    if not secrets.compare_digest(token, APPROVE_TOKEN):
+        raise HTTPException(403, "Missing or wrong approval token (shown in the UI and the app console).")
     try:
         it = outbox.approve(item_id, note)
     except outbox.OutboxRejected as e:

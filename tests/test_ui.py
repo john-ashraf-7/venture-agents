@@ -25,7 +25,9 @@ def test_run_page_and_landing_flow():
     orch.decide(rid, "experiment_plan", "GO", background=False)
     assert client.get(f"/lp/{rid}").status_code == 403  # not served before approval
     item = [i for i in outbox.items(rid) if i["kind"] == "serve_landing_page"][0]
-    assert client.post(f"/outbox/{item['id']}/approve", follow_redirects=False).status_code == 303
+    from app import main
+    assert client.post(f"/outbox/{item['id']}/approve", follow_redirects=False).status_code == 403
+    assert client.post(f"/outbox/{item['id']}/approve", data={"token": main.APPROVE_TOKEN}, follow_redirects=False).status_code == 303
     assert client.get(f"/lp/{rid}?src=demo").status_code == 200
     r = client.post(f"/lp/{rid}/signup", data={"email": "judge@example.com", "src": "demo"})
     assert "demo_audience" in r.text

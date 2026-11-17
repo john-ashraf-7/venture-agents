@@ -59,7 +59,7 @@
   {% for it in outbox %}<tr><td><b>{{ it.title }}</b><div class="small mute">{{ it.content[:220] }}</div></td><td>{{ it.tier }}</td>
   <td class="small">{{ it.target }} ({{ it.target_provenance }})</td><td>{{ it.status }}<div class="small mute">{{ it.reason }}</div></td>
   <td>{% if it.status == 'pending_approval' %}
-    <form method="post" action="/outbox/{{ it.id }}/approve"><button>Approve</button></form>
+    <form method="post" action="/outbox/{{ it.id }}/approve"><input type="hidden" name="token" value="{{ approve_token }}"><button>Approve</button></form>
     <form method="post" action="/outbox/{{ it.id }}/reject"><button class="ghost">Reject</button></form>{% endif %}</td></tr>{% endfor %}
   </table>
   {% if landing_served %}<p>Landing page served locally: <a href="/lp/{{ st.id }}" target="_blank">/lp/{{ st.id }}</a> · demo-audience link (never counted): <a href="/lp/{{ st.id }}?src=demo" target="_blank">/lp/{{ st.id }}?src=demo</a></p>{% endif %}

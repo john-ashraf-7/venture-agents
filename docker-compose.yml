@@ -16,7 +16,7 @@ services:
     volumes:
       - ollama_models:/root/.ollama
     ports:
-      - "11434:11434"
+      - "127.0.0.1:11434:11434"
     deploy:
       resources:
         reservations:
@@ -38,7 +38,7 @@ services:
         condition: service_healthy
     environment:
       OLLAMA_HOST: "http://ollama:11434"
-      PULL_MODELS: "${PULL_MODELS:-gpt-oss:120b qwen3:32b nomic-embed-text}"
+      PULL_MODELS: "${PULL_MODELS:-gpt-oss:20b qwen2.5:7b nomic-embed-text}"
     entrypoint: ["/bin/sh", "-c", "for m in $$PULL_MODELS; do echo pulling $$m; ollama pull $$m || exit 1; done; echo models-ready"]
     restart: "no"
 
@@ -50,15 +50,18 @@ services:
     volumes:
       - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
     ports:
-      - "8888:8080"
+      - "127.0.0.1:8888:8080"
 
   app:
     build: .
     image: venture-builder:latest
     restart: unless-stopped
+    # the UI starts while models download; /health and the UI report model status
     depends_on:
+      ollama:
+        condition: service_started
       ollama-pull:
-        condition: service_completed_successfully
+        condition: service_started
       searxng:
         condition: service_started
     env_file:
@@ -77,7 +80,7 @@ services:
       - ./outputs:/app/outputs
       - ./decision_log.json:/app/decision_log.json
     ports:
-      - "8000:8000"
+      - "${APP_BIND:-127.0.0.1}:8000:8000"
 
 volumes:
   ollama_models:

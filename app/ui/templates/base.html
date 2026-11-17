@@ -40,6 +40,7 @@ pre{white-space:pre-wrap;word-break:break-word}
 </header>
 <main>
 {% for w in warnings %}<div class="card small" style="border-color:#e0b000">Config warning: {{ w }}</div>{% endfor %}
+{% if models and not models.ready %}<div class="card small" style="border-color:#e0b000">Models loading: {{ models.note }}. Missing: {{ models.missing|join(", ") }}. Runs start once these are downloaded.</div>{% endif %}
 {% block content %}{% endblock %}
 <div class="card small">
   <h2>What is mocked</h2>
