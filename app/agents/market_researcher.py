@@ -167,17 +167,36 @@ def is_snippet(page: dict[str, Any]) -> bool:
     return bool(page.get("snippet_only"))
 
 
+EXTRACT_BATCH = 4
+
+
+def _has_fields(p: dict[str, Any]) -> bool:
+    ex = p["extract"]
+    return bool(ex.get("problem_statements") or ex.get("price_text") or ex.get("product_name") or ex.get("features")
+                or ex.get("snippet"))
+
+
 def extract_claims(run_id: str, brief: Brief, pages: list[dict[str, Any]]) -> ClaimList:
-    if not pages:
-        return ClaimList(claims=[])
-    compact = [{"url": p["url"], "retrieved_at": p["retrieved_at"], "fields": p["extract"]} for p in pages]
-    return base.run(run_id, "claim_extractor", "claim_extractor", "extract_atomic_claims", ClaimList,
-                    {"idea": brief.idea, "target_market": brief.target_market, "page_extracts": compact},
-                    sources=[p["url"] for p in pages],
-                    instructions="Write atomic claims (one fact each) ONLY from these page extracts. Types: "
-                                 "demand_signal (a person describing this problem, with date if known), paying_competitor "
-                                 "(a product with a visible price), competitor, trend, market_size, compliance, other. "
-                                 "source_quote must be words copied exactly from the extract fields of that URL.")
+    """Claims are extracted a few pages at a time: with 20+ pages in one prompt the model returned an empty list.
+    Pages with no extracted fields are skipped; an empty answer for a batch with fields is logged."""
+    pages = [p for p in pages if _has_fields(p)]
+    claims = []
+    for i in range(0, len(pages), EXTRACT_BATCH):
+        batch = pages[i:i + EXTRACT_BATCH]
+        compact = [{"url": p["url"], "retrieved_at": p["retrieved_at"], "fields": p["extract"]} for p in batch]
+        out = base.run(run_id, "claim_extractor", "claim_extractor", "extract_atomic_claims", ClaimList,
+                       {"idea": brief.idea, "target_market": brief.target_market, "page_extracts": compact},
+                       sources=[p["url"] for p in batch],
+                       instructions="Write atomic claims (one fact each) ONLY from these page extracts; usually several per "
+                                    "page. Types: demand_signal (a person describing this problem in their own words, "
+                                    "with date if known), paying_competitor (a product with a visible price), competitor, "
+                                    "trend, market_size, compliance, other. source_url must be the URL of the extract the "
+                                    "claim comes from; source_quote must be words copied exactly from that extract's fields.")
+        if not out.claims and run_id:
+            decision_log.append(run_id, "claim_extractor", "claims_empty", sources=[p["url"] for p in batch],
+                                reason="model returned no claims for pages with extracted fields")
+        claims += out.claims
+    return ClaimList(claims=claims)
 
 
 def normalize(s: str) -> str:

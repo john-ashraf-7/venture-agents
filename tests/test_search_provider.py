@@ -100,3 +100,16 @@ def test_search_raw_text_is_ignored_without_a_key(monkeypatch):
     fetched = [{"url": "https://www.reddit.com/r/a/comments/1/x/", "ok": False, "reason": "http_403", "text": ""}]
     raw = {"https://www.reddit.com/r/a/comments/1/x/": "I keep chasing late invoices every month. " * 20}
     assert mr._extract_failed("run_test_raw", "demand", fetched, {"max_pages": 5, "page_chars": 6000}, raw) == fetched
+
+
+def test_claims_are_extracted_in_batches_and_empty_pages_skipped(monkeypatch):
+    from app.agents import market_researcher as mr
+    from app.models import ClaimList
+    calls = []
+    monkeypatch.setattr(mr.base, "run", lambda *a, **k: calls.append(len(a[5]["page_extracts"])) or ClaimList(claims=[]))
+    full = {"problem_statements": [{"quote": "I was paid late", "date": "2026-01-01"}]}
+    pages = [{"url": f"https://ex.org/{i}", "retrieved_at": "t", "extract": full} for i in range(9)]
+    pages.append({"url": "https://ex.org/empty", "retrieved_at": "t", "extract": {"page_kind": "other"}})
+    brief = type("B", (), {"idea": "idea", "target_market": "market"})()
+    mr.extract_claims(None, brief, pages)
+    assert calls == [4, 4, 1]
