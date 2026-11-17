@@ -311,6 +311,19 @@ def community_demand(quote: str, page: dict[str, Any], rule: dict[str, Any]) -> 
                for ps in page["extract"].get("problem_statements", []))
 
 
+COMPETITOR_PURPOSES = ("competitors", "alternatives", "pricing", "pricing_fallback")
+PRICE = re.compile(r"(?:[$€£]|\b(?:usd|eur|gbp|egp)\b)\s*(\d+(?:[.,]\d+)?)|(\d+(?:[.,]\d+)?)\s*(?:[$€£]|\b(?:usd|eur|gbp|egp)\b)", re.I)
+
+
+def priced_competitor(quote: str, page: dict[str, Any]) -> bool:
+    """A paying competitor needs a non-zero price in the quote, on a page found by a competitor or pricing search
+    (a page fetched for demand research may sell anything)."""
+    if page.get("purpose") not in COMPETITOR_PURPOSES:
+        return False
+    amounts = [float((a or b).replace(",", ".")) for a, b in PRICE.findall(quote or "")]
+    return any(x > 0 for x in amounts)
+
+
 def desk_rule(brief: Brief) -> dict[str, Any]:
     g = gate_definitions()
     d = dict(g["desk_gate"])
@@ -364,8 +377,8 @@ def phase1(run_id: str) -> None:
 
     research = market_researcher.gather(run_id, planned)
     # second pass: the first competitor named on a product page gets an "alternatives" and a "pricing" query
-    top = next((p["extract"].get("product_name") for p in research["pages"]
-                if p["extract"].get("page_kind") == "product" and p["extract"].get("product_name")), None)
+    top = next((p["extract"].get("product_name") for p in research["pages"] if p.get("purpose") in COMPETITOR_PURPOSES
+                and p["extract"].get("page_kind") == "product" and p["extract"].get("product_name")), None)
     if top:
         decision_log.append(run_id, "market_researcher", "second_pass_competitor", competitor=top,
                             provenance=Provenance.web.value)
@@ -373,11 +386,23 @@ def phase1(run_id: str) -> None:
             run_id, plan.search_terms, brief.idea, {"alternatives": top, "pricing": top}),
             skip={p["url"] for p in research["pages"]})
         research = {"searches": research["searches"] + more["searches"], "pages": research["pages"] + more["pages"]}
+        priced = any(p.get("purpose") == "pricing" and not market_researcher.is_snippet(p)
+                     and (p["extract"].get("price_text") or p.get("structured_prices")) for p in more["pages"])
+        if not priced:  # one extra query; its snippets stay PARTIAL unless a fetched page confirms the price
+            fb = market_researcher.gather(run_id, market_researcher.plan_queries(
+                run_id, plan.search_terms, brief.idea, {"pricing_fallback": top}),
+                skip={p["url"] for p in research["pages"]})
+            research = {"searches": research["searches"] + fb["searches"], "pages": research["pages"] + fb["pages"]}
     pages = research["pages"]
     src_md = ["# Sources", ""]
     for s in research["searches"]:
         src_md += [f"## Query: {s['query']} ({s['note']})", ""] + [f"- {r['title']} - {r['url']}" for r in s["results"]] + [""]
-    src_md += ["## Pages read (isolated reader)", ""] + [f"- {p['url']} (retrieved {p['retrieved_at']}, {p['origin']})" for p in pages]
+    src_md += ["## Pages read (isolated reader)", ""] + [f"- {p['url']} (retrieved {p['retrieved_at']}, {p['origin']})"
+                                                          for p in pages if not market_researcher.is_snippet(p)]
+    snips = [p for p in pages if market_researcher.is_snippet(p)]
+    if snips:
+        src_md += ["", "## Search snippets used (page failed or had no target fields; claims are PARTIAL, never counted)", ""] + [
+            f"- {p['url']} ({p['purpose']})" for p in snips]
     write(run_id, 1, "step4", "sources", "\n".join(src_md))
 
     # Claims -> code quote check -> cross-family checker -> ledger
@@ -389,15 +414,25 @@ def phase1(run_id: str) -> None:
     for d in drafts.claims:
         page = by_url.get(d.source_url)
         vendor_copy = d.type == "demand_signal" and page and not community_demand(d.source_quote, page, lock["rule"])
-        if vendor_copy:
+        not_a_price = d.type == "paying_competitor" and page and not priced_competitor(d.source_quote, page)
+        if vendor_copy or not_a_price:
             d.type = "other"
         c = ledger.new(run_id, text=d.text, type=d.type, label=Label.PARTIAL, source_url=d.source_url if page else None,
                        source_quote=d.source_quote, retrieved_at=page["retrieved_at"] if page else None,
                        writer_family=writer_family, provenance=Provenance.web, artifact_id=f"phase1_market_v{ver}")
         if vendor_copy:
             c.note = "Vendor or article copy, not a person describing the problem: not a demand signal."
+        if not_a_price:
+            c.note = "Not a paying competitor: no non-zero price, or the page was not found by a competitor/pricing search."
         if not page:
             ledger.rewrite_unsupported(c)
+        elif market_researcher.is_snippet(page):
+            c.note = "snippet only"
+            c.label = Label.UNSUPPORTED if not market_researcher.quote_in_source(d.source_quote, page["text"]) else Label.PARTIAL
+            if c.label == Label.UNSUPPORTED:
+                ledger.rewrite_unsupported(c)
+            else:
+                ledger.update(c)
         elif not market_researcher.quote_in_source(d.source_quote, page["text"]):
             c.note = "Quote not found in fetched source text."
             c.label = Label.UNSUPPORTED

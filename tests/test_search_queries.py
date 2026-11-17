@@ -70,3 +70,13 @@ def test_fresh_cache_is_used_and_labelled(monkeypatch, tmp_path):
          "cached_at": "2026-11-17T10:00:00Z", "cached_ts": time.time()}), encoding="utf-8")
     res = search.search("q", 5, "demand")
     assert res["origin"] == "cache" and res["note"].startswith("cached search from") and res["results"]
+
+
+def test_paying_competitor_needs_nonzero_price_from_a_competitor_search():
+    from app.orchestrator.orchestrator import priced_competitor
+    comp = {"purpose": "competitors"}
+    assert priced_competitor("Pro pack $29 one-time", comp)
+    assert priced_competitor("EGP 150 per month", {"purpose": "pricing"})
+    assert not priced_competitor("Freelancer Starter Pack: 0 USD", comp)
+    assert not priced_competitor("Standard evaluation $250", {"purpose": "demand"})
+    assert not priced_competitor("Free forever", comp)

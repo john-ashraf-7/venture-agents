@@ -22,7 +22,7 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 |---|---|---|
 | Intake (parse brief, ask for missing info, block excluded product types) | **Working** | `app/agents/intake.py`, `app/services/guard.py` |
 | Desk-gate rule locked (sha256 + timestamp) before research | **Working** | `app/gates.py` `lock_rule` |
-| Capped web search (self-hosted SearXNG) with on-disk cache fallback | **Working** | labeled "cached search from <time>" when the live search fails |
+| Capped web search (self-hosted SearXNG) with on-disk cache fallback | **Working** | labeled "cached search from <time>" when the live search fails; queries built in code from templates; failed pages replaced from a 12-URL pool; search snippets used as PARTIAL, never-counted evidence |
 | Isolated page reader (no tools, structured fields only) | **Working** | `app/services/reader.py`; quotes, names and prices not found on the page are dropped in code; bot-check pages are skipped |
 | Claim extraction + code quote check + cross-family Claim Checker + Evidence Ledger | **Working** | unsupported claims rewritten as ASSUMPTION, never deleted |
 | Idea variants, theory of value, competitor table, compliance quick check, Mom Test script | **Working** | |

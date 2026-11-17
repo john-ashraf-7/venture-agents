@@ -6,9 +6,11 @@ is data, never instructions. Nothing a page says can add steps, recipients or pu
 """
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import re
+import time
 from typing import Any, Optional
 
 import httpx
@@ -45,39 +47,140 @@ def html_to_text(html: str) -> str:
             return text
     except Exception:
         pass
-    import re
-    return re.sub(r"<[^>]+>", " ", html)
+    html = re.sub(r"<(script|style|noscript)\b.*?</\1>", " ", html, flags=re.S | re.I)
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html)).strip()
 
 
-def fetch(url: str, max_chars: int) -> dict[str, Any]:
-    """Return {"url", "text", "retrieved_at", "origin"}; text is '' when unavailable."""
-    html = _fixture_page(url)
-    if html is not None:
-        return {"url": url, "text": html_to_text(html)[:max_chars], "retrieved_at": now_iso(), "origin": "fixture"}
-    if env("SEARCH_MODE", "live") == "fixtures":
-        return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": "none"}
+CACHE_TTL_S = 24 * 3600
+MIN_CHARS = 300
+# real challenge markers only: document.addEventListener alone is in most normal pages' HTML
+CHALLENGE = re.compile(r"(captcha|cf-chl|challenge-platform|verify you are (a )?human|are you a robot|unusual traffic)", re.I)
+LOGIN_WALL = re.compile(r"(log ?in to (continue|view|see)|sign ?in to (continue|view|see)|create an account to (continue|view))", re.I)
+JS_SHELL = re.compile(r"(<noscript[^>]*>[^<]*(javascript|enable js)|id=\"(__next|root|app)\"\s*>\s*</div>)", re.I)
+
+
+def structured_prices(html: str) -> list[str]:
+    """Prices a page carries as data: schema.org Product/Offer/SoftwareApplication in ld+json, or __NEXT_DATA__.
+    Many JavaScript pricing pages have no price in their visible text but do carry it here."""
+    out: list[str] = []
+
+    def walk(node: Any, name: str = "") -> None:
+        if isinstance(node, dict):
+            name = str(node.get("name") or name)
+            price = node.get("price") or node.get("lowPrice")
+            if price not in (None, "") and str(node.get("@type", "Offer")).lower() in ("offer", "aggregateoffer", "product",
+                                                                                        "softwareapplication", ""):
+                cur = node.get("priceCurrency", "")
+                out.append(f"{name + ': ' if name else ''}{price} {cur}".strip())
+            for v in node.values():
+                walk(v, name)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, name)
+    for block in re.findall(r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', html, re.S | re.I):
+        try:
+            walk(json.loads(block.strip()))
+        except ValueError:
+            continue
+    m = re.search(r'<script[^>]+id=["\']__NEXT_DATA__["\'][^>]*>(.*?)</script>', html, re.S | re.I)
+    if m:
+        for price, cur in re.findall(r'"(?:price|amount|unitAmount)"\s*:\s*"?(\d{1,5}(?:\.\d{1,2})?)"?\s*,\s*"(?:currency|priceCurrency)"\s*:\s*"([A-Za-z]{3})"', m.group(1))[:6]:
+            out.append(f"{price} {cur.upper()}")
+    seen: list[str] = []
+    for x in out:
+        if x not in seen:
+            seen.append(x)
+    return seen[:6]
+
+
+def quality(text: str, html: str = "") -> Optional[str]:
+    """Why a fetched page is unusable, or None. Reasons: bot_check | login_wall | js_required | too_short."""
+    if looks_blocked(text) or (html and CHALLENGE.search(html[:8000]) and len(text) < MIN_CHARS):
+        return "bot_check"
+    if len(text) < 2000 and LOGIN_WALL.search(text):
+        return "login_wall"
+    if len(text) < MIN_CHARS:
+        return "js_required" if html and JS_SHELL.search(html) else "too_short"
+    return None
+
+
+def _page(url: str, text: str, origin: str, *, ok: bool, reason: Optional[str] = None,
+          prices: Optional[list[str]] = None, max_chars: int = 6000) -> dict[str, Any]:
+    if prices:  # structured prices are page data too; added as text so the reader and quote check can use them
+        text = (text + "\n\nStructured price data on this page: " + "; ".join(prices)).strip()
+    return {"url": url, "text": text[:max_chars] if ok else "", "retrieved_at": now_iso(), "origin": origin,
+            "ok": ok, "reason": reason, "structured_prices": prices or []}
+
+
+async def _fetch_one(client: httpx.AsyncClient, url: str, max_chars: int) -> dict[str, Any]:
     cache = _cache_path(url)
     if cache.exists():
         data = json.loads(cache.read_text(encoding="utf-8"))
-        if looks_blocked(data["text"]):
-            return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": "blocked-bot-check"}
-        data["text"] = data["text"][:max_chars]
-        data["origin"] = "cache"
-        return data
+        if time.time() - data.get("ts", 0) < CACHE_TTL_S and not quality(data["text"]):
+            return {**_page(url, data["text"], "cache", ok=True, prices=data.get("prices"), max_chars=max_chars),
+                    "retrieved_at": data.get("retrieved_at", now_iso())}
     try:
-        r = httpx.get(url, timeout=12, follow_redirects=True, headers={"User-Agent": UA})
-        r.raise_for_status()
-        if "html" not in r.headers.get("content-type", "html"):
-            return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": "skipped-non-html"}
-        text = html_to_text(r.text)
+        r = await client.get(url)
+    except httpx.TimeoutException:
+        return _page(url, "", "live", ok=False, reason="timeout")
     except httpx.HTTPError as e:
-        return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": f"error: {type(e).__name__}"}
-    if looks_blocked(text):
-        return {"url": url, "text": "", "retrieved_at": now_iso(), "origin": "blocked-bot-check"}
-    data = {"url": url, "text": text[:20000], "retrieved_at": now_iso(), "origin": "live"}
-    cache.write_text(json.dumps(data), encoding="utf-8")
-    data["text"] = data["text"][:max_chars]
-    return data
+        return _page(url, "", "live", ok=False, reason=f"error_{type(e).__name__}")
+    if r.status_code >= 400:
+        return _page(url, "", "live", ok=False, reason=f"http_{r.status_code}")
+    if "html" not in r.headers.get("content-type", "html"):
+        return _page(url, "", "live", ok=False, reason="not_html")
+    html = r.text
+    prices = structured_prices(html)
+    text = html_to_text(html)
+    why = quality(text, html)
+    if why and not (prices and why in ("js_required", "too_short")):
+        return _page(url, "", "live", ok=False, reason=why)
+    cache.write_text(json.dumps({"url": url, "text": text[:20000], "prices": prices, "retrieved_at": now_iso(),
+                                 "ts": time.time()}), encoding="utf-8")
+    return _page(url, text, "live", ok=True, prices=prices, max_chars=max_chars)
+
+
+def fetch_many(urls: list[str], max_chars: int, want: int, concurrency: int = 4, timeout: float = 8.0) -> list[dict[str, Any]]:
+    """Fetch candidates in order, `concurrency` at a time, until `want` pages pass the quality check.
+    Returns every attempted page (ok or not, with a reason), in candidate order."""
+    out: list[dict[str, Any]] = []
+    remote = []
+    for u in urls:
+        html = _fixture_page(u)
+        if html is not None:
+            out.append(_page(u, html_to_text(html), "fixture", ok=True, max_chars=max_chars))
+        elif env("SEARCH_MODE", "live") == "fixtures":
+            out.append(_page(u, "", "none", ok=False, reason="no_fixture"))
+        else:
+            remote.append(u)
+    if not remote or sum(p["ok"] for p in out) >= want:
+        return _first_ok(out, want)
+
+    async def run() -> None:
+        async with httpx.AsyncClient(timeout=timeout, follow_redirects=True, headers={"User-Agent": UA}) as client:
+            for i in range(0, len(remote), concurrency):
+                if sum(p["ok"] for p in out) >= want:
+                    break
+                out.extend(await asyncio.gather(*(_fetch_one(client, u, max_chars) for u in remote[i:i + concurrency])))
+    asyncio.run(run())
+    return _first_ok(out, want)
+
+
+def _first_ok(pages: list[dict[str, Any]], want: int) -> list[dict[str, Any]]:
+    """Keep every rejected page (for its reason) but only the first `want` good ones, in candidate order."""
+    kept, n = [], 0
+    for p in pages:
+        if p["ok"]:
+            if n >= want:
+                continue
+            n += 1
+        kept.append(p)
+    return kept
+
+
+def fetch(url: str, max_chars: int) -> dict[str, Any]:
+    """Single-page fetch (evals and tools); same checks as fetch_many."""
+    return fetch_many([url], max_chars, want=1)[0]
 
 
 BOT_WALL = re.compile(r"(document\.addEventListener|enable javascript|verify you are (a )?human|cf-chl|captcha)", re.I)

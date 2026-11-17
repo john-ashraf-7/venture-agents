@@ -7,15 +7,11 @@ from typing import Any
 from app import llm
 from app.agents import base
 from app.config import caps
-from app.models import Brief, ClaimList, PageExtract, SearchTerms
+from app.models import Brief, ClaimList, PageExtract, SearchTerms, now_iso
 from app.services import decision_log, events, reader, search
 from app.services.search import queries
 
 SKIP_HOSTS = re.compile(r"(youtube\.com|facebook\.com|instagram\.com|tiktok\.com|x\.com|twitter\.com|linkedin\.com/in/|\.pdf$)", re.I)
-PRICING_HINT = re.compile(r"(/(pricing|plans|products?)/?([?#]|$)|gumroad\.com/l/|etsy\.com/listing/|/shop/)", re.I)
-PRICING_SLOTS = 2
-FORUM_HINT = re.compile(r"(reddit\.com/r/|/forums?/|/discussions?/|/community/|community\.|stackexchange\.com|quora\.com|/questions/|/threads?/|/t/)", re.I)
-FORUM_SLOTS = 2
 
 
 def plan_queries(run_id: str, terms: SearchTerms, idea: str, purposes: dict[str, str] | None = None) -> list[tuple[str, str]]:
@@ -34,10 +30,18 @@ def plan_queries(run_id: str, terms: SearchTerms, idea: str, purposes: dict[str,
     return planned
 
 
+POOL_SIZE = 12
+SNIPPETS_PER_PURPOSE = 3
+MIN_SNIPPET = 80
+
+
 def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = None) -> dict[str, Any]:
+    """Search each planned query, then per purpose: a pool of up to 12 candidate URLs, fetched until max_pages
+    pass the quality check; failures are logged with a reason and replaced by the next candidate. Search
+    snippets of failed or empty pages are kept as snippet-only pages (their claims are PARTIAL, never counted)."""
     c = caps()
-    searches, urls = [], []
-    skip = skip or set()
+    skip = set(skip or ())
+    searches: list[dict[str, Any]] = []
     for purpose, q in planned:
         res = {**search.search(q, c["results_per_query"], purpose), "purpose": purpose}
         searches.append(res)
@@ -45,48 +49,63 @@ def gather(run_id: str, planned: list[tuple[str, str]], skip: set[str] | None = 
                             model=None, query=q, purpose=purpose, origin=res["origin"], note=res["note"],
                             engines=res.get("engines", []), unresponsive=res.get("unresponsive", []))
         events.emit(run_id, "step", f"search '{q}' -> {len(res['results'])} results ({res['note']})")
-    # reserve slots for pricing pages and forum threads: the gate needs prices and people describing the problem
-    lists = [r["results"] for r in searches]
-    for hint, slots in ((PRICING_HINT, PRICING_SLOTS), (FORUM_HINT, FORUM_SLOTS)):
-        taken = 0
-        for r in (r for l in lists for r in l):
-            if taken >= slots or len(urls) >= c["max_pages"]:
-                break
-            if hint.search(r["url"]) and r["url"] not in urls and r["url"] not in skip and not SKIP_HOSTS.search(r["url"]):
-                urls.append(r["url"])
-                taken += 1
-    # then round-robin across queries so one query cannot take every slot
-    i = 0
-    while len(urls) < c["max_pages"] and any(i < len(l) for l in lists):
-        for l in lists:
-            if i < len(l) and len(urls) < c["max_pages"]:
-                u = l[i]["url"]
-                if u not in urls and u not in skip and not SKIP_HOSTS.search(u):
-                    urls.append(u)
-        i += 1
-    snippets = {r["url"]: f'{r.get("title", "")}\n{r.get("snippet", "")}'.strip() for l in lists for r in l}
-    pages = []
-    for u in urls:
+    pages: list[dict[str, Any]] = []
+    # competitor/pricing purposes first: a URL is read once, and only competitor-purpose pages may yield a
+    # paying competitor, while demand signals depend on the site and the quote, not on the purpose
+    for purpose in sorted(dict.fromkeys(s["purpose"] for s in searches), key=lambda x: x == "demand"):
+        lists = [s["results"] for s in searches if s["purpose"] == purpose]
+        pool: list[str] = []
+        snippets: dict[str, str] = {}
+        for i in range(max((len(l) for l in lists), default=0)):  # round-robin so one query cannot fill the pool
+            for l in lists:
+                if i < len(l):
+                    u = l[i]["url"]
+                    snippets.setdefault(u, f'{l[i].get("title", "")}\n{l[i].get("snippet", "")}'.strip())
+                    if len(pool) < POOL_SIZE and u not in pool and u not in skip and not SKIP_HOSTS.search(u):
+                        pool.append(u)
         events.check_kill()
-        page = reader.fetch(u, c["page_chars"])
-        if not page["text"].strip():
-            decision_log.append(run_id, "page_reader", "fetch_failed", sources=[u], origin=page["origin"])
-            # the search engine's own snippet of the page is still real text from that URL
-            if len(snippets.get(u, "")) < 80:
+        fetched = reader.fetch_many(pool, c["page_chars"], want=c["max_pages"])
+        fallback: list[str] = []
+        for page in fetched:
+            u = page["url"]
+            skip.add(u)
+            if not page["ok"]:
+                decision_log.append(run_id, "page_reader", "fetch_rejected", sources=[u], purpose=purpose, reason=page["reason"])
+                fallback.append(u)
                 continue
-            page = {**page, "text": snippets[u], "origin": f"search-snippet ({page['origin']})"}
-        try:
-            extract = reader.read(u, page["text"], run_id=run_id)
-        except llm.LLMError as e:
-            decision_log.append(run_id, "page_reader", "read_failed", sources=[u], model=e.model, reason=e.detail[:200])
-            continue
-        last = __import__("app.services.cost", fromlist=["last_call"]).last_call(run_id)
-        decision_log.append(run_id, "page_reader", "read_page_isolated", sources=[u], model=llm.model_name("page_reader"),
-                            tokens_in=last.get("tokens_in"), tokens_out=last.get("tokens_out"),
-                            text_chars=len(page["text"]), origin=page["origin"])
-        events.emit(run_id, "step", f"read {u} -> {extract.page_kind}" + (f", price {extract.price_text}" if extract.price_text else ""))
-        pages.append({**page, "extract": extract.model_dump()})
+            try:
+                extract = reader.read(u, page["text"], run_id=run_id)
+            except llm.LLMError as e:
+                decision_log.append(run_id, "page_reader", "read_failed", sources=[u], model=e.model, reason=e.detail[:200])
+                fallback.append(u)
+                continue
+            last = __import__("app.services.cost", fromlist=["last_call"]).last_call(run_id)
+            decision_log.append(run_id, "page_reader", "read_page_isolated", sources=[u], model=llm.model_name("page_reader"),
+                                purpose=purpose, tokens_in=last.get("tokens_in"), tokens_out=last.get("tokens_out"),
+                                text_chars=len(page["text"]), origin=page["origin"],
+                                structured_prices=page.get("structured_prices", []))
+            events.emit(run_id, "step", f"read {u} -> {extract.page_kind}" + (f", price {extract.price_text}" if extract.price_text else ""))
+            ex = extract.model_dump()
+            if not (ex["problem_statements"] or ex["price_text"] or ex["product_name"] or ex["features"]):
+                fallback.append(u)
+            pages.append({**page, "purpose": purpose, "extract": ex})
+        # snippet fallback: the search engine's own text for pages that failed or gave no target fields
+        for u in [u for u in fallback if len(snippets.get(u, "")) >= MIN_SNIPPET][:SNIPPETS_PER_PURPOSE]:
+            pages.append(snippet_page(u, snippets[u], purpose))
+            decision_log.append(run_id, "market_researcher", "snippet_fallback", sources=[u], purpose=purpose)
     return {"searches": searches, "pages": pages}
+
+
+def snippet_page(url: str, text: str, purpose: str) -> dict[str, Any]:
+    """A search-result snippet used as evidence text. No LLM read; claims from it are PARTIAL, 'snippet only'."""
+    return {"url": url, "text": text, "retrieved_at": now_iso(), "origin": "search-snippet", "ok": True, "purpose": purpose,
+            "snippet_only": True, "structured_prices": [],
+            "extract": {"page_kind": "other", "snippet": text, "product_name": None, "price_text": None,
+                        "has_public_price": False, "features": [], "problem_statements": [], "audience": None}}
+
+
+def is_snippet(page: dict[str, Any]) -> bool:
+    return bool(page.get("snippet_only"))
 
 
 def extract_claims(run_id: str, brief: Brief, pages: list[dict[str, Any]]) -> ClaimList:
