@@ -72,7 +72,7 @@ def _model(key: str) -> ModelSpec:
                      extra={k: v for k, v in m.items() if k in MODEL_EXTRA_KEYS})
 
 
-MODEL_EXTRA_KEYS = ("device", "fp16", "keep_alive", "license")
+MODEL_EXTRA_KEYS = ("device", "dtype", "keep_alive", "license")
 
 
 def resolve(role: str) -> RoleSpec:
@@ -94,7 +94,8 @@ def config_warnings() -> list[str]:
     warnings: list[str] = []
     used = {resolve(r).model.key for r in cfg["roles"] if r != "judge"}
     total = sum(_model(k).vram_gb_est for k in used)
-    headroom = 2.0 * len(used)  # KV cache / context headroom per loaded model (estimate)
+    # KV cache / context headroom per loaded LLM (estimate); local_transformers models have no KV cache
+    headroom = 2.0 * sum(1 for k in used if _model(k).provider_kind != "local_transformers")
     if total + headroom > 24:
         warnings.append(f"Co-loaded models need ~{total + headroom:.0f} GB (models {total:.0f} + context {headroom:.0f}) > 24 GB.")
     for r in CHECKING_ROLES:

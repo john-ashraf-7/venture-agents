@@ -79,8 +79,12 @@ def test_purpose_texts_from_config():
 
 
 def _weights_cached(repo: str) -> bool:
-    home = os.environ.get("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
-    return os.path.isdir(os.path.join(home, "hub", "models--" + repo.replace("/", "--")))
+    """True only when a complete weights file is in the local HF cache (never triggers a download)."""
+    try:
+        from huggingface_hub import try_to_load_from_cache
+    except ImportError:
+        return False
+    return any(isinstance(try_to_load_from_cache(repo, f), str) for f in ("model.safetensors", "pytorch_model.bin"))
 
 
 @pytest.mark.skipif(importlib.util.find_spec("torch") is None or not _weights_cached("lytang/MiniCheck-Flan-T5-Large"),

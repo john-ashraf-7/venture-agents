@@ -71,9 +71,9 @@ models:
     family: flan-t5
     license: MIT
     device: auto
-    fp16: false            # T5 overflows in fp16; fp32 on GPU is ~3 GB
+    dtype: bfloat16        # on GPU (T5 overflows in fp16; bf16 ~1.6 GB); CPU always runs float32
     num_ctx: 2048          # max input tokens per (chunk, claim) pair
-    vram_gb_est: 3
+    vram_gb_est: 1.6
     ref_usd_per_mtok: { in: 0.0, out: 0.0 }
   bge-reranker-v2-m3:
     provider: local_transformers
@@ -81,7 +81,7 @@ models:
     family: bge
     license: Apache-2.0
     device: cpu            # set to auto/cuda to use the GPU (RERANKER_DEVICE env overrides)
-    fp16: true
+    dtype: float16         # on GPU only
     num_ctx: 512
     vram_gb_est: 0
     ref_usd_per_mtok: { in: 0.0, out: 0.0 }

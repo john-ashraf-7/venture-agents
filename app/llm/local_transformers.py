@@ -42,7 +42,7 @@ def _load(spec: ModelSpec, kind: str) -> tuple[Any, Any, str]:
         except ImportError as e:  # pragma: no cover - depends on the install
             raise LocalModelUnavailable(f"{spec.name}: torch/transformers not installed ({e})") from e
         device = _device(str(spec.extra.get("device", "auto")))
-        dtype = torch.float16 if device == "cuda" and spec.extra.get("fp16", True) else torch.float32
+        dtype = getattr(torch, str(spec.extra.get("dtype", "float16"))) if device == "cuda" else torch.float32
         tok = AutoTokenizer.from_pretrained(spec.name)
         cls = AutoModelForSeq2SeqLM if kind == "seq2seq" else AutoModelForSequenceClassification
         model = cls.from_pretrained(spec.name, torch_dtype=dtype).to(device).eval()
