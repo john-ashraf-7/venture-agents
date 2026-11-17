@@ -96,14 +96,14 @@
 </div>{% endif %}
 
 <div class="grid">
-<div class="card"><h2>Interview rehearsal <span class="badge">SIMULATED</span></h2>
+<div class="card"><h2>Interview rehearsal <span class="badge">MOCKED</span></h2>
   <p class="small mute">Practise your Mom Test questions. Persona answers are stored as ASSUMPTION, never evidence.</p>
   <form onsubmit="return rehearse(event)"><select name="persona"><option value="0">Persona 1</option><option value="1">Persona 2</option><option value="2">Persona 3</option></select>
   <input name="question" placeholder="When did you last ...?" style="margin-top:.4rem"><button style="margin-top:.4rem">Ask</button></form><pre id="reh" class="small"></pre>
   <h3>Paste real interview notes</h3>
   <form onsubmit="return notes(event)"><textarea name="notes" rows="3"></textarea><button style="margin-top:.4rem">Analyze</button></form><pre id="notesout" class="small"></pre>
 </div>
-<div class="card"><h2>Sale to cash <span class="badge">SIMULATED</span> <span class="badge">MOCKED</span></h2>
+<div class="card"><h2>Sale to cash <span class="badge">MOCKED</span></h2>
   <p class="small mute">No payment code. Checkout belongs in your own payment provider.</p>
   <form onsubmit="return simorder(event)"><button class="ghost">Simulate order_received → mocked delivery</button></form><pre id="orderout" class="small"></pre>
   {% for oid, d in deliveries.items() %}<div class="small">{{ oid }}: {% if d.active %}<a href="{{ d.url }}" target="_blank">download (MOCKED)</a>{% else %}access revoked{% endif %}</div>{% endfor %}

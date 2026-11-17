@@ -386,9 +386,9 @@ def phase1(run_id: str) -> None:
         v.regulatory_claim_ids = flag_ids
     keep(run_id, "ideas", ideas)
     ranking = idea_scout.rank(ideas)
-    opp = ["# Opportunities (Phase 1, step 6)", "", "## Theory of value", "",
-           f"- Who: {ideas.theory_of_value.who}", f"- Problem: {ideas.theory_of_value.problem}",
-           f"- Why now: {ideas.theory_of_value.why_now}", f"- Why us: {ideas.theory_of_value.why_us}", "",
+    opp = ["# Opportunities (Phase 1, step 6)", "", "## Theory of value (ASSUMPTION: model reasoning, not sourced)", "",
+           f"- Who (ASSUMPTION): {ideas.theory_of_value.who}", f"- Problem (ASSUMPTION): {ideas.theory_of_value.problem}",
+           f"- Why now (ASSUMPTION): {ideas.theory_of_value.why_now}", f"- Why us (ASSUMPTION): {ideas.theory_of_value.why_us}", "",
            "## Idea variants (scores are ASSUMPTION; regulatory burden cites compliance claims)", "",
            "| variant | buyer | demand | fit | regulatory burden | effort | rank score | regulatory claims |", "|---|---|---|---|---|---|---|---|"]
     rank_map = {n: s for s, n in ranking}
@@ -548,11 +548,11 @@ def recheck_experiment(run_id: str) -> None:
 
 
 def replay_fixture(name: str) -> dict[str, Any]:
-    """SIMULATED replay through the same gate code. Never touches a run's evidence."""
+    """MOCKED replay through the same gate code. Never touches a run's evidence."""
     fx = json.loads((EVALS_DIR / "fixtures" / "experiments" / f"{name}.json").read_text(encoding="utf-8"))
     res = gates.experiment_gate(fx["rule"], started_at=fx["started_at"], now=fx["now"], visitors=fx["visitors"],
                                 signups=fx["signups"], excluded_sources=fx["rule"]["excluded_sources"])
-    return {"label": "SIMULATED", "fixture": name, "result": res.to_dict()}
+    return {"label": "MOCKED", "fixture": name, "result": res.to_dict()}
 
 
 def verify_public_copy(run_id: str, name: str, text: str) -> str:
@@ -677,12 +677,12 @@ def phase5(run_id: str) -> None:
                       target=p.channel, target_provenance=Provenance.agent, requested_by="launch_post")
     write(run_id, 5, "step2", "launch_posts", "# Launch posts (queued in the Outbox; founder approves each; connectors MOCKED)\n\n"
           + "\n\n".join(f"## {p.channel}\n\n{p.text}" for p in posts.posts) + "\n", guard_check=True)
-    # Sale-to-cash test: SIMULATED order -> MOCKED delivery (idempotent) -> MOCKED refund request -> reconcile.
+    # Sale-to-cash test: MOCKED order -> MOCKED delivery (idempotent) -> MOCKED refund request -> reconcile.
     tier = sheet.tiers[0]
     order = payments.simulate_order_received(run_id, tier.name, tier.price_usd)
     delivery.deliver(run_id, order["order_id"])
     delivery.deliver(run_id, order["order_id"])  # duplicate event: must not deliver twice
-    refunds.request_refund(run_id, order["order_id"], "SIMULATED test refund request")
+    refunds.request_refund(run_id, order["order_id"], "MOCKED test refund request")
     rec = refunds.reconcile(run_id)
     log = (decision_log.run_dir(run_id) / "payment_test_log.md").read_text(encoding="utf-8")
     write(run_id, 5, "step3", "sale_to_cash_test", log + f"\nReconciliation: {json.dumps(rec)}\n")

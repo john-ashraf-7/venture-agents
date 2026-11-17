@@ -24,7 +24,7 @@ flowchart TD
     P2 --> EG{{Experiment gate: code<br/>no verdict before window closes}}
     EG --> FD2{Founder} --> P3[Phase 3 Build: PRD, Test Writer, Builder,<br/>code test runner x3]
     P3 --> TG{{Tests gate: exit code}} --> FD3{Founder} --> P4[Phase 4 Commercial: pricing,<br/>DRAFT policies, compliance checklist]
-    P4 --> FD4{Founder approval} --> P5[Phase 5 Sell: store page, posts,<br/>SIMULATED order to MOCKED delivery]
+    P4 --> FD4{Founder approval} --> P5[Phase 5 Sell: store page, posts,<br/>MOCKED order to MOCKED delivery]
     P5 --> FD5{Founder approval} --> P6[Phase 6 Operate: support drafts in shadow mode,<br/>MOCKED metrics, persevere-or-pivot memo]
     P2 & P5 & P6 -. outward actions .-> OB[[Outbox: tier 0 auto · tier 1 founder approval · tier 2 blocked]]
     OB -. approved .-> M[MOCKED connectors]
@@ -53,7 +53,7 @@ Each phase lists its agents, tools, method and output. Outputs are written to `o
 
 ### Phase 2: Validate (core step: design the business)
 
-- **Agents:** Lean Canvas (gpt-oss), Experiment Designer (gpt-oss), Landing Page copywriter (gpt-oss), Interview Analyst (gpt-oss, on notes the founder pastes), Rehearsal personas + coach (qwen3, SIMULATED).
+- **Agents:** Lean Canvas (gpt-oss), Experiment Designer (gpt-oss), Landing Page copywriter (gpt-oss), Interview Analyst (gpt-oss, on notes the founder pastes), Rehearsal personas + coach (qwen3, MOCKED).
 - **Tools:** local landing-page server (`/lp/<run>`), SQLite visit and sign-up tables, Outbox.
 - **Method:** every canvas item is ASSUMPTION unless it cites a SUPPORTED ledger claim (checked in code). Open assumptions are ranked by impact × uncertainty and the Experiment Designer tests the riskiest one first, proposing a threshold from a sourced benchmark or a labeled ASSUMPTION, plus `min_visitors` and a window. The founder approves (approval gate), then the experiment rule locks. Landing copy is checked by the Policy Guard and every factual sentence is verified against the ledger by the other model family. The page is queued in the Outbox and served only after founder approval. The form stores only email + timestamp, shows a consent line and a delete link; `?src=demo` sign-ups are tagged `demo_audience` and never counted.
 - **Output:** `phase2_step1_lean_canvas`, `step2_riskiest_assumptions`, `step3_experiment_plan`, `step3_experiment_rule_locked`, `step4_landing_page.html`, `step4_landing_page_claims_check`, `step5_interview_insights`, `phase2_gate_experiment_plan`, `phase2_gate_experiment`.
@@ -74,7 +74,7 @@ Each phase lists its agents, tools, method and output. Outputs are written to `o
 ### Phase 5: Sell, deliver, get paid (core step: open the store; deliver automatically)
 
 - **Agents:** Store Page writer, Launch Post writer (gpt-oss), cross-model claim check (qwen3).
-- **Method:** store page and posts pass the Policy Guard and claim check, then wait in the Outbox for one-by-one founder approval (connectors MOCKED). The sale-to-cash path runs as a SIMULATED test: `order_received` → MOCKED delivery (download token, idempotent) → duplicate event ignored → MOCKED refund request revokes access and drafts a reply → reconciliation.
+- **Method:** store page and posts pass the Policy Guard and claim check, then wait in the Outbox for one-by-one founder approval (connectors MOCKED). The sale-to-cash path runs as a MOCKED test: `order_received` → MOCKED delivery (download token, idempotent) → duplicate event ignored → MOCKED refund request revokes access and drafts a reply → reconciliation.
 - **Output:** `phase5_step1_store_page`, `step1_store_page_claims_check`, `step2_launch_posts`, `step3_sale_to_cash_test`, `payment_test_log.md`, `phase5_gate_launch`.
 
 ### Phase 6: Operate and learn
@@ -101,7 +101,7 @@ The real design (prototype status in brackets):
 
 1. **Price approved** by the founder at the commercial gate [working].
 2. **Store page approved** through the Outbox [working; publish connector MOCKED].
-3. **Payment triggers delivery:** checkout happens in the founder's **own** payment provider; its signed `order_received` webhook is the only trigger for delivery [SIMULATED event in `app/commerce/payments.py`; no payment code exists].
+3. **Payment triggers delivery:** checkout happens in the founder's **own** payment provider; its signed `order_received` webhook is the only trigger for delivery [MOCKED event in `app/commerce/payments.py`; no payment code exists].
 4. **Automatic delivery:** a per-order download token is issued and the product link sent [MOCKED in `app/commerce/delivery.py`; no email is sent].
 5. **Idempotency prevents double delivery:** delivery is keyed by order id; a repeated webhook returns the existing delivery [working; tested in the sale-to-cash run].
 6. **A refund revokes access:** a refund request is recorded, the download token is revoked and a reply is drafted; only the founder issues the refund in their own provider account [MOCKED in `app/commerce/refunds.py`].
@@ -129,10 +129,10 @@ The real design (prototype status in brackets):
 | Phases 1-6 agents and artifacts, landing page + waitlist, code test runner | Built |
 | Lessons log with embedding relevance filter (SQLite/JSONL instead of ChromaDB) | Built |
 | Publish / post / email connectors | MOCKED |
-| Order event / payments | SIMULATED (no payment code) |
+| Order event / payments | MOCKED (no payment code) |
 | Delivery, refunds | MOCKED |
 | Phase 6 metrics and support tickets | MOCKED |
-| Interview personas, experiment replay fixtures | SIMULATED |
+| Interview personas, experiment replay fixtures | MOCKED |
 | LLM in the test suite | STUBBED |
 
 ## Roadmap

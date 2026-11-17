@@ -24,7 +24,7 @@
   {% for r in runs %}<tr><td><a href="/runs/{{ r.id }}">{{ r.id }}</a></td><td>{{ r.status }}</td><td>{{ r.phase }}</td>
   <td class="small">{{ r.founder_input.idea[:70] }}</td></tr>{% endfor %}
   </table>
-  <h2 style="margin-top:1rem">Experiment gate replay <span class="badge">SIMULATED</span></h2>
+  <h2 style="margin-top:1rem">Experiment gate replay <span class="badge">MOCKED</span></h2>
   <p class="small mute">Same gate code, labeled fixtures. Never counted as evidence.</p>
   <button class="ghost" onclick="replay('signups_12_of_100')">12 / 100 sign-ups</button>
   <button class="ghost" onclick="replay('signups_130_of_100')">130 / 100 sign-ups</button>

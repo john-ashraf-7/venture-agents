@@ -30,22 +30,22 @@ Then open **http://localhost:8000**, paste a founder brief (or click an example 
 | Lean Canvas with labeled assumptions; riskiest-assumption-first; Experiment Designer; founder approval locks the experiment | **Working** | |
 | Local landing page with a real waitlist form (consent line, email + timestamp only, delete link), served only after Outbox approval | **Working** | demo-audience sign-ups tagged and never counted |
 | Experiment gate states (NOT_STARTED, IN_PROGRESS, INSUFFICIENT_SAMPLE, VERDICT); no verdict before the window closes | **Working** | |
-| Experiment replay fixtures (12/100 and 130/100 sign-ups) | **SIMULATED** | same gate code; never evidence |
+| Experiment replay fixtures (12/100 and 130/100 sign-ups) | **MOCKED** | same gate code; never evidence |
 | Build loop: Builder, independent Test Writer, code test runner (exit code = gate), 3 tries then founder | **Working** | product = digital guide/template pack (HTML + Markdown) |
 | Pricing, DRAFT terms/privacy/refund policies, compliance checklist with official sources, consistency check | **Working** | "not legal advice" on every policy |
 | Store page and launch posts queued in the Outbox | **Working** | |
 | Outbox tier-1 "publish page / post / send email" connectors | **MOCKED** | approved items are written locally, nothing leaves the machine |
-| Checkout / order_received event | **SIMULATED** | no payment code; no money exists or moves |
+| Checkout / order_received event | **MOCKED** | no payment code; no money exists or moves |
 | Automatic delivery of the digital product | **MOCKED** | local download token, idempotent per order id |
 | Refund requests | **MOCKED** | recorded, access revoked, reply drafted; only the founder refunds, in their own provider |
 | Phase 6 metrics (visits, orders, tickets) | **MOCKED** | `evals/fixtures/metrics_mock.json` |
 | Support tickets in Phase 6 | **MOCKED** | replies are drafts in shadow mode until the founder signs off, then go through the Outbox |
-| Interview rehearsal personas | **SIMULATED** | answers stored as ASSUMPTION |
+| Interview rehearsal personas | **MOCKED** | answers stored as ASSUMPTION |
 | Persevere-or-pivot memo (recommendation computed by code, first sentence) | **Working** | |
 | Scripted LLM used only by the test suite | **STUBBED** | `tests/conftest.py`; never used by the app |
 | Kill switch, decision log, cost meter, citation dashboard, hypothesis tracker, founder-control panel | **Working** | |
 
-Every mock is registered in `config/mocks.yaml`, which also drives the MOCKED / SIMULATED / STUBBED badges in the UI.
+Every mock is registered in `config/mocks.yaml`, which also drives the MOCKED / STUBBED badges in the UI.
 
 ## Architecture
 

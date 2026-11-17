@@ -58,7 +58,7 @@ def test_outputs_named_by_phase_and_step():
 
 def test_every_mock_is_registered_and_labeled():
     mocks = yaml.safe_load((ROOT / "config" / "mocks.yaml").read_text(encoding="utf-8"))["mocks"]
-    assert all(m["label"] in {"MOCKED", "STUBBED", "SIMULATED"} for m in mocks)
+    assert all(m["label"] in {"MOCKED", "STUBBED"} for m in mocks)
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for m in mocks:
         assert m["component"].split(" (")[0][:25] in readme, m["component"]

@@ -242,7 +242,7 @@ def simulate_order(run_id: str) -> Any:
         raise HTTPException(400, "No approved pricing yet.")
     o = payments.simulate_order_received(run_id, sheet.tiers[0].name, sheet.tiers[0].price_usd)
     d = delivery.deliver(run_id, o["order_id"])
-    return {"label": "SIMULATED", "order": o, "delivery": d}
+    return {"label": "MOCKED", "order": o, "delivery": d}
 
 
 @app.post("/runs/{run_id}/refund_request/{order_id}")

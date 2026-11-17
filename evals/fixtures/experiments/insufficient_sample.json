@@ -1,5 +1,5 @@
 {
- "label": "SIMULATED",
+ "label": "MOCKED",
  "rule": {
   "signups_threshold": 100,
   "min_visitors": 500,

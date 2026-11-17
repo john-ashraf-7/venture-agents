@@ -1,4 +1,4 @@
-"""Gate logic: desk-gate mapping, experiment states, SIMULATED fixtures, rule locking, tests gate."""
+"""Gate logic: desk-gate mapping, experiment states, MOCKED fixtures, rule locking, tests gate."""
 import pytest
 
 from app import gates
@@ -62,7 +62,7 @@ def test_experiment_not_started():
 
 def test_simulated_fixture_12_of_100_stops():
     out = orch.replay_fixture("signups_12_of_100")
-    assert out["label"] == "SIMULATED"
+    assert out["label"] == "MOCKED"
     assert out["result"]["state"] == "VERDICT" and out["result"]["verdict"] == "STOP"
 
 
