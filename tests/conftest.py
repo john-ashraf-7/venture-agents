@@ -175,6 +175,8 @@ def isolated_env(tmp_path, monkeypatch):
     monkeypatch.setenv("DECISION_LOG_PATH", str(tmp_path / "decision_log.json"))
     monkeypatch.setenv("SEARCH_MODE", "fixtures")
     monkeypatch.setenv("PROFILE", "demo-fast")
+    for k in [k for k in os.environ if k.startswith("ROLE_")]:  # a developer's .env must not change test models
+        monkeypatch.delenv(k)
     # fixture pages live on fixture.local; treat its /forum/ path as a community site in tests only
     from app.orchestrator import orchestrator as orch
     real = orch.gate_definitions

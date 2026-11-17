@@ -66,6 +66,7 @@ def mentions(text: str, query: str) -> bool:
 
 # ------------------------------------------------------------------ cache and budget
 _BUDGET: dict[tuple[str, str], int] = {}
+_THROTTLED: set[tuple[str, str]] = set()
 _LOCK = threading.Lock()
 
 
@@ -100,7 +101,9 @@ def _cached_call(run_id: Optional[str], provider: str, query: str, key: str,
     if not _spend(run_id, provider, int(pcfg.get("budget", 4))):
         if run_id:
             decision_log.append(run_id, "community", "community_search_skipped", sources=[], model=None,
-                                provider=provider, query=query, reason="per-run call budget used up")
+                                provider=provider, query=query,
+                                reason="provider throttled earlier this run (429/quota)" if (run_id or "-", provider) in _THROTTLED
+                                else "per-run call budget used up")
         return []
     try:
         posts = fetch()
@@ -109,6 +112,7 @@ def _cached_call(run_id: Optional[str], provider: str, query: str, key: str,
         if status in (400, 429, 502, 503):  # Stack Exchange throttle_violation / quota: stop calling it this run
             with _LOCK:
                 _BUDGET[(run_id or "-", provider)] = 10 ** 6
+                _THROTTLED.add((run_id or "-", provider))
         if run_id:
             decision_log.append(run_id, "community", "community_search", sources=[], model=None, provider=provider,
                                 query=query, origin="live", error=f"{type(e).__name__}: {str(e)[:150]}")
