@@ -14,6 +14,12 @@ providers:
     enabled: true
     budget: 6
     kinds: [submission, comment]
+  appstore:              # competitor app reviews (iTunes Search API + public review feeds), no key; searched by product type
+    enabled: true
+    budget: 2
+    apps: 3
+    max_rating: 3        # complaints and wishes, not praise
+    country: us
   hackernews:            # Hacker News via Algolia, no key
     enabled: true
     budget: 6            # API calls per run

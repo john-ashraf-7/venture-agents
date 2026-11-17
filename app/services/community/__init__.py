@@ -163,7 +163,8 @@ def pullpush(query: str, limit: int, run_id: Optional[str] = None, context: str 
     for kind in pcfg.get("kinds", ["submission", "comment"]):
         def fetch(kind: str = kind) -> list[CommunityPost]:
             with _client() as c:
-                r = c.get(f"https://api.pullpush.io/reddit/search/{kind}/", params={"q": query, "size": limit, "sort_type": "score", "sort": "desc"})
+                r = c.get(f"https://api.pullpush.io/reddit/search/{kind}/", params={"q": f'"{query}"' if len(query.split()) > 1 else query, "size": limit,
+                                  "sort_type": "score", "sort": "desc"})  # exact phrase: unquoted search is off-topic
                 r.raise_for_status()
                 posts = []
                 for h in r.json().get("data", []) or []:
@@ -184,6 +185,44 @@ def pullpush(query: str, limit: int, run_id: Optional[str] = None, context: str 
                 return posts
         out += _cached_call(run_id, "pullpush", query, f"{kind}|{query}|{limit}", fetch)
     return out
+
+
+def appstore(query: str, limit: int, run_id: Optional[str] = None, context: str = "") -> list[CommunityPost]:
+    """Competitor app reviews from Apple's public iTunes Search API and customer-review feeds (no key).
+    Buyers complaining about, or wishing for more from, the tools they already use: dated, first-hand text.
+    Low-rated reviews (<= max_rating) only; the demand classifier still judges each one."""
+    pcfg = config()["providers"].get("appstore", {})
+    term = (query or context).strip()  # the problem phrase; the joined context is too long for app search
+
+    def fetch() -> list[CommunityPost]:
+        posts: list[CommunityPost] = []
+        with _client() as c:
+            r = c.get("https://itunes.apple.com/search", params={"term": term, "entity": "software",
+                                                                 "limit": pcfg.get("apps", 3), "country": pcfg.get("country", "us")})
+            r.raise_for_status()
+            for app in r.json().get("results", []):
+                aid, name = app.get("trackId"), app.get("trackName", "")
+                rr = c.get(f"https://itunes.apple.com/{pcfg.get('country', 'us')}/rss/customerreviews/id={aid}/sortBy=mostRecent/json")
+                if rr.status_code != 200:
+                    continue
+                entries = (rr.json().get("feed") or {}).get("entry") or []
+                for e in entries if isinstance(entries, list) else [entries]:
+                    lab = lambda k: (e.get(k) or {}).get("label", "") if isinstance(e.get(k), dict) else ""
+                    try:
+                        rating = int(lab("im:rating") or 5)
+                    except ValueError:
+                        rating = 5
+                    text = (lab("title") + "\n" + lab("content")).strip()
+                    if rating > int(pcfg.get("max_rating", 3)) or not text:
+                        continue
+                    posts.append(CommunityPost(
+                        source=f"app store review ({name[:40]})", url=f"https://apps.apple.com/us/app/id{aid}#review-{lab('id')}",
+                        author_handle_hash=hash_handle((e.get("author") or {}).get("name", {}).get("label") if isinstance(e.get("author"), dict) else ""),
+                        created_at=(lab("updated") or "")[:10], text=text[:3000], score=rating, thread_title=f"Review of {name}"))
+                    if len(posts) >= limit:
+                        return posts
+        return posts
+    return _cached_call(run_id, "appstore", term, f"{term}|{limit}", fetch)
 
 
 def stackexchange_sites(context: str) -> list[str]:
@@ -251,7 +290,7 @@ def reddit(query: str, limit: int, run_id: Optional[str] = None, context: str = 
     return _cached_call(run_id, "reddit", query, f"search|{query}|{limit}", fetch)
 
 
-PROVIDERS: dict[str, Callable[..., list[CommunityPost]]] = {"pullpush": pullpush, "hackernews": hackernews,
+PROVIDERS: dict[str, Callable[..., list[CommunityPost]]] = {"pullpush": pullpush, "appstore": appstore, "hackernews": hackernews,
                                                            "stackexchange": stackexchange, "reddit": reddit}
 
 
